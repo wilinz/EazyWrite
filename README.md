@@ -5,7 +5,7 @@
 如 通用工具类
 
 各自的功能写在各自的模块  
-可以使用自己熟悉的语言 Java or Kotlin
+可以使用自己熟悉的语言 Java or Kotlin  
 Api文档应写在模块下 readme.md  
 主界面先不急，等各自功能开发完成再开发主界面  
 提交记得写 comment  
