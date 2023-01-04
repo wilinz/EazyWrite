@@ -16,5 +16,6 @@ implementation: 仅此模块导入
 api: 引用此模块的其他模块也可以使用此依赖
 
 模块分工如下：
-<img src="img/img1.png" width="200px">
+
+<img src="img/img1.png" width="400px">
 
