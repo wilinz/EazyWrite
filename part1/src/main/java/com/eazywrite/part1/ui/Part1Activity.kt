@@ -1,4 +1,4 @@
-package com.eazywrite.part1
+package com.eazywrite.part1.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -8,5 +8,7 @@ class Part1Activity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_part1_test)
+
+
     }
 }

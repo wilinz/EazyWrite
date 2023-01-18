@@ -17,7 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.eazywrite.app.ui.theme.EazyWriteTheme
-import com.eazywrite.part1.Part1Activity
+import com.eazywrite.part1.ui.Part1Activity
 import com.eazywrite.part2.Part2Activity
 import com.eazywrite.part3.Part3Activity
 import com.eazywrite.part4.Part4Activity

@@ -3,7 +3,7 @@
 
     <application>
         <activity
-            android:name="com.eazywrite.part1.Part1Activity"
+            android:name="com.eazywrite.part1.ui.Part1Activity"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
