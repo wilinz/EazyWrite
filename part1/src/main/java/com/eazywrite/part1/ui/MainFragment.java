@@ -2,6 +2,9 @@ package com.eazywrite.part1.ui;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
@@ -9,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.eazywrite.app.part1.R;
+import com.eazywrite.app.part1.databinding.FragmentMainBinding;
 
 public class MainFragment extends Fragment {
 
@@ -55,7 +59,14 @@ public class MainFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_main, container, false);
+        mBinding = DataBindingUtil.inflate(inflater,R.layout.fragment_main,container,false);
+
+        return  mBinding.getRoot();
+    }
+    FragmentMainBinding mBinding;
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
     }
 }
