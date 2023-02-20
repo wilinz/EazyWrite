@@ -7,6 +7,7 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -14,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.eazywrite.app.ui.bill.BillActivity
 import com.eazywrite.app.ui.theme.EazyWriteTheme
 
 class MainActivity : ComponentActivity() {
@@ -31,7 +33,9 @@ class MainActivity : ComponentActivity() {
                             .fillMaxSize()
                             .padding(8.dp)
                     ) {
-                        Text(text = "MainActivity")
+                        Button(onClick = { startActivity<BillActivity>() }) {
+                            Text(text = "记账页面")
+                        }
                     }
                 }
             }

@@ -44,6 +44,10 @@ android {
             excludes += '/META-INF/{AL2.0,LGPL2.1}'
         }
     }
+
+    buildFeatures {
+        dataBinding true
+    }
 }
 
 dependencies {
@@ -86,4 +90,6 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.10'
     implementation 'com.squareup.okhttp3:logging-interceptor:4.10.0'
     implementation 'com.github.thomas-bouvier:persistent-cookie-jar-okhttp:1.0.2'
+
+
 }
