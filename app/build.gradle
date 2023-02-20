@@ -47,9 +47,5 @@ android {
 }
 
 dependencies {
-    api(project(":part1"))
-    api(project(":part2"))
-    api(project(":part3"))
-    api(project(":part4"))
-    implementation(project(":common"))
+
 }
