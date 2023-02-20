@@ -1,12 +1,15 @@
 package com.eazywrite.app
 
 import android.app.Application
-import com.eazywrite.common.GlobalContext
 
-class MyApplication: Application() {
+class MyApplication : Application() {
+
+    companion object {
+        lateinit var instance: MyApplication
+    }
 
     override fun onCreate() {
         super.onCreate()
-        GlobalContext.init(this)
+        instance = this
     }
 }
