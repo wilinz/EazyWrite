@@ -2,9 +2,12 @@ package com.eazywrite.app.ui.bill;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.view.Window;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.WindowCompat;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -19,6 +22,11 @@ public class AddBillContentActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_bill_content);
 
+        Window window = getWindow();
+        WindowCompat.setDecorFitsSystemWindows(window, false);
+        window.setStatusBarColor(Color.TRANSPARENT);
+        window.setNavigationBarColor(Color.TRANSPARENT);
+
         addFragment();
     }
 
@@ -26,14 +34,14 @@ public class AddBillContentActivity extends AppCompatActivity {
         AddItemFragment fragment = new AddItemFragment();
         FragmentManager manager = getSupportFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();
-        transaction.replace(R.id.iddFragment,fragment);
+        transaction.replace(R.id.iddFragment, fragment);
         transaction.commit();
     }
 
-    public static void actionStart(Context context, String data1, String data2){
+    public static void actionStart(Context context, String data1, String data2) {
         Intent intent = new Intent(context, AddBillContentActivity.class);
-        intent.putExtra("param1",data1);
-        intent.putExtra("param2",data2);
+        intent.putExtra("param1", data1);
+        intent.putExtra("param2", data2);
         context.startActivity(intent);
     }
 }
