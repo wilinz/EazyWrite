@@ -1,4 +1,4 @@
-package com.eazywrite.part1.ui;
+package com.eazywrite.part1.ui.fragment;
 
 import android.os.Bundle;
 
@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 
 import com.eazywrite.app.part1.R;
 import com.eazywrite.app.part1.databinding.FragmentMainBinding;
+import com.eazywrite.part1.ui.activity.AddContentActivity;
 
 public class MainFragment extends Fragment {
 
@@ -67,6 +68,8 @@ public class MainFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
+        mBinding.addItem.setOnClickListener(view1 -> {
+            AddContentActivity.actionStart(getActivity(),null,null);
+        });
     }
 }

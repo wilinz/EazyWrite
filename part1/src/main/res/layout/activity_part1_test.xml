@@ -7,7 +7,7 @@
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/HomePageFragment"
-        android:name="com.eazywrite.part1.ui.MainFragment"
+        android:name="com.eazywrite.part1.ui.fragment.MainFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_constraintBottom_toBottomOf="parent"

@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:background="@drawable/add_budget_type_top_bg_icon"
         android:layout_height="match_parent"
-        tools:context="com.eazywrite.part1.ui.MainFragment">
+        tools:context="com.eazywrite.part1.ui.fragment.MainFragment">
 
         <ImageView
             android:id="@+id/imageBackground"

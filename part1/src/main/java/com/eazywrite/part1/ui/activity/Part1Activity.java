@@ -1,4 +1,4 @@
-package com.eazywrite.part1.ui;
+package com.eazywrite.part1.ui.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 
