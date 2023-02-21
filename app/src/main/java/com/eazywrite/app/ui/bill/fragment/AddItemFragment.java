@@ -48,6 +48,7 @@ public class AddItemFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         init();
+        back();
         ViewPager2Adapter adapter = new ViewPager2Adapter(getActivity(), fragments);
         mBinding.viewPager2.setAdapter(adapter);
 
@@ -60,6 +61,15 @@ public class AddItemFragment extends Fragment {
                 tab.setText("支出");
             }
         })).attach();
+    }
+
+    private void back() {
+        mBinding.back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getActivity().finish();
+            }
+        });
     }
 
     private ArrayList<Fragment> fragments = new ArrayList<>();
