@@ -3,25 +3,8 @@
 
     <application>
         <activity
-            android:name="com.eazywrite.part1.ui.activity.AddContentActivity"
-            android:exported="true">
-
-
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
-        </activity>
-        <activity
-            android:name="com.eazywrite.part1.ui.activity.Part1Activity"
-            android:exported="true">
-
-
-
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+            android:name="com.eazywrite.part1.ui.Part1Activity"
+            android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
