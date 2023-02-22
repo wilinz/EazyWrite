@@ -9,7 +9,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 
@@ -49,14 +48,14 @@ public class FragmentOne extends Fragment {
 
     private void initRecycleView() {
         mBinding.recycleView.setLayoutManager(new GridLayoutManager(getActivity(),4));
-        RecycleViewAdapter adapter = new RecycleViewAdapter(viewModel.beans.getValue(),getContext());
+        RecycleViewAdapter adapter = new RecycleViewAdapter(viewModel.outputBean.getValue(),getContext());
         mBinding.recycleView.setAdapter(adapter);
     }
     OutputViewModel viewModel;
     private void initData() {
         viewModel = new ViewModelProvider(this).get(OutputViewModel.class);
         init();
-        viewModel.beans.setValue(beans);
+        viewModel.outputBean.setValue(beans);
     }
 
     ArrayList<OutputBean> beans = new ArrayList<>();
@@ -88,13 +87,11 @@ public class FragmentOne extends Fragment {
         beans.add(setResource("shuiguo","水果"));
         beans.add(setResource("shucai","蔬菜"));
         beans.add(setResource("shejiao","社交"));
-        beans.add(setResource("set","设置"));
         beans.add(setResource("riyong","日用"));
         beans.add(setResource("qinyou","亲友"));
         beans.add(setResource("pay_qiche_g_icon","汽车"));
         beans.add(setResource("pay_meirong_g_icon","美容"));
         beans.add(setResource("pay_lvxing_g_icon","相机"));
-        beans.add(setResource("pay_lijin_g_icon","礼金"));
         beans.add(setResource("pay_kuaidi_g_icon","快递"));
         beans.add(setResource("pay_jujia_g_icon","车驾"));
         beans.add(setResource("pay_juanzeng_g_icon","捐赠"));
