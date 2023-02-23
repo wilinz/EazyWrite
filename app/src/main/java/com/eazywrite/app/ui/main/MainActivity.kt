@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import com.eazywrite.app.ui.bill.BillActivity
+import com.eazywrite.app.ui.chart.ChartActivity
 import com.eazywrite.app.ui.theme.EazyWriteTheme
 
 class MainActivity : ComponentActivity() {
@@ -98,6 +99,12 @@ class MainActivity : ComponentActivity() {
                             ) {
                                 ElevatedButton(onClick = { startActivity<BillActivity>() }) {
                                     Text(text = "记账页面")
+                                }
+                                ElevatedButton(onClick = { startActivity<ChartActivity>() }) {
+                                    Text(text = "图表页面")
+                                }
+                                ElevatedButton(onClick = { startActivity<ChartActivity>() }) {
+                                    Text(text = "登录页面")
                                 }
                             }
                         }
