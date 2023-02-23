@@ -11,7 +11,6 @@ import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.eazywrite.app.R;
 import com.eazywrite.app.data.model.OutputBean;
@@ -44,10 +43,12 @@ public class FragmentTwo extends Fragment {
         initData();
         initRecyclerView();
     }
-
+    RecycleViewAdapter adapter;
     private void initRecyclerView() {
-        mBinding.recycleViewTwo.setLayoutManager(new GridLayoutManager(getActivity(), 4));
-        RecycleViewAdapter adapter = new RecycleViewAdapter(viewModel.inputBean.getValue(), getContext());
+        GridLayoutManager layoutManager =  new GridLayoutManager(getActivity(),4);
+        mBinding.recycleViewTwo.setLayoutManager(layoutManager);
+        adapter = new RecycleViewAdapter(viewModel.inputBean.getValue(), getContext(),
+                viewModel.inputBeanColored.getValue(), layoutManager);
         mBinding.recycleViewTwo.setAdapter(adapter);
     }
 
@@ -56,17 +57,35 @@ public class FragmentTwo extends Fragment {
         viewModel = new ViewModelProvider(this).get(OutputViewModel.class);
         init();
         viewModel.inputBean.setValue(beans);
+        viewModel.inputBeanColored.setValue(beansColored);
     }
 
 
     ArrayList<OutputBean> beans = new ArrayList<>();
+    ArrayList<OutputBean> beansColored = new ArrayList<>();
     private void init() {
-        beans.add(setResource("income_gongzi_g_con","工资"));
-        beans.add(setResource("income_jianzhi_g_icon","兼职"));
-        beans.add(setResource("pay_lijin_g_icon","礼金"));
-        beans.add(setResource("income_qita_g_icon","其他"));
-        beans.add(setResource("baoxiao_expend_shezhi_g_icon","设置"));
+        beans.add(setResource("gongzi","工资"));
+        beans.add(setResource("jianzhi","兼职"));
+        beans.add(setResource("lijin","礼金"));
+        beans.add(setResource("other","其他"));
+        beans.add(setResource("shezhi","设置"));
+
+        beansColored.add(setResource("gongzi1","工资"));
+        beansColored.add(setResource("jianzhi1","兼职"));
+        beansColored.add(setResource("lijin1","礼金"));
+        beansColored.add(setResource("other1","其他"));
+        beansColored.add(setResource("shezhi1","设置"));
+
+
     }
+
+
+        @Override
+        public void onPause() {
+            super.onPause();
+            adapter.resume();
+        }
+
 
     public OutputBean setResource(String id, String name){
         OutputBean bean = new OutputBean();
