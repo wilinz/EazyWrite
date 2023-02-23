@@ -9,7 +9,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 
@@ -47,40 +46,42 @@ public class FragmentOne extends Fragment {
         initRecycleView();
     }
 
+    RecycleViewAdapter adapter;
     private void initRecycleView() {
-        mBinding.recycleView.setLayoutManager(new GridLayoutManager(getActivity(),4));
-        RecycleViewAdapter adapter = new RecycleViewAdapter(viewModel.beans.getValue(),getContext());
+        GridLayoutManager layoutManager =  new GridLayoutManager(getActivity(),4);
+        mBinding.recycleView.setLayoutManager(layoutManager);
+        adapter = new RecycleViewAdapter(viewModel.outputBean.getValue(),getContext(),
+                viewModel.outputBeanColored.getValue(),layoutManager);
         mBinding.recycleView.setAdapter(adapter);
     }
     OutputViewModel viewModel;
     private void initData() {
         viewModel = new ViewModelProvider(this).get(OutputViewModel.class);
         init();
-        viewModel.beans.setValue(beans);
+        viewModel.outputBean.setValue(beans);
+        viewModel.outputBeanColored.setValue(beansColored);
     }
 
     ArrayList<OutputBean> beans = new ArrayList<>();
+    ArrayList<OutputBean> beansColored = new ArrayList<>();
 
     private void init(){
-        beans.add(setResource("jiaju1_1","家具"));
-        beans.add(setResource("bangong1_1","办公"));
-        beans.add(setResource("geren1_1","个人"));
-        beans.add(setResource("gouwu1_1","购物"));
-        beans.add(setResource("jianshen1_1","健身"));
-        beans.add(setResource("jiaotong1_1","交通"));
-        beans.add(setResource("jiating1_1","家庭"));
-        beans.add(setResource("other1_1","其他"));
-        beans.add(setResource("shenghuo1_1","生活"));
-        beans.add(setResource("shouru1_1","收入"));
-        beans.add(setResource("xuexi1_1","学习"));
-        beans.add(setResource("yiliao1_1","医疗"));
-        beans.add(setResource("yule1_1","娱乐"));
+        beans.add(setResource("jiaju","家具"));
+        beans.add(setResource("bangong","办公"));
+        beans.add(setResource("geren","个人"));
+        beans.add(setResource("gouwu","购物"));
+        beans.add(setResource("jianshen","健身"));
+        beans.add(setResource("jiaotong","交通"));
+        beans.add(setResource("jiating","家庭"));
+        beans.add(setResource("qita","其他"));
+        beans.add(setResource("shenghuo","生活"));
+        beans.add(setResource("shouru","收入"));
+        beans.add(setResource("xuexi","学习"));
+        beans.add(setResource("yiliao","医疗"));
+        beans.add(setResource("yule","娱乐"));
         beans.add(setResource("zhufang","住房"));
         beans.add(setResource("zhangbei","长辈"));
         beans.add(setResource("yundong","运动"));
-        beans.add(setResource("yule","娱乐"));
-        beans.add(setResource("yiliao","医疗"));
-        beans.add(setResource("yaojiu","药酒"));
         beans.add(setResource("xuexi","学习"));
         beans.add(setResource("weixiu","未休"));
         beans.add(setResource("tongxun","通讯"));
@@ -88,18 +89,56 @@ public class FragmentOne extends Fragment {
         beans.add(setResource("shuiguo","水果"));
         beans.add(setResource("shucai","蔬菜"));
         beans.add(setResource("shejiao","社交"));
-        beans.add(setResource("set","设置"));
         beans.add(setResource("riyong","日用"));
         beans.add(setResource("qinyou","亲友"));
-        beans.add(setResource("pay_qiche_g_icon","汽车"));
-        beans.add(setResource("pay_meirong_g_icon","美容"));
-        beans.add(setResource("pay_lvxing_g_icon","相机"));
-        beans.add(setResource("pay_lijin_g_icon","礼金"));
-        beans.add(setResource("pay_kuaidi_g_icon","快递"));
-        beans.add(setResource("pay_jujia_g_icon","车驾"));
-        beans.add(setResource("pay_juanzeng_g_icon","捐赠"));
+        beans.add(setResource("qiche","汽车"));
+        beans.add(setResource("meirong","美容"));
+        beans.add(setResource("kuaidi","快递"));
+
+        beans.add(setResource("juanzeng","捐赠"));
+
+        beansColored.add(setResource("jiaju1","家具"));
+        beansColored.add(setResource("bangong1","办公"));
+        beansColored.add(setResource("geren1","个人"));
+        beansColored.add(setResource("gouwu1","购物"));
+        beansColored.add(setResource("jianshen1","健身"));
+        beansColored.add(setResource("jiaotong1","交通"));
+        beansColored.add(setResource("jiating1","家庭"));
+        beansColored.add(setResource("qita1","其他"));
+        beansColored.add(setResource("shenghuo1","生活"));
+        beansColored.add(setResource("shouru1","收入"));
+        beansColored.add(setResource("xuexi1","学习"));
+        beansColored.add(setResource("yiliao1","医疗"));
+        beansColored.add(setResource("yule1","娱乐"));
+        beansColored.add(setResource("zhufang1","住房"));
+        beansColored.add(setResource("zhangbei1","长辈"));
+        beansColored.add(setResource("yundong1","运动"));
+        beansColored.add(setResource("xuexi1","学习"));
+        beansColored.add(setResource("weixiu1","未休"));
+        beansColored.add(setResource("tongxun1","通讯"));
+        beansColored.add(setResource("shuma1","数码"));
+        beansColored.add(setResource("shuiguo1","水果"));
+        beansColored.add(setResource("shucai1","蔬菜"));
+        beansColored.add(setResource("shejiao1","社交"));
+        beansColored.add(setResource("riyong1","日用"));
+        beansColored.add(setResource("qinyou1","亲友"));
+        beansColored.add(setResource("qiche1","汽车"));
+        beansColored.add(setResource("meirong1","美容"));
+        beansColored.add(setResource("kuaidi1","快递"));
+        beansColored.add(setResource("juanzeng1","捐赠"));
+
+    }
 
 
+
+
+
+    
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        adapter.resume();
     }
 
     public OutputBean setResource(String id, String name){
@@ -108,4 +147,6 @@ public class FragmentOne extends Fragment {
         bean.setName(name);
         return bean;
     }
+
+
 }

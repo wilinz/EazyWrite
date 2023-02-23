@@ -10,7 +10,10 @@ import java.util.ArrayList;
 
 public class OutputViewModel extends AndroidViewModel {
 
-    public MutableLiveData<ArrayList<OutputBean>> beans = new MutableLiveData<>();
+    public MutableLiveData<ArrayList<OutputBean>> outputBean = new MutableLiveData<>();
+    public MutableLiveData<ArrayList<OutputBean>> outputBeanColored = new MutableLiveData<>();
+    public MutableLiveData<ArrayList<OutputBean>> inputBean = new MutableLiveData<>();
+    public MutableLiveData<ArrayList<OutputBean>> inputBeanColored = new MutableLiveData<>();
 
     public OutputViewModel(@NonNull Application application) {
         super(application);
