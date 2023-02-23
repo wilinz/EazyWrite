@@ -17,6 +17,7 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import com.eazywrite.app.R
 import com.eazywrite.app.ui.theme.EazyWriteTheme
+import com.eazywrite.app.util.setWindow
 import com.jaikeerthick.composable_graphs.color.*
 import com.jaikeerthick.composable_graphs.composables.LineGraph
 import com.jaikeerthick.composable_graphs.data.GraphData
@@ -28,10 +29,7 @@ class ChartActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        WindowCompat.setDecorFitsSystemWindows(window, false)
-        window.statusBarColor = Color.Transparent.toArgb()
-        window.navigationBarColor = Color.Transparent.toArgb()
-        WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars = true
+        setWindow()
 
         setContent {
             EazyWriteTheme {

@@ -29,15 +29,13 @@ import androidx.core.view.WindowInsetsControllerCompat
 import com.eazywrite.app.ui.bill.BillActivity
 import com.eazywrite.app.ui.chart.ChartActivity
 import com.eazywrite.app.ui.theme.EazyWriteTheme
+import com.eazywrite.app.ui.welcome.WelcomeActivity
+import com.eazywrite.app.util.setWindow
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        WindowCompat.setDecorFitsSystemWindows(window, false)
-        window.statusBarColor = Color.Transparent.toArgb()
-        window.navigationBarColor = Color.Transparent.toArgb()
-        WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars = true
+        setWindow()
         setContent {
             EazyWriteTheme {
                 // A surface container using the 'background' color from the theme
@@ -103,8 +101,8 @@ class MainActivity : ComponentActivity() {
                                 ElevatedButton(onClick = { startActivity<ChartActivity>() }) {
                                     Text(text = "图表页面")
                                 }
-                                ElevatedButton(onClick = { startActivity<ChartActivity>() }) {
-                                    Text(text = "登录页面")
+                                ElevatedButton(onClick = { startActivity<WelcomeActivity>() }) {
+                                    Text(text = "欢迎页面")
                                 }
                             }
                         }
