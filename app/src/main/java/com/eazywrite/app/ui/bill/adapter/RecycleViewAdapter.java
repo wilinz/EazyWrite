@@ -1,5 +1,6 @@
 package com.eazywrite.app.ui.bill.adapter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,11 +9,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.eazywrite.app.R;
 import com.eazywrite.app.data.model.OutputBean;
+import com.eazywrite.app.ui.bill.fragment.MyDialogFragment;
 
 import java.util.ArrayList;
 
@@ -21,14 +25,16 @@ public class RecycleViewAdapter extends RecyclerView.Adapter<RecycleViewAdapter.
     private ArrayList<OutputBean> coloredBeans;
     private Context mContext;
     private GridLayoutManager layoutManager;
+    private FragmentManager fragmentManager;
 
     public RecycleViewAdapter(ArrayList<OutputBean> beans, Context context, ArrayList<OutputBean> coloredBeans
-            , GridLayoutManager layoutManager) {
+            , GridLayoutManager layoutManager, FragmentManager fragmentManager) {
         super();
         this.beans = beans;
         this.mContext = context;
         this.coloredBeans = coloredBeans;
         this.layoutManager = layoutManager;
+        this.fragmentManager = fragmentManager;
     }
     boolean isClick = false;
     int prePosition;
@@ -57,12 +63,18 @@ public class RecycleViewAdapter extends RecyclerView.Adapter<RecycleViewAdapter.
                     prePosition = position;
                 }
 
+                showDialog();
+
 
             }
         });
         return view;
     }
 
+    private void showDialog() {
+        DialogFragment dialogFragment = new MyDialogFragment();
+        dialogFragment.show(fragmentManager,"DialogFragment");
+    }
 
 
     @Override

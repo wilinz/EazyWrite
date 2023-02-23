@@ -51,7 +51,7 @@ public class FragmentOne extends Fragment {
         GridLayoutManager layoutManager =  new GridLayoutManager(getActivity(),4);
         mBinding.recycleView.setLayoutManager(layoutManager);
         adapter = new RecycleViewAdapter(viewModel.outputBean.getValue(),getContext(),
-                viewModel.outputBeanColored.getValue(),layoutManager);
+                viewModel.outputBeanColored.getValue(),layoutManager,getActivity().getSupportFragmentManager());
         mBinding.recycleView.setAdapter(adapter);
     }
     OutputViewModel viewModel;

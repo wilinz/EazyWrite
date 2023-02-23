@@ -48,7 +48,7 @@ public class FragmentTwo extends Fragment {
         GridLayoutManager layoutManager =  new GridLayoutManager(getActivity(),4);
         mBinding.recycleViewTwo.setLayoutManager(layoutManager);
         adapter = new RecycleViewAdapter(viewModel.inputBean.getValue(), getContext(),
-                viewModel.inputBeanColored.getValue(), layoutManager);
+                viewModel.inputBeanColored.getValue(), layoutManager,getActivity().getSupportFragmentManager());
         mBinding.recycleViewTwo.setAdapter(adapter);
     }
 
