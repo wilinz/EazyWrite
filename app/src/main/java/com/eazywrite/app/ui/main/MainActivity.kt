@@ -28,6 +28,7 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import com.eazywrite.app.ui.bill.BillActivity
 import com.eazywrite.app.ui.chart.ChartActivity
+import com.eazywrite.app.ui.image_editing.ImageEditingActivity
 import com.eazywrite.app.ui.theme.EazyWriteTheme
 import com.eazywrite.app.ui.welcome.WelcomeActivity
 import com.eazywrite.app.util.setWindow
@@ -103,6 +104,9 @@ class MainActivity : ComponentActivity() {
                                 }
                                 ElevatedButton(onClick = { startActivity<WelcomeActivity>() }) {
                                     Text(text = "欢迎页面")
+                                }
+                                ElevatedButton(onClick = { startActivity<ImageEditingActivity>() }) {
+                                    Text(text = "图像增强")
                                 }
                             }
                         }
