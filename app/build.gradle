@@ -75,10 +75,6 @@ dependencies {
     androidTestApi 'androidx.test.espresso:espresso-core:3.5.1'
 
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
-
- 
-
-    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
     implementation 'com.squareup.retrofit2:adapter-rxjava3:2.9.0'
 
@@ -90,5 +86,5 @@ dependencies {
     implementation 'com.squareup.okhttp3:logging-interceptor:4.10.0'
     implementation 'com.github.thomas-bouvier:persistent-cookie-jar-okhttp:1.0.2'
 
-
+    implementation 'com.github.jaikeerthick:Composable-Graphs:v1.2.1'
 }
