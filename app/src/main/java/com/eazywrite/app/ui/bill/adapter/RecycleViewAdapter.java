@@ -1,6 +1,5 @@
 package com.eazywrite.app.ui.bill.adapter;
 
-import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,7 +14,8 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.eazywrite.app.R;
-import com.eazywrite.app.data.model.OutputBean;
+import com.eazywrite.app.ui.bill.fragment.OutputBean;
+import com.eazywrite.app.ui.bill.AddBillContentActivity;
 import com.eazywrite.app.ui.bill.fragment.MyDialogFragment;
 
 import java.util.ArrayList;
@@ -26,15 +26,18 @@ public class RecycleViewAdapter extends RecyclerView.Adapter<RecycleViewAdapter.
     private Context mContext;
     private GridLayoutManager layoutManager;
     private FragmentManager fragmentManager;
+    private AddBillContentActivity  mActivity;
 
     public RecycleViewAdapter(ArrayList<OutputBean> beans, Context context, ArrayList<OutputBean> coloredBeans
-            , GridLayoutManager layoutManager, FragmentManager fragmentManager) {
+            , GridLayoutManager layoutManager, FragmentManager fragmentManager
+            ,AddBillContentActivity addBillContentActivity) {
         super();
         this.beans = beans;
         this.mContext = context;
         this.coloredBeans = coloredBeans;
         this.layoutManager = layoutManager;
         this.fragmentManager = fragmentManager;
+        this.mActivity = addBillContentActivity;
     }
     boolean isClick = false;
     int prePosition;
@@ -72,7 +75,7 @@ public class RecycleViewAdapter extends RecyclerView.Adapter<RecycleViewAdapter.
     }
 
     private void showDialog() {
-        DialogFragment dialogFragment = new MyDialogFragment();
+        DialogFragment dialogFragment = new MyDialogFragment(mActivity,fragmentManager);
         dialogFragment.show(fragmentManager,"DialogFragment");
     }
 

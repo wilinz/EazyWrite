@@ -13,9 +13,8 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 
 import com.eazywrite.app.R;
-import com.eazywrite.app.data.model.OutputBean;
-import com.eazywrite.app.data.model.OutputViewModel;
 import com.eazywrite.app.databinding.FragmentBillOneBinding;
+import com.eazywrite.app.ui.bill.AddBillContentActivity;
 import com.eazywrite.app.ui.bill.adapter.RecycleViewAdapter;
 
 import java.util.ArrayList;
@@ -51,7 +50,8 @@ public class FragmentOne extends Fragment {
         GridLayoutManager layoutManager =  new GridLayoutManager(getActivity(),4);
         mBinding.recycleView.setLayoutManager(layoutManager);
         adapter = new RecycleViewAdapter(viewModel.outputBean.getValue(),getContext(),
-                viewModel.outputBeanColored.getValue(),layoutManager,getActivity().getSupportFragmentManager());
+                viewModel.outputBeanColored.getValue(),layoutManager,getActivity().getSupportFragmentManager()
+        , (AddBillContentActivity) getActivity());
         mBinding.recycleView.setAdapter(adapter);
     }
     OutputViewModel viewModel;

@@ -54,7 +54,7 @@ public class AddItemFragment extends Fragment {
 
 
         new TabLayoutMediator(mBinding.tabLayout,mBinding.viewPager2,((tab, position) -> {
-            Log.d("HelloWorld", "onViewCreated: "+tab.getId()+"///"+position);
+
             if (position == 0) {
                 tab.setText("收入");
             }else {
