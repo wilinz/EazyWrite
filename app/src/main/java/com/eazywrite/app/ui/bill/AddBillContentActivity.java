@@ -15,15 +15,17 @@ import com.eazywrite.app.R;
 import com.eazywrite.app.ui.bill.fragment.AddItemFragment;
 import com.eazywrite.app.util.ActivityKt;
 
-
 public class AddBillContentActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_bill_content);
-
         ActivityKt.setWindow(this);
+        Window window = getWindow();
+        WindowCompat.setDecorFitsSystemWindows(window, false);
+        window.setStatusBarColor(Color.TRANSPARENT);
+        window.setNavigationBarColor(Color.TRANSPARENT);
 
         addFragment();
     }

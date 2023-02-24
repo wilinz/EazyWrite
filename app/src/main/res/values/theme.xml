@@ -6,4 +6,9 @@
         <item name="cornerSize">30dp</item>
     </style>
 
+    <style name="dialogAnim" mce_bogus="1" parent="android:Animation">
+        <item name="android:windowEnterAnimation">@anim/enter</item>
+        <item name="android:windowExitAnimation">@anim/out</item>
+    </style>
+
 </resources>

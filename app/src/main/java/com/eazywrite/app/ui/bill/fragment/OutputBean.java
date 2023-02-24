@@ -1,4 +1,4 @@
-package com.eazywrite.app.data.model;
+package com.eazywrite.app.ui.bill.fragment;
 
 public class OutputBean {
     private int imageId;
