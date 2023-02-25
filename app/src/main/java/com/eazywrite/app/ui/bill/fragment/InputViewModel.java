@@ -13,23 +13,32 @@ public class InputViewModel extends AndroidViewModel {
         super(application);
     }
 
-    private LiveData<StringBuilder> moneyCount = new MutableLiveData<>();
-    private LiveData<StringBuilder> beiZhu = new MutableLiveData<>();
+    private MutableLiveData<StringBuilder> moneyCount = new MutableLiveData<>();
+    private MutableLiveData<StringBuilder> beiZhu = new MutableLiveData<>();
+    private MutableLiveData<StringBuilder> date = new MutableLiveData<>();
+
+    public LiveData<StringBuilder> getDate() {
+        return date;
+    }
+
+    public void setDate(StringBuilder date) {
+        this.date.setValue(date);
+    }
 
     public LiveData<StringBuilder> getBeiZhu() {
         return beiZhu;
     }
 
-    public void setBeiZhu(LiveData<StringBuilder> beiZhu) {
-        this.beiZhu = beiZhu;
+    public void setBeiZhu(StringBuilder beiZhu) {
+        this.beiZhu.setValue(beiZhu);
     }
 
     public LiveData<StringBuilder> getMoneyCount() {
         return moneyCount;
     }
 
-    public void setMoneyCount(LiveData<StringBuilder> moneyCount) {
-        this.moneyCount = moneyCount;
+    public void setMoneyCount(StringBuilder moneyCount) {
+        this.moneyCount.setValue(moneyCount);
     }
 
 

@@ -9,17 +9,31 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.eazywrite.app.R;
 import com.eazywrite.app.databinding.DialogFragmentBinding;
 import com.eazywrite.app.ui.bill.AddBillContentActivity;
+import com.google.android.material.datepicker.MaterialDatePicker;
+import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener;
+
+import java.text.DateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Stack;
+import java.util.regex.Pattern;
 
 public class MyDialogFragment extends DialogFragment implements View.OnClickListener {
     private AddBillContentActivity mActivity;
@@ -39,6 +53,7 @@ public class MyDialogFragment extends DialogFragment implements View.OnClickList
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
+
 
         getDialog().getWindow().setWindowAnimations(R.style.dialogAnim);
         getDialog().getWindow().setGravity(Gravity.BOTTOM);
@@ -76,6 +91,8 @@ public class MyDialogFragment extends DialogFragment implements View.OnClickList
         mBinding.dot.setOnClickListener(this);
         mBinding.delete.setOnClickListener(this);
         mBinding.date.setOnClickListener(this);
+        mBinding.add.setOnClickListener(this);
+        mBinding.sub.setOnClickListener(this);
         mBinding.beiZhu.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -85,7 +102,7 @@ public class MyDialogFragment extends DialogFragment implements View.OnClickList
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 beiZhu.replace(0, beiZhu.length(), charSequence.toString());
-                Log.d("HelloWorld", "onTextChanged: "+beiZhu.toString());
+                mViewModel.setBeiZhu(new StringBuilder(beiZhu.toString()));
             }
 
             @Override
@@ -106,6 +123,8 @@ public class MyDialogFragment extends DialogFragment implements View.OnClickList
     }
 
     boolean isDot = false;
+    boolean isCul = false;
+
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
@@ -149,13 +168,135 @@ public class MyDialogFragment extends DialogFragment implements View.OnClickList
                 if(mBuilder.length()<=8)add('9');
                 break;
             case R.id.finish:
-                getDialog().dismiss();
+                if(isCul){
+                    int result = calculate(toInfixExpression(mBuilder.toString()));
+                    mBuilder.delete(0, mBuilder.length());
+                    mBuilder.append(result);
+                    mBinding.money.setText(mBuilder.toString());
+
+                    isCul = false;
+                }else {
+                    mViewModel.setMoneyCount(mBuilder);
+                     mViewModel.getDate().observe(this, new Observer<StringBuilder>() {
+                        @Override
+                        public void onChanged(StringBuilder stringBuilder) {
+                            Log.d("HelloWorld", "onChanged: "+stringBuilder.toString());
+                        }
+                    });
+                    mViewModel.getMoneyCount().observe(this, new Observer<StringBuilder>() {
+                        @Override
+                        public void onChanged(StringBuilder stringBuilder) {
+                            Log.d("HelloWorld", "onChanged: "+stringBuilder.toString());
+                        }
+                    });
+                    mViewModel.getBeiZhu().observe(this, new Observer<StringBuilder>() {
+                        @Override
+                        public void onChanged(StringBuilder stringBuilder) {
+                            Log.d("HelloWorld", "onChanged: "+stringBuilder.toString());
+                        }
+                    });
+                    getDialog().dismiss();
+                }
+
                 break;
             case R.id.date:
-                MyDatePickerFragment fragment = MyDatePickerFragment.newInstance();
-                fragment.show(mFragmentManager,"datePicker");
+                dataPicker();
+
+                break;
+            case R.id.add:
+                if(mBuilder.length()<=8&&!isCul)add('+');
+                isCul = true;
+                break;
+            case R.id.sub:
+                if(mBuilder.length()<=8&&!isCul)add('-');
+                isCul = true;
                 break;
         }
+    }
+
+
+    StringBuilder date = new StringBuilder();
+    private void dataPicker() {
+        MaterialDatePicker<Long> datePicker= MaterialDatePicker.Builder.datePicker().setTitleText("日期选择").build();
+
+        datePicker.addOnPositiveButtonClickListener(new MaterialPickerOnPositiveButtonClickListener<Long>() {
+            @Override
+            public void onPositiveButtonClick(Long selection) {
+                String dateStr = DateFormat.getDateInstance().format(new Date(selection));
+                date.append(dateStr);
+                mBinding.dateIcon.setVisibility(View.GONE);
+                mBinding.dateContent.setText(dateStr);
+                mViewModel.setDate(new StringBuilder(dateStr));
+            }
+        });
+        datePicker.addOnNegativeButtonClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
+
+        datePicker.show(mFragmentManager,"data");
+    }
+
+
+    public static List<String> toInfixExpression(String string) {
+        // 索引
+        int index = 0;
+        // 创建一个数组保存
+        List<String> ls = new ArrayList<>();
+        while (index < string.length()) {
+            // 如果是字符那么就直接添加
+            if (string.charAt(index) < 48 || string.charAt(index) > 57) {
+                ls.add(string.charAt(index) + "");
+                index++;
+            } else {
+                String str = "";
+                // 判断数字是否是多位数，直到匹配不到数字结束循环
+                while (index < string.length() && (string.charAt(index) >= 48 && string.charAt(index) <= 57)) {
+                    // 拼接
+                    str += string.charAt(index) + "";
+                    index++;
+                }
+                ls.add(str);
+            }
+        }
+        return ls;
+
+    }
+
+    public static int calculate(List<String> ls) {
+        // 创建栈, 只需要一个栈即可
+        Stack<String> stack = new Stack<String>();
+        // 遍历 ls
+        for (String item : ls) {
+            // 这里使用正则表达式来取出数
+            if (item.matches("\\d+")) { // 匹配的是多位数
+                // 入栈
+                stack.push(item);
+            }
+        }
+        for (String item : ls) {
+            // 这里使用正则表达式来取出数
+            if (item.matches("\\d+")) { // 匹配的是多位数
+
+            }else {
+                // pop出两个数，并运算， 再入栈
+                int num2 = Integer.parseInt(stack.pop());
+                int num1 = Integer.parseInt(stack.pop());
+                int res = 0;
+                if (item.equals("+")) {
+                    res = num1 + num2;
+                } else if (item.equals("-")) {
+                    res = num1 - num2;
+                }
+                //把res 入栈
+                stack.push("" + res);
+                //最后留在stack中的数据是运算结果
+            }
+        }
+
+        return Integer.parseInt(stack.pop());
     }
 
     private void delete() {

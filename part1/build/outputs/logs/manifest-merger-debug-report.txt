@@ -1,0 +1,55 @@
+-- Merging decision tree log ---
+manifest
+ADDED from /Users/jiangxiyu/Desktop/根目录/服创/EazyWrite/part1/src/main/AndroidManifest.xml:2:1-31:12
+INJECTED from /Users/jiangxiyu/Desktop/根目录/服创/EazyWrite/part1/src/main/AndroidManifest.xml:2:1-31:12
+INJECTED from /Users/jiangxiyu/Desktop/根目录/服创/EazyWrite/part1/src/main/AndroidManifest.xml:2:1-31:12
+	package
+		INJECTED from /Users/jiangxiyu/Desktop/根目录/服创/EazyWrite/part1/src/main/AndroidManifest.xml
+		ADDED from /Users/jiangxiyu/Desktop/根目录/服创/EazyWrite/part1/src/main/AndroidManifest.xml:2:1-31:12
+		INJECTED from /Users/jiangxiyu/Desktop/根目录/服创/EazyWrite/part1/src/main/AndroidManifest.xml
+	xmlns:android
+		ADDED from /Users/jiangxiyu/Desktop/根目录/服创/EazyWrite/part1/src/main/AndroidManifest.xml:2:11-69
+application
+ADDED from /Users/jiangxiyu/Desktop/根目录/服创/EazyWrite/part1/src/main/AndroidManifest.xml:4:5-29:19
+activity#com.eazywrite.part1.ui.activity.AddContentActivity
+ADDED from /Users/jiangxiyu/Desktop/根目录/服创/EazyWrite/part1/src/main/AndroidManifest.xml:5:9-13:20
+	android:exported
+		ADDED from /Users/jiangxiyu/Desktop/根目录/服创/EazyWrite/part1/src/main/AndroidManifest.xml:7:13-36
+	android:name
+		ADDED from /Users/jiangxiyu/Desktop/根目录/服创/EazyWrite/part1/src/main/AndroidManifest.xml:6:13-78
+meta-data#android.app.lib_name
+ADDED from /Users/jiangxiyu/Desktop/根目录/服创/EazyWrite/part1/src/main/AndroidManifest.xml:10:13-12:36
+	android:value
+		ADDED from /Users/jiangxiyu/Desktop/根目录/服创/EazyWrite/part1/src/main/AndroidManifest.xml:12:17-33
+	android:name
+		ADDED from /Users/jiangxiyu/Desktop/根目录/服创/EazyWrite/part1/src/main/AndroidManifest.xml:11:17-52
+activity#com.eazywrite.part1.ui.activity.Part1Activity
+ADDED from /Users/jiangxiyu/Desktop/根目录/服创/EazyWrite/part1/src/main/AndroidManifest.xml:14:9-28:20
+	android:exported
+		ADDED from /Users/jiangxiyu/Desktop/根目录/服创/EazyWrite/part1/src/main/AndroidManifest.xml:16:13-36
+	android:name
+		ADDED from /Users/jiangxiyu/Desktop/根目录/服创/EazyWrite/part1/src/main/AndroidManifest.xml:15:13-73
+intent-filter#action:name:android.intent.action.MAIN+category:name:android.intent.category.LAUNCHER
+ADDED from /Users/jiangxiyu/Desktop/根目录/服创/EazyWrite/part1/src/main/AndroidManifest.xml:20:13-24:29
+action#android.intent.action.MAIN
+ADDED from /Users/jiangxiyu/Desktop/根目录/服创/EazyWrite/part1/src/main/AndroidManifest.xml:21:17-69
+	android:name
+		ADDED from /Users/jiangxiyu/Desktop/根目录/服创/EazyWrite/part1/src/main/AndroidManifest.xml:21:25-66
+category#android.intent.category.LAUNCHER
+ADDED from /Users/jiangxiyu/Desktop/根目录/服创/EazyWrite/part1/src/main/AndroidManifest.xml:23:17-77
+	android:name
+		ADDED from /Users/jiangxiyu/Desktop/根目录/服创/EazyWrite/part1/src/main/AndroidManifest.xml:23:27-74
+uses-sdk
+INJECTED from /Users/jiangxiyu/Desktop/根目录/服创/EazyWrite/part1/src/main/AndroidManifest.xml reason: use-sdk injection requested
+INJECTED from /Users/jiangxiyu/Desktop/根目录/服创/EazyWrite/part1/src/main/AndroidManifest.xml
+INJECTED from /Users/jiangxiyu/Desktop/根目录/服创/EazyWrite/part1/src/main/AndroidManifest.xml
+INJECTED from /Users/jiangxiyu/Desktop/根目录/服创/EazyWrite/part1/src/main/AndroidManifest.xml
+INJECTED from /Users/jiangxiyu/Desktop/根目录/服创/EazyWrite/part1/src/main/AndroidManifest.xml
+	android:targetSdkVersion
+		INJECTED from /Users/jiangxiyu/Desktop/根目录/服创/EazyWrite/part1/src/main/AndroidManifest.xml
+		ADDED from /Users/jiangxiyu/Desktop/根目录/服创/EazyWrite/part1/src/main/AndroidManifest.xml
+		INJECTED from /Users/jiangxiyu/Desktop/根目录/服创/EazyWrite/part1/src/main/AndroidManifest.xml
+	android:minSdkVersion
+		INJECTED from /Users/jiangxiyu/Desktop/根目录/服创/EazyWrite/part1/src/main/AndroidManifest.xml
+		ADDED from /Users/jiangxiyu/Desktop/根目录/服创/EazyWrite/part1/src/main/AndroidManifest.xml
+		INJECTED from /Users/jiangxiyu/Desktop/根目录/服创/EazyWrite/part1/src/main/AndroidManifest.xml

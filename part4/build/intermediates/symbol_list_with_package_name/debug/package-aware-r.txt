@@ -1,0 +1,2 @@
+com.eazywrite.app.part4
+layout activity_part4
