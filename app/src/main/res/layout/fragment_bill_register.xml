@@ -126,6 +126,7 @@
             android:textSize="20sp"/>
 
         <Button
+            android:id="@+id/button_register_send"
             android:layout_width="70dp"
             android:layout_height="40dp"
             android:layout_toRightOf="@+id/edittext_register3"
@@ -136,6 +137,7 @@
 
 
     <RelativeLayout
+        android:id="@+id/relativelayout_register_go"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/welcome_register"
