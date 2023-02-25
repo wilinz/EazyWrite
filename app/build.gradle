@@ -85,6 +85,9 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.10'
     implementation 'com.squareup.okhttp3:logging-interceptor:4.10.0'
     implementation 'com.github.thomas-bouvier:persistent-cookie-jar-okhttp:1.0.2'
+    //glide4.11.0的依赖包
+    implementation 'com.github.bumptech.glide:glide:4.11.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
 
     implementation 'com.github.jaikeerthick:Composable-Graphs:v1.2.1'
 }
