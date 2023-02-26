@@ -89,5 +89,7 @@ dependencies {
     implementation 'com.github.bumptech.glide:glide:4.11.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
 
+    implementation 'com.github.florent37:singledateandtimepicker:2.2.7'
+
     implementation 'com.github.jaikeerthick:Composable-Graphs:v1.2.1'
 }

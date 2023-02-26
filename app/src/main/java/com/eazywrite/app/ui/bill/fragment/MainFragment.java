@@ -70,5 +70,10 @@ public class MainFragment extends Fragment {
         mBinding.addItem.setOnClickListener(view1 -> {
             AddBillContentActivity.actionStart(getActivity(),null,null);
         });
+        chooseDate();
+    }
+
+    private void chooseDate() {
+
     }
 }
