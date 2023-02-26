@@ -4,6 +4,7 @@ import com.eazywrite.app.BuildConfig
 import com.eazywrite.app.MyApplication
 import com.eazywrite.app.data.network.service.TemplateJavaService
 import com.eazywrite.app.data.network.service.TemplateKotlinService
+import com.eazywrite.app.util.RequestInterceptor
 import com.thomasbouvier.persistentcookiejar.PersistentCookieJar
 import com.thomasbouvier.persistentcookiejar.cache.SetCookieCache
 import com.thomasbouvier.persistentcookiejar.persistence.SharedPrefsCookiePersistor
@@ -26,12 +27,13 @@ object Network {
                 level =
                     if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BODY else HttpLoggingInterceptor.Level.NONE
             })
+            this.addInterceptor(RequestInterceptor())//请求拦截器
             this.callTimeout(10, TimeUnit.SECONDS)
             this.connectTimeout(10, TimeUnit.SECONDS)
             this.readTimeout(10, TimeUnit.SECONDS)
             this.writeTimeout(10, TimeUnit.SECONDS)
         }.build())
-        .baseUrl("https://xxx")
+        .baseUrl("https://api.textin.com")
         .addConverterFactory(GsonConverterFactory.create())
         .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
         .build()

@@ -7,13 +7,19 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 
+import androidx.annotation.RequiresApi;
 import androidx.core.content.FileProvider;
 
+import com.eazywrite.app.MyApplication;
+
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.util.Base64;
 
 /**
  * 访问相册或调用相机得到图片资源
@@ -122,6 +128,48 @@ public class MediaUtil {
             cursor.close();
         }
         return path;
+    }
+
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    public File base64ToFile(String base64) {
+        File pictureFile = new File(MyApplication.instance.getExternalCacheDir(), "editedPicture.jpg");
+
+        if (pictureFile.exists()) {
+            pictureFile.delete();
+        }
+        try {
+            pictureFile.createNewFile();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        BufferedOutputStream bos = null;
+        java.io.FileOutputStream fos = null;
+        try {
+            byte[] bytes = Base64.getDecoder().decode(base64);//Android O 以上
+            fos = new java.io.FileOutputStream(pictureFile);
+            bos = new BufferedOutputStream(fos);
+            bos.write(bytes);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (bos != null) {
+                try {
+                    bos.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (fos != null) {
+                try {
+                    fos.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return pictureFile;
     }
 
 }
