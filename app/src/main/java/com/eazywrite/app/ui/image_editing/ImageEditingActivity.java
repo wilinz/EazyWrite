@@ -2,20 +2,23 @@ package com.eazywrite.app.ui.image_editing;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.view.KeyEvent;
+import android.view.View;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
-import com.bumptech.glide.request.RequestOptions;
 import com.eazywrite.app.R;
 import com.eazywrite.app.databinding.ActivityImageEditingBinding;
 import com.eazywrite.app.util.ActivityKt;
@@ -37,6 +40,13 @@ public class ImageEditingActivity extends AppCompatActivity {
         observerDataStateUpdateAction();
     }
 
+    public class Click{
+        @RequiresApi(api = Build.VERSION_CODES.O)
+        public void editImage(View view){
+            vm.dewarpImage();
+        }
+    }
+
     /**
      * 处理拍摄结果 和 从相册选择结果
      *
@@ -50,32 +60,27 @@ public class ImageEditingActivity extends AppCompatActivity {
         try {
             switch (requestCode) {
                 case MediaUtil.TAKE_PHOTO:
+                    File imageFile = MediaUtil.getInstance().getImage();
                     if (resultCode == RESULT_OK) {
                         //成功拍摄
-                        File imageFile = MediaUtil.getInstance().getImage();
-                        RoundedCorners roundedCorners = new RoundedCorners(30);//设置圆角大小
-                        RequestOptions options = RequestOptions.bitmapTransform(roundedCorners).override(300, 300);
-                        Glide.with(this).load(imageFile).apply(options).into(binding.imageView);
+                        vm.imageFile.setValue(imageFile);
                     } else {
                         //未拍摄,删除提前创建的文件
-                        File imageFile = MediaUtil.getInstance().getImage();
                         if (imageFile.exists()) {
                             imageFile.delete();
                         }
                         Toast.makeText(ImageEditingActivity.this, "未进行拍摄", Toast.LENGTH_SHORT).show();
+                        finish();
                     }
                     break;
                 case MediaUtil.CHOOSE_PHOTO:
-                    if (resultCode == RESULT_OK&&data!=null) {
-                        MediaUtil.handleImage(this,data);//处理返回intent中的image 以得到相片的绝对路径imagePath
+                    if (resultCode == RESULT_OK && data != null) {
+                        MediaUtil.handleImage(this, data);//处理返回intent中的image 以得到相片的绝对路径imagePath
                         File ImageFile = MediaUtil.getInstance().getImage();
-                        Glide.with(this).load(ImageFile)
-                                .diskCacheStrategy(DiskCacheStrategy.NONE)//不缓存到disk硬盘中
-                                .apply(RequestOptions.bitmapTransform(new RoundedCorners(30))
-                                        .override(300, 300))
-                                .into(binding.imageView);
+                        vm.imageFile.setValue(ImageFile);
                     } else {
                         Toast.makeText(ImageEditingActivity.this, "未选择图片", Toast.LENGTH_SHORT).show();
+                        finish();
                     }
                     break;
                 default:
@@ -133,6 +138,11 @@ public class ImageEditingActivity extends AppCompatActivity {
         dialog.setCancelable(false);
         dialog.setPositiveButton("拍照", (dialogInterface, i) -> vm.requestPermissions(true, this, this));
         dialog.setNegativeButton("从相册选择", (dialogInterface, i) -> vm.requestPermissions(false, this, this));
+        dialog.setOnKeyListener((dialogInterface, keyCode, keyEvent) -> {
+            if(keyCode == KeyEvent.KEYCODE_BACK && keyEvent.getRepeatCount()==0)
+                finish();
+            return false;
+        });
         dialog.show();
     }
 
@@ -140,7 +150,16 @@ public class ImageEditingActivity extends AppCompatActivity {
      * 监测数据变化
      */
     private void observerDataStateUpdateAction() {
-
+        vm.imageFile.observe(this, file -> Glide.with(ImageEditingActivity.this).load(file)
+                .skipMemoryCache(true)//不做内存缓存
+                .diskCacheStrategy(DiskCacheStrategy.NONE)//不缓存到disk硬盘中
+                .override(2000, 2000)
+                .into(binding.imageView));
+        vm.editedImage.observe(this, file -> Glide.with(ImageEditingActivity.this).load(file)
+                .skipMemoryCache(true)//不做内存缓存
+                .diskCacheStrategy(DiskCacheStrategy.NONE)//不缓存到disk硬盘中
+                .override(2000, 2000)
+                .into(binding.imageView));
     }
 
     /**
@@ -150,5 +169,7 @@ public class ImageEditingActivity extends AppCompatActivity {
         ActivityKt.setWindow(this);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_image_editing);
         vm = new ViewModelProvider(this).get(ImageEditingViewModel.class);
+        binding.setClick(new Click());
+        binding.setLifecycleOwner(this);
     }
 }
