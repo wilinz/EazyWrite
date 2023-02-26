@@ -118,10 +118,11 @@
                     android:layout_weight="1">
 
                     <ImageView
+                        android:id="@+id/dateIcon"
                         android:layout_gravity="center_vertical"
                         android:layout_width="20dp"
                         android:layout_height="20dp"
-                        android:layout_marginLeft="10dp"
+                        android:layout_marginLeft="15dp"
                         android:background="@drawable/icon_family_calendar"></ImageView>
 
                     <TextView
@@ -129,8 +130,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
-
+                        android:id="@+id/dateContent"
                         android:gravity="center"
+                        android:textSize="9sp"
                         android:text="今天"></TextView>
                 </LinearLayout>
 
@@ -195,10 +197,11 @@
                 <TextView
                     android:layout_width="0dp"
                     android:layout_weight="1"
-                    android:id="@+id/and"
+                    android:id="@+id/add"
                     android:gravity="center"
                     android:layout_height="60dp"
-                    android:text="+"></TextView>
+                    android:text="+"
+                    ></TextView>
 
                 <View
                     android:layout_height="match_parent"
