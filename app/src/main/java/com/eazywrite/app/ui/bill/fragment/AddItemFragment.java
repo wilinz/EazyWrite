@@ -1,7 +1,6 @@
 package com.eazywrite.app.ui.bill.fragment;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,14 +20,11 @@ import java.util.ArrayList;
 
 public class AddItemFragment extends Fragment {
 
-    public AddItemFragment() {
-
+    public AddItemFragment(MainFragment mMainFragment) {
+        this.mMainFragment = mMainFragment;
     }
 
-    public static AddItemFragment newInstance(String param1, String param2) {
-        AddItemFragment fragment = new AddItemFragment();
-        return fragment;
-    }
+    MainFragment mMainFragment;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -75,8 +71,8 @@ public class AddItemFragment extends Fragment {
     private ArrayList<Fragment> fragments = new ArrayList<>();
 
     private void init() {
-        FragmentOne fragmentOne = new FragmentOne();
-        FragmentTwo fragmentTwo = new FragmentTwo();
+        FragmentOne fragmentOne = new FragmentOne(mMainFragment);
+        FragmentTwo fragmentTwo = new FragmentTwo(mMainFragment);
         fragments.add(fragmentOne);
         fragments.add(fragmentTwo);
     }

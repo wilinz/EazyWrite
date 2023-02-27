@@ -13,6 +13,7 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.eazywrite.app.R;
 import com.eazywrite.app.ui.bill.fragment.AddItemFragment;
+import com.eazywrite.app.ui.bill.fragment.MainFragment;
 import com.eazywrite.app.util.ActivityKt;
 
 public class AddBillContentActivity extends AppCompatActivity {
@@ -31,17 +32,18 @@ public class AddBillContentActivity extends AppCompatActivity {
     }
 
     private void addFragment() {
-        AddItemFragment fragment = new AddItemFragment();
+        AddItemFragment fragment = new AddItemFragment(mMainFragment);
         FragmentManager manager = getSupportFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();
         transaction.replace(R.id.iddFragment, fragment);
         transaction.commit();
     }
 
-    public static void actionStart(Context context, String data1, String data2) {
+    static MainFragment mMainFragment;
+    public static void actionStart(Context context, MainFragment mainFragment, String data2) {
         Intent intent = new Intent(context, AddBillContentActivity.class);
-        intent.putExtra("param1", data1);
         intent.putExtra("param2", data2);
+        mMainFragment = mainFragment;
         context.startActivity(intent);
     }
 }
