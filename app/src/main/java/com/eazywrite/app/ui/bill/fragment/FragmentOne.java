@@ -21,6 +21,10 @@ import java.util.ArrayList;
 
 public class FragmentOne extends Fragment {
 
+    MainFragment mMainFragment;
+    public FragmentOne(MainFragment mainFragment) {
+        this.mMainFragment = mainFragment;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -51,7 +55,7 @@ public class FragmentOne extends Fragment {
         mBinding.recycleView.setLayoutManager(layoutManager);
         adapter = new RecycleViewAdapter(viewModel.outputBean.getValue(),getContext(),
                 viewModel.outputBeanColored.getValue(),layoutManager,getActivity().getSupportFragmentManager()
-        , (AddBillContentActivity) getActivity());
+        , (AddBillContentActivity) getActivity(),mMainFragment);
         mBinding.recycleView.setAdapter(adapter);
     }
     OutputViewModel viewModel;

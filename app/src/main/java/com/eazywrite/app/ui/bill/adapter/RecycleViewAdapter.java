@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.eazywrite.app.R;
+import com.eazywrite.app.ui.bill.fragment.MainFragment;
 import com.eazywrite.app.ui.bill.fragment.OutputBean;
 import com.eazywrite.app.ui.bill.AddBillContentActivity;
 import com.eazywrite.app.ui.bill.fragment.MyDialogFragment;
@@ -27,12 +28,14 @@ public class RecycleViewAdapter extends RecyclerView.Adapter<RecycleViewAdapter.
     private GridLayoutManager layoutManager;
     private FragmentManager fragmentManager;
     private AddBillContentActivity  mActivity;
+    private MainFragment mMainFragment;
 
     public RecycleViewAdapter(ArrayList<OutputBean> beans, Context context, ArrayList<OutputBean> coloredBeans
             , GridLayoutManager layoutManager, FragmentManager fragmentManager
-            ,AddBillContentActivity addBillContentActivity) {
+            , AddBillContentActivity addBillContentActivity, MainFragment mainFragment) {
         super();
         this.beans = beans;
+        this.mMainFragment = mainFragment;
         this.mContext = context;
         this.coloredBeans = coloredBeans;
         this.layoutManager = layoutManager;
@@ -66,7 +69,7 @@ public class RecycleViewAdapter extends RecyclerView.Adapter<RecycleViewAdapter.
                     prePosition = position;
                 }
 
-                showDialog();
+                showDialog(coloredBeans.get(prePosition));
 
 
             }
@@ -74,8 +77,8 @@ public class RecycleViewAdapter extends RecyclerView.Adapter<RecycleViewAdapter.
         return view;
     }
 
-    private void showDialog() {
-        DialogFragment dialogFragment = new MyDialogFragment(mActivity,fragmentManager);
+    private void showDialog(OutputBean bean) {
+        DialogFragment dialogFragment = new MyDialogFragment(mActivity,fragmentManager,mMainFragment,bean);
         dialogFragment.show(fragmentManager,"DialogFragment");
     }
 

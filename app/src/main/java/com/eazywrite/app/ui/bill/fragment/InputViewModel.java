@@ -7,6 +7,8 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import java.util.ArrayList;
+
 
 public class InputViewModel extends AndroidViewModel {
     public InputViewModel(@NonNull Application application) {
@@ -17,6 +19,16 @@ public class InputViewModel extends AndroidViewModel {
      * 手动入录的信息都放在这里了
      */
     private MutableLiveData<StringBuilder> moneyCount = new MutableLiveData<>();
+
+    public MutableLiveData<OutputBean> getBean() {
+        return bean;
+    }
+
+    public void setBean(OutputBean bean) {
+        this.bean.setValue(bean);
+    }
+
+    public MutableLiveData<OutputBean> bean = new MutableLiveData<>();
     private MutableLiveData<StringBuilder> beiZhu = new MutableLiveData<>();
     private MutableLiveData<StringBuilder> date = new MutableLiveData<>();
 

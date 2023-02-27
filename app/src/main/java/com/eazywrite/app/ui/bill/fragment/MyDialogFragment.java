@@ -9,15 +9,12 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -30,17 +27,21 @@ import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClic
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Stack;
-import java.util.regex.Pattern;
 
 public class MyDialogFragment extends DialogFragment implements View.OnClickListener {
     private AddBillContentActivity mActivity;
     private FragmentManager mFragmentManager;
-    public MyDialogFragment(AddBillContentActivity activity, FragmentManager fragmentManager) {
+    private MainFragment mMainFragment;
+    private OutputBean mOutputBean;
+
+    public MyDialogFragment(AddBillContentActivity activity, FragmentManager fragmentManager,
+                            MainFragment mainFragment, OutputBean bean) {
         mActivity = activity;
+        this.mMainFragment = mainFragment;
         mFragmentManager = fragmentManager;
+        mOutputBean = bean;
     }
 
     @Override
@@ -195,8 +196,12 @@ public class MyDialogFragment extends DialogFragment implements View.OnClickList
                             Log.d("HelloWorld", "onChanged: "+stringBuilder.toString());
                         }
                     });
+                    mViewModel.setBean(mOutputBean);
+                    mMainFragment.addData(mViewModel);
                     getDialog().dismiss();
                     getActivity().finish();
+
+
                 }
 
                 break;
