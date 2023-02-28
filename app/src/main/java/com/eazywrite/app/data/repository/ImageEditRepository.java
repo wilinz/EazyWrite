@@ -1,5 +1,6 @@
 package com.eazywrite.app.data.repository;
 
+import com.eazywrite.app.data.model.BillsCropResponse;
 import com.eazywrite.app.data.model.CropEnhanceImageResponse;
 import com.eazywrite.app.data.model.DewarpResponse;
 import com.eazywrite.app.data.network.Network;
@@ -33,12 +34,17 @@ public class ImageEditRepository {
 
     public Observable<CropEnhanceImageResponse> getCropEnhanceImageResponse(File imageFile) {
         RequestBody body=RequestBody.Companion.create(imageFile,MediaType.parse("application/octet-stream"));
-        return Network.INSTANCE.getTemplateJavaService().cropEnhanceImage(1, 1,body);
+        return Network.INSTANCE.getTemplateJavaService().cropEnhanceImage(2, 1,body);
     }
 
     public Observable<DewarpResponse> getDewarpResponse(File imageFile){
         RequestBody body=RequestBody.Companion.create(imageFile,MediaType.parse("application/octet-stream"));
         return Network.INSTANCE.getTemplateJavaService().dewarp(1, 1,body);
+    }
+
+    public Observable<BillsCropResponse> getBillsCropResponse(File imageFile){
+        RequestBody body=RequestBody.Companion.create(imageFile,MediaType.parse("application/octet-stream"));
+        return Network.INSTANCE.getTemplateJavaService().billsCrop(body);
     }
 
 }

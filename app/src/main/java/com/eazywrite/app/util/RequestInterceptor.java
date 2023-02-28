@@ -28,7 +28,8 @@ public class RequestInterceptor implements Interceptor {
         builder.addHeader("x-ti-secret-code","541304425ad08c927cc6c87827412a5d");
 
         if(urlString.endsWith("ai/service/v1/crop_enhance_image")||//图像切边增强、裁切图像主体区域并增强api
-                urlString.endsWith("/ai/service/v1/dewarp")){//图像切边矫正
+                urlString.endsWith("/robot/v1.0/api/bills_crop")||//国内通用票据识别
+        urlString.endsWith("/ai/service/v1/dewarp")){//图像切边矫正
             builder.addHeader("connection","Keep-Alive");
             builder.addHeader("Content-Type", "application/octet-stream");
         }

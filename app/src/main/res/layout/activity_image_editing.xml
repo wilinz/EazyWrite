@@ -16,14 +16,14 @@
         tools:context=".ui.image_editing.ImageEditingActivity">
 
         <androidx.cardview.widget.CardView
-            app:cardCornerRadius="10dp"
             android:id="@+id/linearLayout3"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:backgroundTint="@color/black"
             android:orientation="horizontal"
+            app:cardCornerRadius="10dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintDimensionRatio="W,1.2:1"
+            app:layout_constraintDimensionRatio="W,4:3"
             app:layout_constraintTop_toTopOf="parent">
 
             <ImageView
@@ -33,14 +33,28 @@
         </androidx.cardview.widget.CardView>
 
         <Button
+            android:id="@+id/button"
             android:layout_width="wrap_content"
             android:layout_height="50dp"
             android:onClick="@{click::editImage}"
             android:text="智能校正"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/button2"
+            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/linearLayout3" />
 
+        <Button
+            android:onClick="@{click::getBills}"
+            android:id="@+id/button2"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:text="提取信息"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/button"
+            app:layout_constraintTop_toBottomOf="@+id/linearLayout3" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

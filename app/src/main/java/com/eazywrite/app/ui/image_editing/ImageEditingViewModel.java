@@ -11,11 +11,13 @@ import androidx.annotation.RequiresApi;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.eazywrite.app.data.model.BillsCropResponse;
 import com.eazywrite.app.data.repository.ImageEditRepository;
 import com.eazywrite.app.util.MediaUtil;
 import com.eazywrite.app.util.PermissionUtil;
 
 import java.io.File;
+import java.util.List;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.schedulers.Schedulers;
@@ -23,6 +25,7 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
 public class ImageEditingViewModel extends ViewModel {
 
     public MutableLiveData<File> imageFile = new MutableLiveData<>();
+    public MutableLiveData<List<BillsCropResponse.ResultDTO.ObjectListDTO>> tickList = new MutableLiveData<>();
     public MutableLiveData<File> editedImage = new MutableLiveData<>();
 
     /**
@@ -57,7 +60,7 @@ public class ImageEditingViewModel extends ViewModel {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         (imageEditResponse) -> {
-                            editedImage.setValue(MediaUtil.getInstance().base64ToFile(imageEditResponse.getResult().getImageList().get(0).getImage()));
+                            imageFile.setValue(MediaUtil.getInstance().base64ToFile(imageEditResponse.getResult().getImageList().get(0).getImage()));
                             },
                         (e) -> {
                             Log.d("Debug","cropEnhanceImage error");
@@ -75,8 +78,10 @@ public class ImageEditingViewModel extends ViewModel {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         (dewarpResponse) -> {
-                            editedImage.setValue(MediaUtil.getInstance().base64ToFile(dewarpResponse.getResult().getImage()));
-                        },
+                            File file=MediaUtil.getInstance().base64ToFile(dewarpResponse.getResult().getImage());
+                            imageFile.setValue(file);
+                            editedImage.setValue(file);
+                            },
                         (e) -> {
                             Log.d("Debug","dewarpImage error");
                         },
@@ -85,4 +90,30 @@ public class ImageEditingViewModel extends ViewModel {
                 );
     }
 
+    @SuppressLint("CheckResult")
+    public void getBills() {
+        ImageEditRepository.getInstance().getBillsCropResponse(imageFile.getValue())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        (billsCropResponse) -> {
+                            /**票据List**/
+                            List<BillsCropResponse.ResultDTO.ObjectListDTO> ticksList=billsCropResponse.getResult().getObjectList();
+                            Log.d("Bills by Image","一共识别出 "+ticksList.size()+" 张票据");
+                            /**每张票据的详细内容**/
+                            //List<BillsCropResponse.ResultDTO.ObjectListDTO.ItemListDTO> tickItemList=ticksList.get(0).getItemList();
+                            for (BillsCropResponse.ResultDTO.ObjectListDTO objectListDTO:ticksList){
+                                Log.d("Bills by Image","===这是一张："+objectListDTO.getTypeDescription()+"===");
+                                for (BillsCropResponse.ResultDTO.ObjectListDTO.ItemListDTO itemListDTO: objectListDTO.getItemList()){
+                                    Log.d("Bills by Image",itemListDTO.getDescription()+" : "+itemListDTO.getValue());
+                                }
+                            }
+                            tickList.setValue(ticksList);
+                        },
+                        (e) -> {
+                        },
+                        () -> {
+                        }
+                );
+    }
 }
