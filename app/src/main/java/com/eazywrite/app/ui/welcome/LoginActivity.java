@@ -20,7 +20,7 @@ import com.eazywrite.app.data.model.LoginBean;
 import com.eazywrite.app.data.model.RegisterResponse;
 import com.eazywrite.app.data.model.VerifyBean;
 import com.eazywrite.app.data.network.Network;
-import com.eazywrite.app.databinding.LoginInBinding;
+import com.eazywrite.app.databinding.SignupBinding;
 import com.eazywrite.app.ui.main.MainActivity;
 import com.google.gson.Gson;
 
@@ -44,7 +44,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     }
 
-    private LoginInBinding mBinding;
+    private SignupBinding mBinding;
 
     private void initView() {
         CardView cardView = findViewById(R.id.round1);

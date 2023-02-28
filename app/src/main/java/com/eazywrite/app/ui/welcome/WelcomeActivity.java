@@ -13,7 +13,7 @@ import com.eazywrite.app.R;
 import com.eazywrite.app.data.model.RegisterResponse;
 import com.eazywrite.app.data.model.SignUpBean;
 import com.eazywrite.app.data.network.Network;
-import com.eazywrite.app.databinding.FragmentWelcomeBinding;
+import com.eazywrite.app.databinding.FragmentLoginBinding;
 import com.eazywrite.app.ui.main.MainActivity;
 import com.eazywrite.app.util.ActivityKt;
 import com.eazywrite.app.util.MessageSummaryKt;
@@ -40,7 +40,7 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
 
 
     }
-    FragmentWelcomeBinding binding;
+    FragmentLoginBinding binding;
 
     private void initView() {
         AssetManager mgr = this.getAssets();
