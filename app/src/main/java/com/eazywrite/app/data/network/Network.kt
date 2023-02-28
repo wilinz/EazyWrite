@@ -43,4 +43,9 @@ object Network {
     val templateKotlinService = retrofit.create<TemplateKotlinService>()
 
     private inline fun <reified T> Retrofit.create() = create(T::class.java)
+
+
+
+
+
 }

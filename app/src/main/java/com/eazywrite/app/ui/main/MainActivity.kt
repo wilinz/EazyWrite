@@ -2,6 +2,7 @@
 
 package com.eazywrite.app.ui.main
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -18,14 +19,9 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.core.view.WindowCompat
-import androidx.core.view.WindowInsetsControllerCompat
 import com.eazywrite.app.ui.bill.BillActivity
 import com.eazywrite.app.ui.chart.ChartActivity
 import com.eazywrite.app.ui.image_editing.ImageEditingActivity
@@ -124,6 +120,12 @@ class MainActivity : ComponentActivity() {
                 T::class.java
             )
         )
+    }
+
+    companion object{
+        fun jumpMainActivity(context: Context) {
+            context.startActivity(Intent(context,MainActivity::class.java))
+        }
     }
 }
 

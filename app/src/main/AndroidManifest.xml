@@ -1,64 +1,84 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
+
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
-        android:usesCleartextTraffic="true"
-        android:requestLegacyExternalStorage="true"
         android:name=".MyApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:requestLegacyExternalStorage="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.EazyWrite"
+        android:usesCleartextTraffic="true"
         tools:targetApi="31">
-
         <activity
-            android:name=".ui.main.MainActivity"
-            android:exported="true"
-            android:label="@string/app_name"
-            android:theme="@style/Theme.EazyWrite">
+            android:name=".ui.welcome.ForgetPasswordActivity"
+            android:exported="true">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+
+        </activity>
+        <activity
+            android:name=".ui.welcome.LoginActivity"
+            android:exported="true">
+
+
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
+            android:name=".ui.welcome.WelcomeActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+
+        </activity>
+        <activity
+            android:name=".ui.main.MainActivity"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.EazyWrite" >
+
+
         </activity>
         <activity
             android:name="com.eazywrite.app.ui.bill.AddBillContentActivity"
-            android:exported="true"></activity>
+            android:exported="true" />
         <activity
             android:name="com.eazywrite.app.ui.bill.BillActivity"
-            android:exported="true"></activity>
-        <activity
-            android:name="com.eazywrite.app.ui.welcome.WelcomeActivity"
-            android:exported="true"></activity>
+            android:exported="true" />
         <activity
             android:name="com.eazywrite.app.ui.chart.ChartActivity"
-            android:exported="true"></activity>
+            android:exported="true" />
         <activity
             android:name="com.eazywrite.app.ui.image_editing.ImageEditingActivity"
-            android:exported="true"></activity>
-
-        <!--注册内容提供器-->
+            android:exported="true" /> <!-- 注册内容提供器 -->
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="com.eazywrite.app.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
-
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
-
     </application>
 
 </manifest>
