@@ -11,4 +11,16 @@
         <item name="android:windowExitAnimation">@anim/out</item>
     </style>
 
+    <style name="welcomeStyle">
+
+        <item name="android:textSize">
+            84sp
+        </item>
+
+        <item name="android:textColor">
+            #585757
+        </item>
+
+    </style>
+
 </resources>
