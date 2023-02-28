@@ -7,14 +7,26 @@ import androidx.databinding.DataBindingUtil;
 import android.content.res.AssetManager;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
 import com.eazywrite.app.R;
+import com.eazywrite.app.data.model.RegisterResponse;
+import com.eazywrite.app.data.model.SignUpBean;
+import com.eazywrite.app.data.network.LoginNetwork;
 import com.eazywrite.app.databinding.FragmentWelcomeBinding;
+import com.eazywrite.app.ui.main.MainActivity;
 import com.eazywrite.app.util.ActivityKt;
+import com.eazywrite.app.util.ShowToast;
+import com.google.gson.Gson;
 
 import org.jetbrains.annotations.Nullable;
+
+import okhttp3.RequestBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class WelcomeActivity extends AppCompatActivity implements View.OnClickListener
 {
@@ -22,9 +34,16 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
         super.onCreate(savedInstanceState);
         ActivityKt.setWindow(this);
         this.setContentView(R.layout.fragment_welcome);
-        FragmentWelcomeBinding binding = DataBindingUtil.setContentView(this,R.layout.fragment_welcome);
+        binding = DataBindingUtil.setContentView(this,R.layout.fragment_welcome);
+        binding.signUp.setOnClickListener(this);
+        mActivity = this;
+        initView();
 
 
+    }
+    FragmentWelcomeBinding binding;
+
+    private void initView() {
         AssetManager mgr = this.getAssets();
         Typeface tf = Typeface.createFromAsset(mgr, "fonts/msyhbd.ttf");
         binding.textView1.setTypeface(tf);
@@ -47,8 +66,57 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
                 ForgetPasswordActivity.jumpForgetActivity(this);
                 break;
             case R.id.loginPassword:
-                LoginActivity.jumpLoginActivity(this);
+                LoginActivity.jumpLoginActivity(this,this);
+                break;
+            case R.id.signUp:
+                loginUp();
                 break;
         }
+    }
+
+    WelcomeActivity mActivity;
+
+    private void loginUp() {
+        String account = String.valueOf(binding.account.getText());
+        String password = String.valueOf(binding.passwordWelcome.getText());
+        if (account.equals("")) {
+            ShowToast.showToast(getApplicationContext(),"用户名不能为空");
+            return;
+        } else if (password.equals("")) {
+            ShowToast.showToast(getApplicationContext(),"密码不能为空");
+            return;
+        }
+
+        SignUpBean signUpBean = new SignUpBean();
+        signUpBean.setPassword(password);
+        signUpBean.setUsername(account);
+        String json = new Gson().toJson(signUpBean);
+        RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8")
+                ,json);
+        Call<RegisterResponse> call = LoginNetwork.getRetrofit().postSignUp(body);
+        call.enqueue(new Callback<RegisterResponse>() {
+            @Override
+            public void onResponse(Call<RegisterResponse> call, Response<RegisterResponse> response) {
+                response.body().getAll();
+                if(response.body().getCode().equals(200)){
+                    ShowToast.showToast(getApplicationContext(),"登陆成功");
+                    MainActivity.Companion.jumpMainActivity(mActivity);
+                    mActivity.finish();
+                } else if (response.body().getCode().equals(10007)) {
+                    ShowToast.showToast(getApplicationContext(),"用户不存在");
+                }else if (response.body().getCode().equals(10005)) {
+                    ShowToast.showToast(getApplicationContext(),"密码错误");
+                }else if (response.body().getCode().equals(10004)) {
+                    ShowToast.showToast(getApplicationContext(),"用户名请输入邮箱");
+                } else if (response.body().getCode().equals(10002)) {
+                    ShowToast.showToast(getApplicationContext(),"密码错误次数超过5次，禁止1小时登录时间");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<RegisterResponse> call, Throwable t) {
+
+            }
+        });
     }
 }
