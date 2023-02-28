@@ -8,7 +8,7 @@ import retrofit2.http.Body;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
 
-public interface RegisterService {
+public interface AccountService {
 
     @Headers({"Content-Type: application/json","Accept: application/json"})//需要添加头
     @POST("account/verify")
@@ -16,9 +16,9 @@ public interface RegisterService {
 
     @Headers({"Content-Type: application/json","Accept: application/json"})//需要添加头
     @POST("account/register")
-    Call<RegisterResponse> postLogin(@Body RequestBody body);
+    Call<RegisterResponse> postSignUp(@Body RequestBody body);
 
     @Headers({"Content-Type: application/json","Accept: application/json"})//需要添加头
     @POST("account/login")
-    Call<RegisterResponse> postSignUp(@Body RequestBody body);
+    Call<RegisterResponse> postLogin(@Body RequestBody body);
 }

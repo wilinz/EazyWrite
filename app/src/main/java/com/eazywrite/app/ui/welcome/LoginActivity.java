@@ -36,7 +36,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mBinding = DataBindingUtil.setContentView(this,R.layout.login_in);
+        mBinding = DataBindingUtil.setContentView(this,R.layout.signup);
         mActivity = this;
         mBinding.post.setOnClickListener(this);
         mBinding.login.setOnClickListener(this);
@@ -75,13 +75,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 post();
                 break;
             case R.id.login:
-                login();
+                register();
                 break;
         }
     }
     LoginActivity mActivity;
 
-    private void login() {
+    private void register() {
         String password = String.valueOf(mBinding.password.getText());
         String verifyCode = String.valueOf(mBinding.verificationCode.getText());
         String postbox = String.valueOf(mBinding.postbox.getText());
@@ -102,7 +102,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         String json = new Gson().toJson(bean);
         RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8")
                 ,json);
-        Call<RegisterResponse> call = Network.INSTANCE.getRegisterService().postLogin(body);
+        Call<RegisterResponse> call = Network.INSTANCE.getAccountService().postSignUp(body);
         call.enqueue(new Callback<RegisterResponse>() {
             @Override
             public void onResponse(Call<RegisterResponse> call, Response<RegisterResponse> response) {
@@ -136,7 +136,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         String json = new Gson().toJson(bean);
         RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8")
                 ,json);
-        Call<RegisterResponse> call = Network.INSTANCE.getRegisterService().postVerify(body);
+        Call<RegisterResponse> call = Network.INSTANCE.getAccountService().postVerify(body);
         call.enqueue(new Callback<RegisterResponse>() {
             @Override
             public void onResponse(Call<RegisterResponse> call, Response<RegisterResponse> response) {

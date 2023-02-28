@@ -2,7 +2,7 @@ package com.eazywrite.app.data.network
 
 import com.eazywrite.app.BuildConfig
 import com.eazywrite.app.MyApplication
-import com.eazywrite.app.data.network.service.RegisterService
+import com.eazywrite.app.data.network.service.AccountService
 import com.eazywrite.app.data.network.service.TemplateJavaService
 import com.eazywrite.app.data.network.service.TemplateKotlinService
 import com.eazywrite.app.util.RequestInterceptor
@@ -10,7 +10,6 @@ import com.thomasbouvier.persistentcookiejar.PersistentCookieJar
 import com.thomasbouvier.persistentcookiejar.cache.SetCookieCache
 import com.thomasbouvier.persistentcookiejar.persistence.SharedPrefsCookiePersistor
 import okhttp3.OkHttpClient
-import okhttp3.ResponseBody
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory
@@ -45,7 +44,7 @@ object Network {
 
     val templateKotlinService = retrofit.create<TemplateKotlinService>()
 
-    val registerService = loginRetrofit.create<RegisterService>()
+    val accountService = loginRetrofit.create<AccountService>()
     private inline fun <reified T> Retrofit.create() = create(T::class.java)
 
 

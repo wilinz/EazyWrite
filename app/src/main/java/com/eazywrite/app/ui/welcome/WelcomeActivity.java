@@ -16,6 +16,7 @@ import com.eazywrite.app.data.network.Network;
 import com.eazywrite.app.databinding.FragmentWelcomeBinding;
 import com.eazywrite.app.ui.main.MainActivity;
 import com.eazywrite.app.util.ActivityKt;
+import com.eazywrite.app.util.MessageSummaryKt;
 import com.eazywrite.app.util.ShowToast;
 import com.google.gson.Gson;
 
@@ -31,8 +32,8 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ActivityKt.setWindow(this);
-        this.setContentView(R.layout.fragment_welcome);
-        binding = DataBindingUtil.setContentView(this,R.layout.fragment_welcome);
+        this.setContentView(R.layout.fragment_login);
+        binding = DataBindingUtil.setContentView(this,R.layout.fragment_login);
         binding.signUp.setOnClickListener(this);
         mActivity = this;
         initView();
@@ -86,12 +87,12 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
         }
 
         SignUpBean signUpBean = new SignUpBean();
-        signUpBean.setPassword(password);
+        signUpBean.setPassword(MessageSummaryKt.messageSummary(password,"SHA-256"));
         signUpBean.setUsername(account);
         String json = new Gson().toJson(signUpBean);
         RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8")
                 ,json);
-        Call<RegisterResponse> call = Network.INSTANCE.getRegisterService().postSignUp(body);
+        Call<RegisterResponse> call = Network.INSTANCE.getAccountService().postLogin(body);
         call.enqueue(new Callback<RegisterResponse>() {
             @Override
             public void onResponse(Call<RegisterResponse> call, Response<RegisterResponse> response) {
