@@ -1,20 +1,18 @@
 package com.eazywrite.app.ui.welcome;
 
+import android.content.res.AssetManager;
+import android.graphics.Typeface;
+import android.os.Bundle;
+import android.view.View;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.databinding.DataBindingUtil;
 
-import android.content.res.AssetManager;
-import android.graphics.Typeface;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
-import android.widget.TextView;
-
 import com.eazywrite.app.R;
 import com.eazywrite.app.data.model.RegisterResponse;
 import com.eazywrite.app.data.model.SignUpBean;
-import com.eazywrite.app.data.network.LoginNetwork;
+import com.eazywrite.app.data.network.Network;
 import com.eazywrite.app.databinding.FragmentWelcomeBinding;
 import com.eazywrite.app.ui.main.MainActivity;
 import com.eazywrite.app.util.ActivityKt;
@@ -93,7 +91,7 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
         String json = new Gson().toJson(signUpBean);
         RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8")
                 ,json);
-        Call<RegisterResponse> call = LoginNetwork.getRetrofit().postSignUp(body);
+        Call<RegisterResponse> call = Network.INSTANCE.getRegisterService().postSignUp(body);
         call.enqueue(new Callback<RegisterResponse>() {
             @Override
             public void onResponse(Call<RegisterResponse> call, Response<RegisterResponse> response) {

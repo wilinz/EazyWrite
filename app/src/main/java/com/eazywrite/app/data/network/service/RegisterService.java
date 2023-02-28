@@ -1,4 +1,4 @@
-package com.eazywrite.app.data.network;
+package com.eazywrite.app.data.network.service;
 
 import com.eazywrite.app.data.model.RegisterResponse;
 
@@ -8,7 +8,7 @@ import retrofit2.http.Body;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
 
-public interface RegisterInterface {
+public interface RegisterService {
 
     @Headers({"Content-Type: application/json","Accept: application/json"})//需要添加头
     @POST("account/verify")

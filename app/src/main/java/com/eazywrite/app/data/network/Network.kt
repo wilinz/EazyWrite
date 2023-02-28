@@ -2,6 +2,7 @@ package com.eazywrite.app.data.network
 
 import com.eazywrite.app.BuildConfig
 import com.eazywrite.app.MyApplication
+import com.eazywrite.app.data.network.service.RegisterService
 import com.eazywrite.app.data.network.service.TemplateJavaService
 import com.eazywrite.app.data.network.service.TemplateKotlinService
 import com.eazywrite.app.util.RequestInterceptor
@@ -38,14 +39,14 @@ object Network {
         .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
         .build()
 
+    private val loginRetrofit = retrofit.newBuilder().baseUrl("https://hw.wilinz.com:444").build()
+
     val templateJavaService = retrofit.create<TemplateJavaService>()
 
     val templateKotlinService = retrofit.create<TemplateKotlinService>()
 
+    val registerService = loginRetrofit.create<RegisterService>()
     private inline fun <reified T> Retrofit.create() = create(T::class.java)
-
-
-
 
 
 }

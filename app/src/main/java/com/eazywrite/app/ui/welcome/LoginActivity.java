@@ -19,19 +19,15 @@ import com.eazywrite.app.R;
 import com.eazywrite.app.data.model.LoginBean;
 import com.eazywrite.app.data.model.RegisterResponse;
 import com.eazywrite.app.data.model.VerifyBean;
-import com.eazywrite.app.data.network.LoginNetwork;
-import com.eazywrite.app.data.network.RegisterInterface;
+import com.eazywrite.app.data.network.Network;
 import com.eazywrite.app.databinding.LoginInBinding;
 import com.eazywrite.app.ui.main.MainActivity;
 import com.google.gson.Gson;
 
-import okhttp3.OkHttpClient;
 import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener
 {
@@ -106,7 +102,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         String json = new Gson().toJson(bean);
         RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8")
                 ,json);
-        Call<RegisterResponse> call = LoginNetwork.getRetrofit().postLogin(body);
+        Call<RegisterResponse> call = Network.INSTANCE.getRegisterService().postLogin(body);
         call.enqueue(new Callback<RegisterResponse>() {
             @Override
             public void onResponse(Call<RegisterResponse> call, Response<RegisterResponse> response) {
@@ -140,7 +136,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         String json = new Gson().toJson(bean);
         RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8")
                 ,json);
-        Call<RegisterResponse> call = LoginNetwork.getRetrofit().postVerify(body);
+        Call<RegisterResponse> call = Network.INSTANCE.getRegisterService().postVerify(body);
         call.enqueue(new Callback<RegisterResponse>() {
             @Override
             public void onResponse(Call<RegisterResponse> call, Response<RegisterResponse> response) {
