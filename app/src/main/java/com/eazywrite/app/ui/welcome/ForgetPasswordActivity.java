@@ -14,6 +14,7 @@ public class ForgetPasswordActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_foget_password);
+
     }
 
     static public void jumpForgetActivity(Context context) {

@@ -2,6 +2,7 @@
 
 package com.eazywrite.app.ui.main
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -119,6 +120,12 @@ class MainActivity : ComponentActivity() {
                 T::class.java
             )
         )
+    }
+
+    companion object{
+        fun jumpMainActivity(context: Context) {
+            context.startActivity(Intent(context,MainActivity::class.java))
+        }
     }
 }
 
