@@ -1,5 +1,6 @@
 package com.eazywrite.app.data.network.service;
 
+import com.eazywrite.app.data.model.BillsCropResponse;
 import com.eazywrite.app.data.model.CropEnhanceImageResponse;
 import com.eazywrite.app.data.model.DewarpResponse;
 
@@ -19,14 +20,19 @@ public interface TemplateJavaService {
      * 图像切边增强
      * 裁切图像主体区域并增强
      *
-     * @param crop_image        0 不执行切边操作
-     *                          1 执行切边操作，默认为1
+     * @param enhance_mode        1 增亮
+     * 2 增亮并锐化
+     * 3 黑白
+     * 4 灰度
+     * 5 去阴影增强
+     * 6 点阵图
+     * -1 禁用增强
      * @param correct_direction 0 不校正图片方向，默认为0
      *                          1 校正图片方向
      * @return
      */
     @POST("/ai/service/v1/crop_enhance_image")
-    Observable<CropEnhanceImageResponse> cropEnhanceImage(@Query("crop_image") int crop_image,
+    Observable<CropEnhanceImageResponse> cropEnhanceImage(@Query("enhance_mode") int enhance_mode,
                                                           @Query("correct_direction") int correct_direction,
                                                           @Body RequestBody body);
 
@@ -43,4 +49,17 @@ public interface TemplateJavaService {
     Observable<DewarpResponse> dewarp(@Query("crop") int crop,
                                       @Query("inpainting") int inpainting,
                                       @Body RequestBody body);
+
+    /**
+     * 国内通用票据识别
+     *
+     * 功能描述
+     * 支持对多种票据类型（多票据）票据切分、票据分类、票据识别，包括增值税普通发票、增值税普通发票（卷票）、增值税专用发票、
+     * 增值税电子专用发票、增值税电子普通发票、货物运输业增值税专用发票、机动车销售统一发票、二手车销售统一发票、通用机打发票、
+     * 通用定额发票、旅客运输普票、公路客运发票、船运客票、出租车发票、停车费发票、过路过桥费发票、教育费收据、行程单、火车票、
+     * 增值税销货清单和其他可报销票据。
+     * @return
+     */
+    @POST("/robot/v1.0/api/bills_crop")
+    Observable<BillsCropResponse> billsCrop(@Body RequestBody body);
 }

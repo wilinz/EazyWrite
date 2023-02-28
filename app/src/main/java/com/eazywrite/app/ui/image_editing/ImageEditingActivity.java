@@ -5,14 +5,17 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Toast;
@@ -20,17 +23,20 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.eazywrite.app.R;
+import com.eazywrite.app.data.model.BillsCropResponse;
 import com.eazywrite.app.databinding.ActivityImageEditingBinding;
 import com.eazywrite.app.util.ActivityKt;
 import com.eazywrite.app.util.MediaUtil;
 import com.eazywrite.app.util.PermissionUtil;
 
 import java.io.File;
+import java.util.List;
 
 public class ImageEditingActivity extends AppCompatActivity {
 
     ActivityImageEditingBinding binding;
     ImageEditingViewModel vm;
+    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +49,13 @@ public class ImageEditingActivity extends AppCompatActivity {
     public class Click{
         @RequiresApi(api = Build.VERSION_CODES.O)
         public void editImage(View view){
+            progressDialog.show();
             vm.dewarpImage();
+        }
+
+        public void getBills(View view){
+            progressDialog.show();
+            vm.getBills();
         }
     }
 
@@ -144,22 +156,51 @@ public class ImageEditingActivity extends AppCompatActivity {
             return false;
         });
         dialog.show();
+        progressDialog = new ProgressDialog(ImageEditingActivity.this);
+        progressDialog.setCancelable(false) ;//如果传入false则不能通过Back键取消
+
     }
 
     /**
      * 监测数据变化
      */
+    @RequiresApi(api = Build.VERSION_CODES.O)
     private void observerDataStateUpdateAction() {
-        vm.imageFile.observe(this, file -> Glide.with(ImageEditingActivity.this).load(file)
-                .skipMemoryCache(true)//不做内存缓存
-                .diskCacheStrategy(DiskCacheStrategy.NONE)//不缓存到disk硬盘中
-                .override(2000, 2000)
-                .into(binding.imageView));
-        vm.editedImage.observe(this, file -> Glide.with(ImageEditingActivity.this).load(file)
-                .skipMemoryCache(true)//不做内存缓存
-                .diskCacheStrategy(DiskCacheStrategy.NONE)//不缓存到disk硬盘中
-                .override(2000, 2000)
-                .into(binding.imageView));
+        vm.imageFile.observe(this, file -> {
+            progressDialog.dismiss();
+            Glide.with(ImageEditingActivity.this).load(file)
+                    .skipMemoryCache(true)//不做内存缓存
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)//不缓存到disk硬盘中
+                    .override(2000, 2000)
+                    .into(binding.imageView);
+        });
+        vm.editedImage.observe(this, file -> {
+            progressDialog.show();
+            vm.cropEnhanceImage();
+        });
+        vm.tickList.observe(this, ticksList -> {
+            progressDialog.dismiss();
+            StringBuilder stringBuilder=new StringBuilder();
+            stringBuilder.append("一共识别出 ").append(ticksList.size()).append(" 张票据\n");
+            /**每张票据的详细内容**/
+            //List<BillsCropResponse.ResultDTO.ObjectListDTO.ItemListDTO> tickItemList=ticksList.get(0).getItemList();
+            for (BillsCropResponse.ResultDTO.ObjectListDTO objectListDTO:ticksList){
+                stringBuilder.append("===这是一张：").append(objectListDTO.getTypeDescription()).append("===\n");
+                for (BillsCropResponse.ResultDTO.ObjectListDTO.ItemListDTO itemListDTO: objectListDTO.getItemList()){
+                    stringBuilder.append(itemListDTO.getDescription()).append(" : ").append(itemListDTO.getValue());
+                }
+            }
+            AlertDialog.Builder dialog = new AlertDialog.Builder(ImageEditingActivity.this);
+            dialog.setTitle("识别结果");
+            dialog.setMessage(stringBuilder.toString());
+            dialog.setCancelable(false);
+            dialog.setOnKeyListener((dialogInterface, keyCode, keyEvent) -> {
+                if(keyCode == KeyEvent.KEYCODE_BACK && keyEvent.getRepeatCount()==0)
+                    finish();
+                return false;
+            });
+            dialog.show();
+        });
     }
 
     /**
