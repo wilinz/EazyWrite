@@ -1,20 +1,16 @@
 package com.eazywrite.app.ui.image_editing;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.Activity;
-import android.content.Context;
-import android.os.Build;
+import android.app.Application;
 import android.util.Log;
 
-import androidx.annotation.RequiresApi;
+import androidx.annotation.NonNull;
+import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
 
 import com.eazywrite.app.data.model.BillsCropResponse;
 import com.eazywrite.app.data.repository.ImageEditRepository;
-import com.eazywrite.app.util.MediaUtil;
-import com.eazywrite.app.util.PermissionUtil;
+import com.eazywrite.app.util.Base64UtilKt;
 
 import java.io.File;
 import java.util.List;
@@ -22,48 +18,28 @@ import java.util.List;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
-public class ImageEditingViewModel extends ViewModel {
+public class ImageEditingViewModel extends AndroidViewModel {
 
     public MutableLiveData<File> imageFile = new MutableLiveData<>();
     public MutableLiveData<List<BillsCropResponse.ResultDTO.ObjectListDTO>> tickList = new MutableLiveData<>();
     public MutableLiveData<File> editedImage = new MutableLiveData<>();
 
-    /**
-     * 动态请求权限
-     *
-     * @param isTakePhoto 是否需要调用相机
-     */
-    public void requestPermissions(boolean isTakePhoto, Activity activity, Context context) {
-        boolean b = PermissionUtil.getInstance().checkPermission(activity, context, PermissionUtil.READ_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE);
-        if (isTakePhoto) {
-            boolean b1 = PermissionUtil.getInstance().checkPermission(activity, context, PermissionUtil.CAMERA, Manifest.permission.CAMERA);
-            if (b && b1) takePhoto(context, activity);
-        } else {
-            if (b) chosePhone(context, activity);
-        }
+    public ImageEditingViewModel(@NonNull Application application) {
+        super(application);
     }
-
-    public void takePhoto(Context context, Activity activity) {
-        MediaUtil.getInstance().takePhoto(context, activity);
-    }
-
-    public void chosePhone(Context context, Activity activity) {
-        MediaUtil.getInstance().openAlbum(context, activity);
-    }
-
 
     @SuppressLint("CheckResult")
-    @RequiresApi(api = Build.VERSION_CODES.O)
     public void cropEnhanceImage() {
         ImageEditRepository.getInstance().getCropEnhanceImageResponse(imageFile.getValue())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         (imageEditResponse) -> {
-                            imageFile.setValue(MediaUtil.getInstance().base64ToFile(imageEditResponse.getResult().getImageList().get(0).getImage()));
-                            },
+                            File pictureFile = new File(getApplication().getCacheDir(), "editedPicture.jpg");
+                            imageFile.setValue(Base64UtilKt.base64ToFile(pictureFile, imageEditResponse.getResult().getImageList().get(0).getImage()));
+                        },
                         (e) -> {
-                            Log.d("Debug","cropEnhanceImage error");
+                            Log.d("Debug", "cropEnhanceImage error");
                         },
                         () -> {
                         }
@@ -71,19 +47,19 @@ public class ImageEditingViewModel extends ViewModel {
     }
 
     @SuppressLint("CheckResult")
-    @RequiresApi(api = Build.VERSION_CODES.O)
-    public void dewarpImage(){
+    public void dewarpImage() {
         ImageEditRepository.getInstance().getDewarpResponse(imageFile.getValue())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         (dewarpResponse) -> {
-                            File file=MediaUtil.getInstance().base64ToFile(dewarpResponse.getResult().getImage());
+                            File pictureFile = new File(getApplication().getCacheDir(), "editedPicture.jpg");
+                            File file = Base64UtilKt.base64ToFile(pictureFile, dewarpResponse.getResult().getImage());
                             imageFile.setValue(file);
                             editedImage.setValue(file);
-                            },
+                        },
                         (e) -> {
-                            Log.d("Debug","dewarpImage error");
+                            Log.d("Debug", "dewarpImage error");
                         },
                         () -> {
                         }
@@ -98,14 +74,14 @@ public class ImageEditingViewModel extends ViewModel {
                 .subscribe(
                         (billsCropResponse) -> {
                             /**票据List**/
-                            List<BillsCropResponse.ResultDTO.ObjectListDTO> ticksList=billsCropResponse.getResult().getObjectList();
-                            Log.d("Bills by Image","一共识别出 "+ticksList.size()+" 张票据");
+                            List<BillsCropResponse.ResultDTO.ObjectListDTO> ticksList = billsCropResponse.getResult().getObjectList();
+                            Log.d("Bills by Image", "一共识别出 " + ticksList.size() + " 张票据");
                             /**每张票据的详细内容**/
                             //List<BillsCropResponse.ResultDTO.ObjectListDTO.ItemListDTO> tickItemList=ticksList.get(0).getItemList();
-                            for (BillsCropResponse.ResultDTO.ObjectListDTO objectListDTO:ticksList){
-                                Log.d("Bills by Image","===这是一张："+objectListDTO.getTypeDescription()+"===");
-                                for (BillsCropResponse.ResultDTO.ObjectListDTO.ItemListDTO itemListDTO: objectListDTO.getItemList()){
-                                    Log.d("Bills by Image",itemListDTO.getDescription()+" : "+itemListDTO.getValue());
+                            for (BillsCropResponse.ResultDTO.ObjectListDTO objectListDTO : ticksList) {
+                                Log.d("Bills by Image", "===这是一张：" + objectListDTO.getTypeDescription() + "===");
+                                for (BillsCropResponse.ResultDTO.ObjectListDTO.ItemListDTO itemListDTO : objectListDTO.getItemList()) {
+                                    Log.d("Bills by Image", itemListDTO.getDescription() + " : " + itemListDTO.getValue());
                                 }
                             }
                             tickList.setValue(ticksList);
