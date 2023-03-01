@@ -1,21 +1,20 @@
 package com.eazywrite.app.ui.image_editing;
 
-import androidx.annotation.NonNull;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
 import androidx.databinding.DataBindingUtil;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.pm.PackageManager;
+import android.content.Context;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Toast;
@@ -26,118 +25,76 @@ import com.eazywrite.app.R;
 import com.eazywrite.app.data.model.BillsCropResponse;
 import com.eazywrite.app.databinding.ActivityImageEditingBinding;
 import com.eazywrite.app.util.ActivityKt;
-import com.eazywrite.app.util.MediaUtil;
-import com.eazywrite.app.util.PermissionUtil;
+import com.eazywrite.app.util.FileKt;
+import com.eazywrite.app.util.UriKt;
+import com.permissionx.guolindev.PermissionX;
 
 import java.io.File;
-import java.util.List;
 
 public class ImageEditingActivity extends AppCompatActivity {
 
-    ActivityImageEditingBinding binding;
-    ImageEditingViewModel vm;
+    private ActivityImageEditingBinding binding;
+    private ImageEditingViewModel vm;
     private ProgressDialog progressDialog;
+
+    @Nullable
+    private File imageCacheFile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         initActivity();
         initView();
-        observerDataStateUpdateAction();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            observerDataStateUpdateAction();
+        }
     }
 
-    public class Click{
-        @RequiresApi(api = Build.VERSION_CODES.O)
-        public void editImage(View view){
+    public class Click {
+        public void editImage(View view) {
             progressDialog.show();
             vm.dewarpImage();
         }
 
-        public void getBills(View view){
+        public void getBills(View view) {
             progressDialog.show();
             vm.getBills();
         }
     }
 
-    /**
-     * 处理拍摄结果 和 从相册选择结果
-     *
-     * @param requestCode
-     * @param resultCode
-     * @param data
-     */
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        try {
-            switch (requestCode) {
-                case MediaUtil.TAKE_PHOTO:
-                    File imageFile = MediaUtil.getInstance().getImage();
-                    if (resultCode == RESULT_OK) {
-                        //成功拍摄
-                        vm.imageFile.setValue(imageFile);
-                    } else {
-                        //未拍摄,删除提前创建的文件
-                        if (imageFile.exists()) {
-                            imageFile.delete();
-                        }
-                        Toast.makeText(ImageEditingActivity.this, "未进行拍摄", Toast.LENGTH_SHORT).show();
-                        finish();
-                    }
-                    break;
-                case MediaUtil.CHOOSE_PHOTO:
-                    if (resultCode == RESULT_OK && data != null) {
-                        MediaUtil.handleImage(this, data);//处理返回intent中的image 以得到相片的绝对路径imagePath
-                        File ImageFile = MediaUtil.getInstance().getImage();
-                        vm.imageFile.setValue(ImageFile);
-                    } else {
-                        Toast.makeText(ImageEditingActivity.this, "未选择图片", Toast.LENGTH_SHORT).show();
-                        finish();
-                    }
-                    break;
-                default:
-                    break;
+    private final ActivityResultLauncher<Uri> takePhotoLauncher = registerForActivityResult(new ActivityResultContracts.TakePicture(), ok -> {
+        if (ok) {
+            //成功拍摄
+            vm.imageFile.setValue(imageCacheFile);
+        } else {
+            //未拍摄,删除提前创建的文件
+            if (imageCacheFile.exists()) {
+                imageCacheFile.delete();
+                imageCacheFile = null;
             }
-        } catch (Exception e) {//MediaUtil.getInstance().getImage()图片为空异常
-            Toast.makeText(ImageEditingActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-            e.printStackTrace();
+            Toast.makeText(this, "未进行拍摄", Toast.LENGTH_SHORT).show();
+            finish();
         }
-    }
+    });
 
-    /**
-     * 处理权限请求结果
-     *
-     * @param requestCode  The request code passed in {@link # requestPermissions(
-     *                     android.app.Activity, String[], int)}
-     * @param permissions  The requested permissions. Never null.
-     * @param grantResults The grant results for the corresponding permissions
-     *                     which is either {@link android.content.pm.PackageManager#PERMISSION_GRANTED}
-     *                     or {@link android.content.pm.PackageManager#PERMISSION_DENIED}. Never null.
-     */
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch (requestCode) {
-            case PermissionUtil.WRITE_EXTERNAL_STORAGE:
-            case PermissionUtil.READ_EXTERNAL_STORAGE:
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    vm.chosePhone(this, this);
-                } else {
-                    Toast.makeText(ImageEditingActivity.this, "您拒绝了使用相册", Toast.LENGTH_SHORT).show();
-                    finish();
-                }
-                break;
-            case PermissionUtil.CAMERA:
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    vm.takePhoto(this, this);
-                } else {
-                    Toast.makeText(ImageEditingActivity.this, "您拒绝了使用相机", Toast.LENGTH_SHORT).show();
-                    finish();
-                }
-                break;
+    private final ActivityResultLauncher<String> albumLauncher = registerForActivityResult(new ActivityResultContracts.GetContent(), uri -> {
+        if (uri != null) {
+            File ImageFile = UriKt.copyToCacheFile(uri, this);
+            vm.imageFile.setValue(ImageFile);
+        } else {
+            Toast.makeText(this, "未选择图片", Toast.LENGTH_SHORT).show();
+            finish();
         }
-    }
+    });
 
+    private void takePhoto(Context context){
+        if (imageCacheFile == null || !imageCacheFile.exists()){
+            imageCacheFile = new File(context.getCacheDir(), "image/takePicture.jpg");
+            FileKt.createFile(imageCacheFile);
+        }
+        Uri imageUri = FileProvider.getUriForFile(context, "com.eazywrite.app.fileprovider", imageCacheFile);//通过内容提供器得到刚创建临时文件的Uri对象
+        takePhotoLauncher.launch(imageUri);
+    }
 
     /**
      * 为视图设置初值
@@ -148,23 +105,34 @@ public class ImageEditingActivity extends AppCompatActivity {
         dialog.setTitle("导入图片");
         dialog.setMessage("请选择导入方式");
         dialog.setCancelable(false);
-        dialog.setPositiveButton("拍照", (dialogInterface, i) -> vm.requestPermissions(true, this, this));
-        dialog.setNegativeButton("从相册选择", (dialogInterface, i) -> vm.requestPermissions(false, this, this));
+        dialog.setPositiveButton("拍照", (dialogInterface, i) -> {
+            PermissionX.init(this)
+                    .permissions(Manifest.permission.CAMERA)
+                    .request((allGranted, grantedList, deniedList) -> {
+                        if (allGranted){
+                            takePhoto(this);
+                        }else {
+                            Toast.makeText(ImageEditingActivity.this, "您拒绝了拍照权限", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+        });
+        dialog.setNegativeButton("从相册选择", (dialogInterface, i) -> {
+            albumLauncher.launch("image/*");
+        });
         dialog.setOnKeyListener((dialogInterface, keyCode, keyEvent) -> {
-            if(keyCode == KeyEvent.KEYCODE_BACK && keyEvent.getRepeatCount()==0)
+            if (keyCode == KeyEvent.KEYCODE_BACK && keyEvent.getRepeatCount() == 0)
                 finish();
             return false;
         });
         dialog.show();
         progressDialog = new ProgressDialog(ImageEditingActivity.this);
-        progressDialog.setCancelable(false) ;//如果传入false则不能通过Back键取消
+        progressDialog.setCancelable(false);//如果传入false则不能通过Back键取消
 
     }
 
     /**
      * 监测数据变化
      */
-    @RequiresApi(api = Build.VERSION_CODES.O)
     private void observerDataStateUpdateAction() {
         vm.imageFile.observe(this, file -> {
             progressDialog.dismiss();
@@ -180,13 +148,13 @@ public class ImageEditingActivity extends AppCompatActivity {
         });
         vm.tickList.observe(this, ticksList -> {
             progressDialog.dismiss();
-            StringBuilder stringBuilder=new StringBuilder();
+            StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("一共识别出 ").append(ticksList.size()).append(" 张票据\n");
             /**每张票据的详细内容**/
             //List<BillsCropResponse.ResultDTO.ObjectListDTO.ItemListDTO> tickItemList=ticksList.get(0).getItemList();
-            for (BillsCropResponse.ResultDTO.ObjectListDTO objectListDTO:ticksList){
+            for (BillsCropResponse.ResultDTO.ObjectListDTO objectListDTO : ticksList) {
                 stringBuilder.append("===这是一张：").append(objectListDTO.getTypeDescription()).append("===\n");
-                for (BillsCropResponse.ResultDTO.ObjectListDTO.ItemListDTO itemListDTO: objectListDTO.getItemList()){
+                for (BillsCropResponse.ResultDTO.ObjectListDTO.ItemListDTO itemListDTO : objectListDTO.getItemList()) {
                     stringBuilder.append(itemListDTO.getDescription()).append(" : ").append(itemListDTO.getValue());
                 }
             }
@@ -195,7 +163,7 @@ public class ImageEditingActivity extends AppCompatActivity {
             dialog.setMessage(stringBuilder.toString());
             dialog.setCancelable(false);
             dialog.setOnKeyListener((dialogInterface, keyCode, keyEvent) -> {
-                if(keyCode == KeyEvent.KEYCODE_BACK && keyEvent.getRepeatCount()==0)
+                if (keyCode == KeyEvent.KEYCODE_BACK && keyEvent.getRepeatCount() == 0)
                     finish();
                 return false;
             });
