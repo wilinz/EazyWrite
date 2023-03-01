@@ -19,6 +19,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.eazywrite.app.R;
+import com.eazywrite.app.data.model.BillBean;
 import com.eazywrite.app.databinding.DialogFragmentBinding;
 import com.eazywrite.app.ui.bill.AddBillContentActivity;
 import com.google.android.material.datepicker.MaterialDatePicker;
@@ -194,9 +195,26 @@ public class MyDialogFragment extends DialogFragment implements View.OnClickList
                         @Override
                         public void onChanged(StringBuilder stringBuilder) {
                             Log.d("HelloWorld", "onChanged: "+stringBuilder.toString());
+
                         }
                     });
                     mViewModel.setBean(mOutputBean);
+
+                    //添加到本地数据库，还没补充属性来源
+                    Log.d("TAGX","mViewModel.bean.toString():"+mViewModel.bean.toString() );
+                    Log.d("TAGX", "mViewModel.getBean().toString():"+mViewModel.getBean().toString());
+                    Log.d("TAGX", "mViewModel.getDate().toString():"+mViewModel.getDate().toString());
+                    Log.d("TAGX", "mViewModel.getBeiZhu():"+mViewModel.getBeiZhu().toString());
+                    Log.d("TAGX", "mViewModel.getMoneyCount():"+mViewModel.getMoneyCount().toString());
+                    Log.d("TAG", ":"+mOutputBean.getName());
+                    Log.d("TAG", ":"+mOutputBean.getImageId());
+                    BillBean billBean = new BillBean();
+                    billBean.setImageId("类别图片");
+                    billBean.setName("类别名称");
+                    billBean.setBeiZhu("备注");
+                    billBean.setMoneyCount("金额");
+                    billBean.save();
+
                     mMainFragment.addData(mViewModel);
                     getDialog().dismiss();
                     getActivity().finish();
