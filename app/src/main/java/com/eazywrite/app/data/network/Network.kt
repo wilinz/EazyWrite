@@ -20,7 +20,7 @@ object Network {
     var cookieJar =
         PersistentCookieJar(SetCookieCache(), SharedPrefsCookiePersistor(MyApplication.instance))
 
-    private val baseOkhttpClient = OkHttpClient.Builder().apply {
+    private val baseOkhttpClientBuilder get() = OkHttpClient.Builder().apply {
         cookieJar(cookieJar)
         this.addInterceptor(HttpLoggingInterceptor().apply {
             level =
@@ -30,22 +30,21 @@ object Network {
         this.connectTimeout(10, TimeUnit.SECONDS)
         this.readTimeout(10, TimeUnit.SECONDS)
         this.writeTimeout(10, TimeUnit.SECONDS)
-    }.build()
+    }
 
-    private val baseRetrofit = Retrofit.Builder()
-        .client(baseOkhttpClient)
+    private val baseRetrofitBuilder get() = Retrofit.Builder()
+        .client(baseOkhttpClientBuilder.build())
         .addConverterFactory(GsonConverterFactory.create())
         .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
-        .build()
 
-    private val retrofit = baseRetrofit.newBuilder()
-        .client(baseOkhttpClient.newBuilder().apply {
+    private val retrofit = baseRetrofitBuilder
+        .client(baseOkhttpClientBuilder.apply {
             this.addInterceptor(RequestInterceptor())//请求拦截器
         }.build())
         .baseUrl("https://api.textin.com")
         .build()
 
-    private val loginRetrofit = baseRetrofit.newBuilder().baseUrl("https://hw.wilinz.com:444").build()
+    private val loginRetrofit = baseRetrofitBuilder.baseUrl("https://hw.wilinz.com:444").build()
 
     val templateJavaService = retrofit.create<TemplateJavaService>()
 
