@@ -1,21 +1,27 @@
 package com.eazywrite.app.data.model;
 
+import androidx.lifecycle.LiveData;
+
 import org.litepal.crud.LitePalSupport;
 
 public class BillBean extends LitePalSupport {
 
-    private String imageId;
+    private int imageId;
     private String name;
     private String beiZhu;
     private String moneyCount;
 
-    public String getImageId() {
+    private String itemDate;
+
+
+    public int getImageId() {
         return imageId;
     }
 
-    public void setImageId(String imageId) {
+    public void setImageId(int imageId) {
         this.imageId = imageId;
     }
+
 
     public String getName() {
         return name;
@@ -39,5 +45,13 @@ public class BillBean extends LitePalSupport {
 
     public void setMoneyCount(String moneyCount) {
         this.moneyCount = moneyCount;
+    }
+
+    public String getItemDate() {
+        return itemDate;
+    }
+
+    public void setItemDate(String itemDate) {
+        this.itemDate = itemDate;
     }
 }

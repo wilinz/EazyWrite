@@ -25,6 +25,8 @@ import com.eazywrite.app.ui.bill.AddBillContentActivity;
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener;
 
+import org.litepal.LitePal;
+
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -201,19 +203,26 @@ public class MyDialogFragment extends DialogFragment implements View.OnClickList
                     mViewModel.setBean(mOutputBean);
 
                     //添加到本地数据库，还没补充属性来源
-                    Log.d("TAGX","mViewModel.bean.toString():"+mViewModel.bean.toString() );
-                    Log.d("TAGX", "mViewModel.getBean().toString():"+mViewModel.getBean().toString());
-                    Log.d("TAGX", "mViewModel.getDate().toString():"+mViewModel.getDate().toString());
-                    Log.d("TAGX", "mViewModel.getBeiZhu():"+mViewModel.getBeiZhu().toString());
-                    Log.d("TAGX", "mViewModel.getMoneyCount():"+mViewModel.getMoneyCount().toString());
-                    Log.d("TAG", ":"+mOutputBean.getName());
-                    Log.d("TAG", ":"+mOutputBean.getImageId());
+//                    Log.d("TAGX", "mViewModel.getDate().toString():"+mViewModel.getDate().getValue());
+//                    Log.d("TAGX", "mViewModel.getBeiZhu():"+mViewModel.getBeiZhu().getValue());
+//                    Log.d("TAGX", "mViewModel.getMoneyCount():"+mViewModel.getMoneyCount().getValue());
+//                    Log.d("TAGX", ":"+mOutputBean.getName());
+//                    Log.d("TAGX", ":"+mOutputBean.getImageId());
+//                    Log.d("TAGX", "last: "+mViewModel.getDate().getValue());
                     BillBean billBean = new BillBean();
-                    billBean.setImageId("类别图片");
-                    billBean.setName("类别名称");
-                    billBean.setBeiZhu("备注");
-                    billBean.setMoneyCount("金额");
+                    billBean.setImageId(mOutputBean.getImageId());
+                    billBean.setName(mOutputBean.getName());
+                    billBean.setBeiZhu(mViewModel.getBeiZhu().getValue().toString());
+                    billBean.setMoneyCount(mViewModel.getMoneyCount().getValue().toString());
+                    billBean.setItemDate(mViewModel.getDate().getValue().toString());
                     billBean.save();
+
+//                    List<BillBean> billBeans = LitePal.findAll(BillBean.class);
+//
+//                    Log.d("TAGX", ""+billBeans.get(0).getName());
+//                    Log.d("TAGX", ""+billBeans.get(0).getBeiZhu());
+//                    Log.d("TAGX", ""+billBeans.get(0).getImageId());
+//                    Log.d("TAGX", ""+billBeans.get(0).getMoneyCount());
 
                     mMainFragment.addData(mViewModel);
                     getDialog().dismiss();
