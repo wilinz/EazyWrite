@@ -52,9 +52,9 @@ public class AddItemFragment extends Fragment {
         new TabLayoutMediator(mBinding.tabLayout,mBinding.viewPager2,((tab, position) -> {
 
             if (position == 0) {
-                tab.setText("收入");
-            }else {
                 tab.setText("支出");
+            }else {
+                tab.setText("输入");
             }
         })).attach();
     }

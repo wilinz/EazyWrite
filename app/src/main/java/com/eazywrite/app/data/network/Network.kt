@@ -20,25 +20,32 @@ object Network {
     var cookieJar =
         PersistentCookieJar(SetCookieCache(), SharedPrefsCookiePersistor(MyApplication.instance))
 
-    private val retrofit = Retrofit.Builder()
-        .client(OkHttpClient.Builder().apply {
-            cookieJar(cookieJar)
-            this.addInterceptor(HttpLoggingInterceptor().apply {
-                level =
-                    if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BODY else HttpLoggingInterceptor.Level.NONE
-            })
-            this.addInterceptor(RequestInterceptor())//请求拦截器
-            this.callTimeout(10, TimeUnit.SECONDS)
-            this.connectTimeout(10, TimeUnit.SECONDS)
-            this.readTimeout(10, TimeUnit.SECONDS)
-            this.writeTimeout(10, TimeUnit.SECONDS)
-        }.build())
-        .baseUrl("https://api.textin.com")
+    private val baseOkhttpClient = OkHttpClient.Builder().apply {
+        cookieJar(cookieJar)
+        this.addInterceptor(HttpLoggingInterceptor().apply {
+            level =
+                if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BODY else HttpLoggingInterceptor.Level.NONE
+        })
+        this.callTimeout(10, TimeUnit.SECONDS)
+        this.connectTimeout(10, TimeUnit.SECONDS)
+        this.readTimeout(10, TimeUnit.SECONDS)
+        this.writeTimeout(10, TimeUnit.SECONDS)
+    }.build()
+
+    private val baseRetrofit = Retrofit.Builder()
+        .client(baseOkhttpClient)
         .addConverterFactory(GsonConverterFactory.create())
         .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
         .build()
 
-    private val loginRetrofit = retrofit.newBuilder().baseUrl("https://hw.wilinz.com:444").build()
+    private val retrofit = baseRetrofit.newBuilder()
+        .client(baseOkhttpClient.newBuilder().apply {
+            this.addInterceptor(RequestInterceptor())//请求拦截器
+        }.build())
+        .baseUrl("https://api.textin.com")
+        .build()
+
+    private val loginRetrofit = baseRetrofit.newBuilder().baseUrl("https://hw.wilinz.com:444").build()
 
     val templateJavaService = retrofit.create<TemplateJavaService>()
 
