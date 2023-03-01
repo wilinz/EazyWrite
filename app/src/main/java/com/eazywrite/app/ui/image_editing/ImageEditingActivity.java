@@ -30,6 +30,9 @@ import com.eazywrite.app.util.UriKt;
 import com.permissionx.guolindev.PermissionX;
 
 import java.io.File;
+import java.util.List;
+
+import kotlin.collections.CollectionsKt;
 
 public class ImageEditingActivity extends AppCompatActivity {
 
@@ -87,8 +90,18 @@ public class ImageEditingActivity extends AppCompatActivity {
         }
     });
 
-    private void takePhoto(Context context){
-        if (imageCacheFile == null || !imageCacheFile.exists()){
+    //    多张图片
+    private final ActivityResultLauncher<String> getMultipleImagesLauncher = registerForActivityResult(new ActivityResultContracts.GetMultipleContents(), uris -> {
+        if (!uris.isEmpty()) {
+            List<File> files = CollectionsKt.map(uris, uri -> UriKt.copyToCacheFile(uri, this));
+        } else {
+            Toast.makeText(this, "未选择图片", Toast.LENGTH_SHORT).show();
+            finish();
+        }
+    });
+
+    private void takePhoto(Context context) {
+        if (imageCacheFile == null || !imageCacheFile.exists()) {
             imageCacheFile = new File(context.getCacheDir(), "image/takePicture.jpg");
             FileKt.createFile(imageCacheFile);
         }
@@ -109,9 +122,9 @@ public class ImageEditingActivity extends AppCompatActivity {
             PermissionX.init(this)
                     .permissions(Manifest.permission.CAMERA)
                     .request((allGranted, grantedList, deniedList) -> {
-                        if (allGranted){
+                        if (allGranted) {
                             takePhoto(this);
-                        }else {
+                        } else {
                             Toast.makeText(ImageEditingActivity.this, "您拒绝了拍照权限", Toast.LENGTH_SHORT).show();
                         }
                     });
