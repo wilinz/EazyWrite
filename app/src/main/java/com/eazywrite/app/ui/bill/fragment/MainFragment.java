@@ -17,14 +17,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.eazywrite.app.R;
-import com.eazywrite.app.data.model.BillBean;
 import com.eazywrite.app.databinding.FragmentBillMainBinding;
 import com.eazywrite.app.ui.bill.AddBillContentActivity;
 import com.eazywrite.app.ui.bill.adapter.CallbackData;
 import com.eazywrite.app.ui.bill.adapter.ItemRecyclerViewAdapter;
 import com.github.florent37.singledateandtimepicker.dialog.SingleDateAndTimePickerDialog;
-
-import org.litepal.LitePal;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -38,9 +35,6 @@ import java.util.Locale;
 
 public class MainFragment extends Fragment implements View.OnClickListener, CallbackData {
 
-
-    private ArrayList<InputViewModel> mInputViewModelList;
-    private List<BillBean> billBeans;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,40 +59,6 @@ public class MainFragment extends Fragment implements View.OnClickListener, Call
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-
-        billBeans = LitePal.findAll(BillBean.class);
-
-        if(billBeans!=null){
-            mInputViewModelList = new ArrayList<>();
-            for (BillBean billBean : billBeans){
-//                Log.d("TAGA",":"+billBean.getName());
-                InputViewModel inputViewModel = new ViewModelProvider(this).get(InputViewModel.class);
-                OutputBean billBean1=new OutputBean();
-                billBean1.setImageId(billBean.getImageId());
-
-                billBean1.setName(billBean.getName());
-                inputViewModel.bean.setValue(billBean1);
-                inputViewModel.setBeiZhu(new StringBuilder(billBean.getBeiZhu()));
-                inputViewModel.setMoneyCount(new StringBuilder(billBean.getMoneyCount()));
-                mInputViewModelList.add(inputViewModel);
-Log.d("TAGA", "："+billBean.getImageId());
-            }
-            Log.d("TAGA", ":"+mInputViewModelList.size());
-//            Log.d("TAGA", ":"+mInputViewModelList.get(1).getBean().getValue().getImageId());
-//            Log.d("TAGA", ":"+mInputViewModelList.get(1).getBean().getValue().getName());
-//            Log.d("TAGA", ":"+mInputViewModelList.get(1).getBeiZhu());
-//            Log.d("TAGA", ":"+mInputViewModelList.get(1).getMoneyCount());
-//            Log.d("TAGA", ":"+mInputViewModelList.get(2).getBean().getValue().getImageId());
-//            Log.d("TAGA", ":"+mInputViewModelList.get(2).getBean().getValue().getName());
-//            Log.d("TAGA", ":"+mInputViewModelList.get(2).getBeiZhu());
-//            Log.d("TAGA", ":"+mInputViewModelList.get(2).getMoneyCount());
-        }
-
-        mBinding.keepAccounts.setLayoutManager(new LinearLayoutManager(getContext()));
-        mBinding.keepAccounts.setAdapter(new ItemRecyclerViewAdapter(mInputViewModelList,getContext()));
-
-
         mBinding.addItem.setOnClickListener(view1 -> {
             AddBillContentActivity.actionStart(getActivity(),this,null);
         });
@@ -181,5 +141,4 @@ Log.d("TAGA", "："+billBean.getImageId());
         mBinding.keepAccounts.setLayoutManager(new LinearLayoutManager(getContext()));
         mBinding.keepAccounts.setAdapter(new ItemRecyclerViewAdapter(viewModel.getBean().getValue(),getContext()));
     }
-
 }
