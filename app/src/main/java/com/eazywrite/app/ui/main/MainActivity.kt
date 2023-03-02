@@ -24,6 +24,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.eazywrite.app.ui.bill.BillActivity
 import com.eazywrite.app.ui.chart.ChartActivity
+import com.eazywrite.app.ui.image_editing.CameraXActivity
 import com.eazywrite.app.ui.image_editing.ImageEditingActivity
 import com.eazywrite.app.ui.theme.EazyWriteTheme
 import com.eazywrite.app.ui.welcome.WelcomeActivity
@@ -103,6 +104,9 @@ class MainActivity : ComponentActivity() {
                                 }
                                 ElevatedButton(onClick = { startActivity<ImageEditingActivity>() }) {
                                     Text(text = "图像增强")
+                                }
+                                ElevatedButton(onClick = { startActivity<CameraXActivity>() }) {
+                                    Text(text = "相机预览")
                                 }
                             }
                         }
