@@ -103,6 +103,7 @@
                 android:id="@+id/passwordWelcome"
                 android:layout_marginLeft="10dp"
                 android:singleLine="true"
+                android:inputType="textPassword"
                 android:background="#B0FFFFFF"
                 android:textSize="18sp"
                 android:hint="请输入您的密码"

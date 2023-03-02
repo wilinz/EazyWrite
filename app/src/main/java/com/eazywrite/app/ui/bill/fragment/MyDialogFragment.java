@@ -25,8 +25,6 @@ import com.eazywrite.app.ui.bill.AddBillContentActivity;
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener;
 
-import org.litepal.LitePal;
-
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -106,7 +104,7 @@ public class MyDialogFragment extends DialogFragment implements View.OnClickList
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 beiZhu.replace(0, beiZhu.length(), charSequence.toString());
-                mViewModel.setBeiZhu(new StringBuilder(beiZhu.toString()));
+                mOutputBean.setBeiZhu(new StringBuilder(beiZhu.toString()));
             }
 
             @Override
@@ -180,50 +178,16 @@ public class MyDialogFragment extends DialogFragment implements View.OnClickList
 
                     isCul = false;
                 }else {
-                    mViewModel.setMoneyCount(mBuilder);
-                     mViewModel.getDate().observe(this, new Observer<StringBuilder>() {
-                        @Override
-                        public void onChanged(StringBuilder stringBuilder) {
-                            Log.d("HelloWorld", "onChanged: "+stringBuilder.toString());
-                        }
-                    });
-                    mViewModel.getMoneyCount().observe(this, new Observer<StringBuilder>() {
-                        @Override
-                        public void onChanged(StringBuilder stringBuilder) {
-                            Log.d("HelloWorld", "onChanged: "+stringBuilder.toString());
-                        }
-                    });
-                    mViewModel.getBeiZhu().observe(this, new Observer<StringBuilder>() {
-                        @Override
-                        public void onChanged(StringBuilder stringBuilder) {
-                            Log.d("HelloWorld", "onChanged: "+stringBuilder.toString());
+                    mOutputBean.setMoneyCount(mBuilder);
 
-                        }
-                    });
-                    mViewModel.setBean(mOutputBean);
-
-                    //添加到本地数据库，还没补充属性来源
-//                    Log.d("TAGX", "mViewModel.getDate().toString():"+mViewModel.getDate().getValue());
-//                    Log.d("TAGX", "mViewModel.getBeiZhu():"+mViewModel.getBeiZhu().getValue());
-//                    Log.d("TAGX", "mViewModel.getMoneyCount():"+mViewModel.getMoneyCount().getValue());
-//                    Log.d("TAGX", ":"+mOutputBean.getName());
-//                    Log.d("TAGX", ":"+mOutputBean.getImageId());
-//                    Log.d("TAGX", "last: "+mViewModel.getDate().getValue());
                     BillBean billBean = new BillBean();
-                    billBean.setImageId(mOutputBean.getImageId());
-                    billBean.setName(mOutputBean.getName());
-                    billBean.setBeiZhu(mViewModel.getBeiZhu().getValue().toString());
-                    billBean.setMoneyCount(mViewModel.getMoneyCount().getValue().toString());
-                    billBean.setItemDate(mViewModel.getDate().getValue().toString());
+                    billBean.setImageId("类别图片");
+                    billBean.setName("类别名称");
+                    billBean.setBeiZhu("备注");
+                    billBean.setMoneyCount("金额");
                     billBean.save();
-
-//                    List<BillBean> billBeans = LitePal.findAll(BillBean.class);
-//
-//                    Log.d("TAGX", ""+billBeans.get(0).getName());
-//                    Log.d("TAGX", ""+billBeans.get(0).getBeiZhu());
-//                    Log.d("TAGX", ""+billBeans.get(0).getImageId());
-//                    Log.d("TAGX", ""+billBeans.get(0).getMoneyCount());
-
+                    mMainFragment.getList().add(mOutputBean);
+                    mViewModel.setBean(mMainFragment.getList());
                     mMainFragment.addData(mViewModel);
                     getDialog().dismiss();
                     getActivity().finish();
@@ -259,7 +223,7 @@ public class MyDialogFragment extends DialogFragment implements View.OnClickList
                 date.append(dateStr);
                 mBinding.dateIcon.setVisibility(View.GONE);
                 mBinding.dateContent.setText(dateStr);
-                mViewModel.setDate(new StringBuilder(dateStr));
+                mOutputBean.setDate(new StringBuilder(dateStr));
             }
         });
         datePicker.addOnNegativeButtonClickListener(new View.OnClickListener() {

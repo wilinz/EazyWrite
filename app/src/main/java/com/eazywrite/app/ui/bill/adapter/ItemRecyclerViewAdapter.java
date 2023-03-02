@@ -11,15 +11,15 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.eazywrite.app.R;
-import com.eazywrite.app.ui.bill.fragment.InputViewModel;
+import com.eazywrite.app.ui.bill.fragment.OutputBean;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class ItemRecyclerViewAdapter extends RecyclerView.Adapter<ItemRecyclerViewAdapter.ViewHolder> {
-    private ArrayList<InputViewModel> mList;
+    private List<OutputBean> mList ;
     private Context  mContext;
 
-    public ItemRecyclerViewAdapter(ArrayList<InputViewModel> mList, Context mContext) {
+    public ItemRecyclerViewAdapter(List<OutputBean> mList, Context mContext) {
         this.mList = mList;
         this.mContext = mContext;
     }
@@ -33,11 +33,11 @@ public class ItemRecyclerViewAdapter extends RecyclerView.Adapter<ItemRecyclerVi
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        InputViewModel inputViewModel = mList.get(position);
-        holder.icon.setImageResource(inputViewModel.getBean().getValue().getImageId());
-        holder.name.setText(inputViewModel.getBean().getValue().getName());
-        holder.beiZhu.setText(inputViewModel.getBeiZhu().getValue());
-        holder.money.setText(inputViewModel.getMoneyCount().getValue());
+        OutputBean outputBean = mList.get(position);
+        holder.icon.setImageResource(outputBean.getImageId());
+        holder.name.setText(outputBean.getName());
+        holder.beiZhu.setText(outputBean.getBeiZhu());
+        holder.money.setText(outputBean.getMoneyCount());
     }
 
     @Override
