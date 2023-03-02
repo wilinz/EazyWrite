@@ -51,8 +51,6 @@ public class MyDialogFragment extends DialogFragment implements View.OnClickList
 
     }
 
-
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -106,7 +104,7 @@ public class MyDialogFragment extends DialogFragment implements View.OnClickList
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 beiZhu.replace(0, beiZhu.length(), charSequence.toString());
-                mOutputBean.setBeiZhu(new StringBuilder(beiZhu.toString()));
+                mViewModel.setBeiZhu(new StringBuilder(beiZhu.toString()));
             }
 
             @Override
@@ -180,16 +178,43 @@ public class MyDialogFragment extends DialogFragment implements View.OnClickList
 
                     isCul = false;
                 }else {
-                    mOutputBean.setMoneyCount(mBuilder);
+                    mViewModel.setMoneyCount(mBuilder);
+                     mViewModel.getDate().observe(this, new Observer<StringBuilder>() {
+                        @Override
+                        public void onChanged(StringBuilder stringBuilder) {
+                            Log.d("HelloWorld", "onChanged: "+stringBuilder.toString());
+                        }
+                    });
+                    mViewModel.getMoneyCount().observe(this, new Observer<StringBuilder>() {
+                        @Override
+                        public void onChanged(StringBuilder stringBuilder) {
+                            Log.d("HelloWorld", "onChanged: "+stringBuilder.toString());
+                        }
+                    });
+                    mViewModel.getBeiZhu().observe(this, new Observer<StringBuilder>() {
+                        @Override
+                        public void onChanged(StringBuilder stringBuilder) {
+                            Log.d("HelloWorld", "onChanged: "+stringBuilder.toString());
 
+                        }
+                    });
+                    mViewModel.setBean(mOutputBean);
+
+                    //添加到本地数据库，还没补充属性来源
+                    Log.d("TAGX","mViewModel.bean.toString():"+mViewModel.bean.toString() );
+                    Log.d("TAGX", "mViewModel.getBean().toString():"+mViewModel.getBean().toString());
+                    Log.d("TAGX", "mViewModel.getDate().toString():"+mViewModel.getDate().toString());
+                    Log.d("TAGX", "mViewModel.getBeiZhu():"+mViewModel.getBeiZhu().toString());
+                    Log.d("TAGX", "mViewModel.getMoneyCount():"+mViewModel.getMoneyCount().toString());
+                    Log.d("TAG", ":"+mOutputBean.getName());
+                    Log.d("TAG", ":"+mOutputBean.getImageId());
                     BillBean billBean = new BillBean();
                     billBean.setImageId("类别图片");
                     billBean.setName("类别名称");
                     billBean.setBeiZhu("备注");
                     billBean.setMoneyCount("金额");
                     billBean.save();
-                    mMainFragment.getList().add(mOutputBean);
-                    mViewModel.setBean(mMainFragment.getList());
+
                     mMainFragment.addData(mViewModel);
                     getDialog().dismiss();
                     getActivity().finish();
@@ -225,7 +250,7 @@ public class MyDialogFragment extends DialogFragment implements View.OnClickList
                 date.append(dateStr);
                 mBinding.dateIcon.setVisibility(View.GONE);
                 mBinding.dateContent.setText(dateStr);
-                mOutputBean.setDate(new StringBuilder(dateStr));
+                mViewModel.setDate(new StringBuilder(dateStr));
             }
         });
         datePicker.addOnNegativeButtonClickListener(new View.OnClickListener() {
