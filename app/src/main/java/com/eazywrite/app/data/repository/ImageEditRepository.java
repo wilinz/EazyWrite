@@ -3,7 +3,7 @@ package com.eazywrite.app.data.repository;
 import com.eazywrite.app.data.model.BillsCropResponse;
 import com.eazywrite.app.data.model.CropEnhanceImageResponse;
 import com.eazywrite.app.data.model.DewarpResponse;
-import com.eazywrite.app.data.network.Network;
+import com.eazywrite.app.data.database.network.Network;
 
 import java.io.File;
 

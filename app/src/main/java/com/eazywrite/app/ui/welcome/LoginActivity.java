@@ -19,7 +19,7 @@ import com.eazywrite.app.R;
 import com.eazywrite.app.data.model.LoginBean;
 import com.eazywrite.app.data.model.RegisterResponse;
 import com.eazywrite.app.data.model.VerifyBean;
-import com.eazywrite.app.data.network.Network;
+import com.eazywrite.app.data.database.network.Network;
 import com.eazywrite.app.databinding.SignupBinding;
 import com.eazywrite.app.ui.main.MainActivity;
 import com.google.gson.Gson;

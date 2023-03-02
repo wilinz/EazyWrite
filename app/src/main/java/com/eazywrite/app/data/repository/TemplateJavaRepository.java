@@ -1,6 +1,6 @@
 package com.eazywrite.app.data.repository;
 
-import com.eazywrite.app.data.network.Network;
+import com.eazywrite.app.data.database.network.Network;
 
 import io.reactivex.rxjava3.core.Observable;
 

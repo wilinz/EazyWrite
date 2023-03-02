@@ -6,6 +6,7 @@ import androidx.databinding.DataBindingUtil;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Toast;
@@ -14,7 +15,7 @@ import com.eazywrite.app.R;
 import com.eazywrite.app.data.model.RegisterResponse;
 import com.eazywrite.app.data.model.ResetBean;
 import com.eazywrite.app.data.model.VerifyBean;
-import com.eazywrite.app.data.network.Network;
+import com.eazywrite.app.data.database.network.Network;
 import com.eazywrite.app.databinding.ActivityFogetPasswordBinding;
 import com.eazywrite.app.ui.main.MainActivity;
 import com.google.gson.Gson;
@@ -77,25 +78,31 @@ public class ForgetPasswordActivity extends AppCompatActivity implements View.On
             showToast("两次输入的密码不相等");
             return;
         }
+
         ResetBean resetBean = new ResetBean();
         resetBean.setCode(code);
         resetBean.setUsername(postbox);
         resetBean.setNewPassword(passwordThree);
+        resetBean.getAll();
         String json = new Gson().toJson(resetBean);
         RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8")
                 ,json);
+
         Call<RegisterResponse> call = Network.INSTANCE.getAccountService().postReset(body);
+
         call.enqueue(new Callback<RegisterResponse>() {
             @Override
             public void onResponse(Call<RegisterResponse> call, Response<RegisterResponse> response) {
-
-                if(response.body().getCode().equals(200))showToast("重置密码成功");
-                else if (response.body().getCode().equals(10011))showToast("密码不符合要求，密码至少包含 数字和英文，长度8-20");
-                else{
+                response.body().getAll();
+                if(response.body().getCode().equals(200)){
+                    showToast("重置密码成功");
+                    MainActivity.Companion.jumpMainActivity(mForgetPasswordActivity);
+                    mForgetPasswordActivity.finish();
+                }
+                else {
                     showToast(response.body().getMsg());
                 }
-                MainActivity.Companion.jumpMainActivity(mForgetPasswordActivity);
-                mForgetPasswordActivity.finish();
+
             }
 
             @Override
@@ -114,7 +121,7 @@ public class ForgetPasswordActivity extends AppCompatActivity implements View.On
             showToast("输入邮箱不能为空");
             return;}
         VerifyBean bean =  new VerifyBean();
-        bean.setCodeType("1001");
+        bean.setCodeType("1002");
         bean.setGraphicCode("忽略");
         bean.setPhoneOrEmail(postbox);
         String json = new Gson().toJson(bean);

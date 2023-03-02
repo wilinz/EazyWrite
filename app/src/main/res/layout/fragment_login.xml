@@ -103,6 +103,7 @@
                 android:id="@+id/passwordWelcome"
                 android:layout_marginLeft="10dp"
                 android:singleLine="true"
+                android:inputType="textPassword"
                 android:background="#B0FFFFFF"
                 android:textSize="18sp"
                 android:hint="请输入您的密码"
@@ -121,7 +122,6 @@
             app:cardCornerRadius="30dp"
             app:cardElevation="8dp"
             app:layout_constraintBottom_toBottomOf="parent"
-
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"

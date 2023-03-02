@@ -1,4 +1,4 @@
-package com.eazywrite.app.data.network.service;
+package com.eazywrite.app.data.database.network.service;
 
 import com.eazywrite.app.data.model.RegisterResponse;
 
@@ -24,6 +24,6 @@ public interface AccountService {
     Call<RegisterResponse> postLogin(@Body RequestBody body);
 
     @Headers({"Content-Type: application/json","Accept: application/json"})//需要添加头
-    @PUT("password/reset")
+    @PUT("account/password/reset")
     Call<RegisterResponse> postReset(@Body RequestBody body);
 }

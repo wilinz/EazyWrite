@@ -1,10 +1,10 @@
-package com.eazywrite.app.data.network
+package com.eazywrite.app.data.database.network
 
 import com.eazywrite.app.BuildConfig
 import com.eazywrite.app.MyApplication
-import com.eazywrite.app.data.network.service.AccountService
-import com.eazywrite.app.data.network.service.TemplateJavaService
-import com.eazywrite.app.data.network.service.TemplateKotlinService
+import com.eazywrite.app.data.database.network.service.AccountService
+import com.eazywrite.app.data.database.network.service.TemplateJavaService
+import com.eazywrite.app.data.database.network.service.TemplateKotlinService
 import com.eazywrite.app.util.RequestInterceptor
 import com.thomasbouvier.persistentcookiejar.PersistentCookieJar
 import com.thomasbouvier.persistentcookiejar.cache.SetCookieCache

@@ -1,5 +1,7 @@
 package com.eazywrite.app.data.model;
 
+import android.util.Log;
+
 public class ResetBean {
 
     /**
@@ -37,5 +39,9 @@ public class ResetBean {
 
     public void setNewPassword(String newPassword) {
         this.newPassword = newPassword;
+    }
+
+    public void getAll() {
+        Log.d("HelloWorld", "username:"+username+" newPassword:"+newPassword+" code:"+code);
     }
 }

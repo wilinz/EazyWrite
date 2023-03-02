@@ -1,4 +1,4 @@
-package com.eazywrite.app.data.network.service
+package com.eazywrite.app.data.database.network.service
 
 import android.database.Observable
 

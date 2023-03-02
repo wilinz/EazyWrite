@@ -30,6 +30,7 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 public class MainFragment extends Fragment implements View.OnClickListener, CallbackData {
@@ -54,7 +55,6 @@ public class MainFragment extends Fragment implements View.OnClickListener, Call
 
     }
 
-    InputViewModel mViewModel;
     FragmentBillMainBinding mBinding;
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -126,15 +126,19 @@ public class MainFragment extends Fragment implements View.OnClickListener, Call
         }
     }
 
-    ArrayList<InputViewModel> mList = new ArrayList<>();
+    public List<OutputBean> getList() {
+        return mList;
+    }
 
+    public void setList(List<OutputBean> list) {
+        mList = list;
+    }
+
+    public List<OutputBean> mList = new ArrayList<>();
 
     @Override
     public void addData(InputViewModel viewModel) {
-        mList.add(viewModel);
-        for (InputViewModel i:mList)
-            Log.d("HelloWorld", "addData: "+i.getBean().getValue().getName());
         mBinding.keepAccounts.setLayoutManager(new LinearLayoutManager(getContext()));
-        mBinding.keepAccounts.setAdapter(new ItemRecyclerViewAdapter(mList,getContext()));
+        mBinding.keepAccounts.setAdapter(new ItemRecyclerViewAdapter(viewModel.getBean().getValue(),getContext()));
     }
 }
