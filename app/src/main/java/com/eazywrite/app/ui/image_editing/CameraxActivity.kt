@@ -2,10 +2,15 @@
 
 package com.eazywrite.app.ui.image_editing
 
+import android.annotation.SuppressLint
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
+import android.util.Size
+import android.view.MotionEvent
+import android.view.View
 import android.view.ViewGroup
+import android.view.ViewTreeObserver
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -25,20 +30,23 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import com.eazywrite.app.util.screenHeight
+import com.eazywrite.app.util.screenWidth
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberPermissionState
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.io.File
-import java.lang.Integer.max
-import java.lang.Integer.min
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.math.abs
+import java.util.concurrent.TimeUnit
 
 /**
  * @author wilinz
  * @date 2023/3/2 8:34
  */
 class CameraXActivity : ComponentActivity() {
+    @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
@@ -49,13 +57,24 @@ class CameraXActivity : ComponentActivity() {
         setContent {
             Surface(color = MaterialTheme.colorScheme.background) {
                 Box(modifier = Modifier.fillMaxSize()) {
-                    var surfaceProvider by remember {
+                    var previewView by remember {
                         mutableStateOf<PreviewView?>(null)
                     }
+                    val scope = rememberCoroutineScope()
                     val cameraPermissionState = rememberPermissionState(
                         android.Manifest.permission.CAMERA,
-                        onPermissionResult = {
-                            surfaceProvider?.let { it1 -> startCamera(it1) }
+                        onPermissionResult = { ok ->
+                            if (ok) {
+                                scope.launch {
+                                    while (previewView == null) {
+                                        delay(1)
+                                    }
+                                    startCamera(
+                                        previewView!!,
+                                        Size(screenWidth, screenHeight)
+                                    )
+                                }
+                            }
                         }
                     )
                     AndroidView(
@@ -65,11 +84,15 @@ class CameraXActivity : ComponentActivity() {
                                     ViewGroup.LayoutParams.MATCH_PARENT,
                                     ViewGroup.LayoutParams.MATCH_PARENT,
                                 )
-                                surfaceProvider = this
+                                previewView = this
                             }
                         },
                         modifier = Modifier
-                            .fillMaxWidth()
+                            .fillMaxWidth(),
+                        update = {
+                            setFocusOnClick(it)
+                            setAutoFocus(it)
+                        }
                     )
                     Box(
                         modifier = Modifier
@@ -80,9 +103,7 @@ class CameraXActivity : ComponentActivity() {
                     ) {
                         TextButton(onClick = {
                             takePhoto()
-//                            cameraPermissionState.launchPermissionRequest()
                         }) {
-//                            Icon(imageVector = Icons.Default.Done, contentDescription = null)
                             Text(text = "拍摄", fontSize = 35.sp)
                         }
                     }
@@ -92,6 +113,57 @@ class CameraXActivity : ComponentActivity() {
                         cameraPermissionState.launchPermissionRequest()
                     })
                 }
+            }
+        }
+    }
+
+    private fun setAutoFocus(previewView: PreviewView) {
+        previewView.afterMeasured {
+            val autoFocusPoint = SurfaceOrientedMeteringPointFactory(1f, 1f)
+                .createPoint(.5f, .5f)
+            try {
+                val autoFocusAction = FocusMeteringAction.Builder(
+                    autoFocusPoint,
+                    FocusMeteringAction.FLAG_AF
+                ).apply {
+                    //start auto-focusing after 2 seconds
+                    setAutoCancelDuration(2, TimeUnit.SECONDS)
+                }.build()
+                camera?.cameraControl?.startFocusAndMetering(autoFocusAction)
+            } catch (e: CameraInfoUnavailableException) {
+                Log.d("ERROR", "cannot access camera", e)
+            }
+        }
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    private fun setFocusOnClick(previewView: PreviewView) {
+        previewView.setOnTouchListener { _, event ->
+            return@setOnTouchListener when (event.action) {
+                MotionEvent.ACTION_DOWN -> {
+                    true
+                }
+                MotionEvent.ACTION_UP -> {
+                    val factory: MeteringPointFactory = SurfaceOrientedMeteringPointFactory(
+                        previewView.width.toFloat(), previewView.height.toFloat()
+                    )
+                    val autoFocusPoint = factory.createPoint(event.x, event.y)
+                    try {
+                        camera?.cameraControl?.startFocusAndMetering(
+                            FocusMeteringAction.Builder(
+                                autoFocusPoint,
+                                FocusMeteringAction.FLAG_AF
+                            ).apply {
+                                //focus only when the user tap the preview
+                                disableAutoCancel()
+                            }.build()
+                        )
+                    } catch (e: CameraInfoUnavailableException) {
+                        Log.d("ERROR", "cannot access camera", e)
+                    }
+                    true
+                }
+                else -> false // Unhandled event.
             }
         }
     }
@@ -152,14 +224,16 @@ class CameraXActivity : ComponentActivity() {
      *  @return suitable aspect ratio
      */
     private fun aspectRatio(width: Int, height: Int): Int {
-        val previewRatio = max(width, height).toDouble() / min(width, height)
-        if (abs(previewRatio - RATIO_4_3_VALUE) <= abs(previewRatio - RATIO_16_9_VALUE)) {
-            return AspectRatio.RATIO_4_3
-        }
+//        val previewRatio = max(width, height).toDouble() / min(width, height)
+//        if (abs(previewRatio - RATIO_4_3_VALUE) <= abs(previewRatio - RATIO_16_9_VALUE)) {
+//            return AspectRatio.RATIO_4_3
+//        }
         return AspectRatio.RATIO_16_9
     }
 
-    private fun startCamera(previewView: PreviewView) {
+    private var camera: Camera? = null
+
+    private fun startCamera(previewView: PreviewView, size: Size) {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
 
         val layoutParams = previewView.layoutParams
@@ -185,7 +259,10 @@ class CameraXActivity : ComponentActivity() {
                 .setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY)
                 // We request aspect ratio but no resolution to match preview config, but letting
                 // CameraX optimize for whatever specific resolution best fits our use cases
-                .setTargetAspectRatio(screenAspectRatio)
+//                .setTargetAspectRatio(screenAspectRatio)
+                .setTargetResolution(
+                    size
+                )
                 // Set initial target rotation, we will have to call this again if rotation changes
                 // during the lifecycle of this use case
                 .setTargetRotation(rotation)
@@ -199,7 +276,7 @@ class CameraXActivity : ComponentActivity() {
                 cameraProvider.unbindAll()
 
                 // Bind use cases to camera
-                cameraProvider.bindToLifecycle(
+                camera = cameraProvider.bindToLifecycle(
                     this, cameraSelector, preview, imageCapture
                 )
 
@@ -208,6 +285,23 @@ class CameraXActivity : ComponentActivity() {
             }
 
         }, ContextCompat.getMainExecutor(this))
+    }
+
+}
+
+inline fun View.afterMeasured(crossinline block: () -> Unit) {
+    if (measuredWidth > 0 && measuredHeight > 0) {
+        block()
+    } else {
+        viewTreeObserver.addOnGlobalLayoutListener(object :
+            ViewTreeObserver.OnGlobalLayoutListener {
+            override fun onGlobalLayout() {
+                if (measuredWidth > 0 && measuredHeight > 0) {
+                    viewTreeObserver.removeOnGlobalLayoutListener(this)
+                    block()
+                }
+            }
+        })
     }
 }
 
