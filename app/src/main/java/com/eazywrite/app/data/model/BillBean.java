@@ -4,16 +4,26 @@ import org.litepal.crud.LitePalSupport;
 
 public class BillBean extends LitePalSupport {
 
-    private String imageId;
+    private int imageId;
     private String name;
     private String beiZhu;
     private String moneyCount;
 
-    public String getImageId() {
+    private String date;
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public int getImageId() {
         return imageId;
     }
 
-    public void setImageId(String imageId) {
+    public void setImageId(int imageId) {
         this.imageId = imageId;
     }
 

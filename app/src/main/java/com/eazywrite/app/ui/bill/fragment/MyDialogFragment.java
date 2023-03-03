@@ -17,13 +17,17 @@ import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.eazywrite.app.R;
 import com.eazywrite.app.data.model.BillBean;
 import com.eazywrite.app.databinding.DialogFragmentBinding;
 import com.eazywrite.app.ui.bill.AddBillContentActivity;
+import com.eazywrite.app.ui.bill.adapter.ItemRecyclerViewAdapter;
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener;
+
+import org.litepal.LitePal;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
@@ -178,15 +182,28 @@ public class MyDialogFragment extends DialogFragment implements View.OnClickList
 
                     isCul = false;
                 }else {
+                    mMainFragment.getList().clear();
+                    List<BillBean> billBeans = LitePal.findAll(BillBean.class);
+                    if (billBeans!=null){
+                        for (BillBean billBean : billBeans){
+                            OutputBean outputBean = new OutputBean();
+                            outputBean.setName(billBean.getName());
+                            outputBean.setImageId(billBean.getImageId());
+                            outputBean.setDate(new StringBuilder().append(billBean.getDate()));
+                            outputBean.setBeiZhu(new StringBuilder().append(billBean.getBeiZhu()));
+                            outputBean.setMoneyCount(new StringBuilder().append(billBean.getMoneyCount()));
+                            mMainFragment.getList().add(outputBean);
+                        }
+                    }
                     mOutputBean.setMoneyCount(mBuilder);
-
-                    BillBean billBean = new BillBean();
-                    billBean.setImageId("类别图片");
-                    billBean.setName("类别名称");
-                    billBean.setBeiZhu("备注");
-                    billBean.setMoneyCount("金额");
-                    billBean.save();
                     mMainFragment.getList().add(mOutputBean);
+                    BillBean billBean = new BillBean();
+                    billBean.setImageId(mOutputBean.getImageId());
+                    billBean.setName(mOutputBean.getName());
+                    billBean.setBeiZhu(mOutputBean.getBeiZhu().toString());
+                    billBean.setMoneyCount(mOutputBean.getMoneyCount().toString());
+                    billBean.setDate(mOutputBean.getDate().toString());
+                    billBean.save();
                     mViewModel.setBean(mMainFragment.getList());
                     mMainFragment.addData(mViewModel);
                     getDialog().dismiss();
