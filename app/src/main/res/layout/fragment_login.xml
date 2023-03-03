@@ -97,20 +97,27 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.40000003">
 
-            <EditText
+            <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:id="@+id/passwordWelcome"
-                android:layout_marginLeft="10dp"
-                android:singleLine="true"
-                android:inputType="textPassword"
-                android:background="#B0FFFFFF"
-                android:textSize="18sp"
-                android:hint="请输入您的密码"
-                android:padding="10dp"
-                android:textColorHint="#888888">
+                android:layout_height="match_parent">
 
-            </EditText>
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:id="@+id/passwordWelcome"
+                    android:layout_marginLeft="10dp"
+                    android:singleLine="true"
+                    android:password="true"
+                    android:inputType="textPassword"
+                    android:background="#B0FFFFFF"
+                    android:textSize="18sp"
+                    android:hint="请输入您的密码"
+                    android:padding="10dp"
+                    android:textColorHint="#888888">
+                </EditText>
+
+            </FrameLayout>
+
         </androidx.cardview.widget.CardView>
 
         <androidx.cardview.widget.CardView

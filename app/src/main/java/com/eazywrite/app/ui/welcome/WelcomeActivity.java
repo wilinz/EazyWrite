@@ -1,5 +1,7 @@
 package com.eazywrite.app.ui.welcome;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.AssetManager;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -100,6 +102,8 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
                 if(response.body().getCode().equals(200)){
                     ShowToast.showToast(getApplicationContext(),"登陆成功");
                     MainActivity.Companion.jumpMainActivity(mActivity);
+                    SharedPreferences sharedPreferences = getSharedPreferences("password", Context.MODE_PRIVATE);
+                    sharedPreferences.edit().putString("password",password).apply();
                     mActivity.finish();
                 } else if (response.body().getCode().equals(10007)) {
                     ShowToast.showToast(getApplicationContext(),"用户不存在");
