@@ -1,5 +1,7 @@
 package com.eazywrite.app.ui.bill.fragment;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -17,13 +19,17 @@ import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.eazywrite.app.R;
 import com.eazywrite.app.data.model.BillBean;
 import com.eazywrite.app.databinding.DialogFragmentBinding;
 import com.eazywrite.app.ui.bill.AddBillContentActivity;
+import com.eazywrite.app.ui.bill.adapter.ItemRecyclerViewAdapter;
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener;
+
+import org.litepal.LitePal;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
@@ -36,6 +42,8 @@ public class MyDialogFragment extends DialogFragment implements View.OnClickList
     private FragmentManager mFragmentManager;
     private MainFragment mMainFragment;
     private OutputBean mOutputBean;
+
+    private SharedPreferences pref;
 
     public MyDialogFragment(AddBillContentActivity activity, FragmentManager fragmentManager,
                             MainFragment mainFragment, OutputBean bean) {
@@ -178,15 +186,33 @@ public class MyDialogFragment extends DialogFragment implements View.OnClickList
 
                     isCul = false;
                 }else {
-                    mOutputBean.setMoneyCount(mBuilder);
+                    mMainFragment.getList().clear();
 
-                    BillBean billBean = new BillBean();
-                    billBean.setImageId("类别图片");
-                    billBean.setName("类别名称");
-                    billBean.setBeiZhu("备注");
-                    billBean.setMoneyCount("金额");
-                    billBean.save();
+                    pref = getActivity().getSharedPreferences("accout", Context.MODE_PRIVATE);
+                    List<BillBean> billBeans = LitePal.findAll(BillBean.class);
+                    if (billBeans!=null){
+                        for (BillBean billBean : billBeans){
+                            if (billBean.getAccount().equals(pref.getString("account",""))){
+                                OutputBean outputBean = new OutputBean();
+                                outputBean.setName(billBean.getName());
+                                outputBean.setImageId(billBean.getImageId());
+                                outputBean.setDate(new StringBuilder().append(billBean.getDate()));
+                                outputBean.setBeiZhu(new StringBuilder().append(billBean.getBeiZhu()));
+                                outputBean.setMoneyCount(new StringBuilder().append(billBean.getMoneyCount()));
+                                mMainFragment.getList().add(outputBean);
+                            }
+                        }
+                    }
+                    mOutputBean.setMoneyCount(mBuilder);
                     mMainFragment.getList().add(mOutputBean);
+                    BillBean billBean = new BillBean();
+                    billBean.setImageId(mOutputBean.getImageId());
+                    billBean.setName(mOutputBean.getName());
+                    billBean.setBeiZhu(mOutputBean.getBeiZhu().toString());
+                    billBean.setMoneyCount(mOutputBean.getMoneyCount().toString());
+                    billBean.setDate(mOutputBean.getDate().toString());
+                    billBean.setAccount(pref.getString("account",""));
+                    billBean.save();
                     mViewModel.setBean(mMainFragment.getList());
                     mMainFragment.addData(mViewModel);
                     getDialog().dismiss();

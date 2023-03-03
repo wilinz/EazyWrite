@@ -1,10 +1,14 @@
 package com.eazywrite.app.ui.bill.fragment;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -14,11 +18,14 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.eazywrite.app.R;
+import com.eazywrite.app.data.model.BillBean;
 import com.eazywrite.app.databinding.FragmentBillMainBinding;
 import com.eazywrite.app.ui.bill.AddBillContentActivity;
 import com.eazywrite.app.ui.bill.adapter.CallbackData;
 import com.eazywrite.app.ui.bill.adapter.ItemRecyclerViewAdapter;
 import com.github.florent37.singledateandtimepicker.dialog.SingleDateAndTimePickerDialog;
+
+import org.litepal.LitePal;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -32,6 +39,7 @@ import java.util.Locale;
 
 public class MainFragment extends Fragment implements View.OnClickListener, CallbackData {
 
+    private  SharedPreferences pref;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,8 +64,34 @@ public class MainFragment extends Fragment implements View.OnClickListener, Call
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        pref = getActivity().getSharedPreferences("accout", Context.MODE_PRIVATE);
+
+        List<BillBean> billBeans = LitePal.findAll(BillBean.class);
+        List<OutputBean> outputBeans = new ArrayList<>();
+        if (billBeans!=null){
+            for (BillBean billBean : billBeans){
+                if (billBean.getAccount().equals(pref.getString("account",""))){
+                    OutputBean outputBean = new OutputBean();
+                    outputBean.setName(billBean.getName());
+                    outputBean.setImageId(billBean.getImageId());
+                    outputBean.setDate(new StringBuilder().append(billBean.getDate()));
+                    outputBean.setBeiZhu(new StringBuilder().append(billBean.getBeiZhu()));
+                    outputBean.setMoneyCount(new StringBuilder().append(billBean.getMoneyCount()));
+                    outputBeans.add(outputBean);
+                }
+            }
+            mBinding.keepAccounts.setLayoutManager(new LinearLayoutManager(getContext()));
+            mBinding.keepAccounts.setAdapter(new ItemRecyclerViewAdapter(outputBeans,getContext()));
+        }
+
+
         mBinding.addItem.setOnClickListener(view1 -> {
-            AddBillContentActivity.actionStart(getActivity(),this,null);
+            if (pref.getString("account","").equals("")){
+                Toast.makeText(getContext(),"请先登录账号",Toast.LENGTH_SHORT).show();
+            }else {
+                AddBillContentActivity.actionStart(getActivity(),this,null);
+            }
         });
         setOnClickListener();
     }
