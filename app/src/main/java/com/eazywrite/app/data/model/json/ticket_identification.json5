@@ -1,0 +1,88 @@
+{
+  "code": 200,
+  "cost_time": 1192,
+  "result": {
+    "object_list": [
+      {
+        "image_angle": 0,
+        "type_description": "商户小票",
+        "rotated_image_width": 1233,
+        "rotated_image_height": 3647,
+        "position": [
+          841,
+          119,
+          2051,
+          211,
+          2232,
+          3840,
+          802,
+          3945
+        ],
+        "kind": "repast",
+        "class": "other_invoice",
+        "item_list": [
+          {
+            "value": "17.6",
+            "position": [
+              141,
+              2133,
+              392,
+              2133,
+              392,
+              2259,
+              141,
+              2259
+            ],
+            "key": "money",
+            "description": "金额"
+          },
+          {
+            "value": "2023-03-03",
+            "position": [
+              181,
+              924,
+              1014,
+              949,
+              1010,
+              1053,
+              178,
+              1029
+            ],
+            "key": "no",
+            "description": "单号"
+          },
+          {
+            "value": "2023-03-03 14:39:00",
+            "position": [],
+            "key": "date",
+            "description": "时间"
+          },
+          {
+            "value": "个",
+            "position": [
+              358,
+              0,
+              494,
+              0,
+              494,
+              83,
+              358,
+              83
+            ],
+            "key": "shop",
+            "description": "商户"
+          },
+          {
+            "value": "外卖信息",
+            "position": [],
+            "key": "sku",
+            "description": "商品"
+          }
+        ],
+        "kind_description": "餐饮",
+        "type": "shop_receipt"
+      }
+    ]
+  },
+  "message": "success"
+}

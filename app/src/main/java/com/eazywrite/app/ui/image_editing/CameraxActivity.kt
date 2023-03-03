@@ -11,18 +11,23 @@ import android.view.*
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
@@ -43,6 +48,18 @@ import java.util.concurrent.TimeUnit
  * @date 2023/3/2 8:34
  */
 class CameraXActivity : ComponentActivity() {
+
+    private var isFlashOpen: Boolean by mutableStateOf(false)
+
+    private val albumLauncher =
+        registerForActivityResult(ActivityResultContracts.GetMultipleContents()) { uris ->
+            if (uris.isNotEmpty()) {
+                Toast.makeText(this, "正在处理", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(this, "未选择图片", Toast.LENGTH_SHORT).show()
+            }
+        }
+
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -93,15 +110,49 @@ class CameraXActivity : ComponentActivity() {
                     )
                     Box(
                         modifier = Modifier
-                            .padding(bottom = 32.dp)
                             .fillMaxWidth()
+                            .padding(bottom = 64.dp)
                             .align(Alignment.BottomCenter),
                         contentAlignment = Alignment.Center
                     ) {
-                        TextButton(onClick = {
-                            takePhoto()
-                        }) {
-                            Text(text = "拍摄", fontSize = 35.sp)
+                        Row(
+                            Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .weight(1f), Alignment.Center
+                            ) {
+                                IconButton(onClick = {
+                                    Toast.makeText(this@CameraXActivity, "长按多选", Toast.LENGTH_SHORT)
+                                        .show()
+                                    albumLauncher.launch("image/*") }) {
+                                    Icon(
+                                        imageVector = Icons.Default.PhotoLibrary,
+                                        contentDescription = "相册",
+                                        tint = Color.White,
+                                    )
+                                }
+                            }
+                            Box(modifier = Modifier.weight(1f), Alignment.Center) {
+                                CaptureButton {
+                                    takePhoto()
+                                }
+                            }
+                            Box(
+                                modifier = Modifier
+                                    .weight(1f), Alignment.Center
+                            ) {
+                                IconButton(onClick = {
+                                    camera?.cameraControl?.enableTorch(!isFlashOpen)
+                                }) {
+                                    Icon(
+                                        imageVector = if (isFlashOpen) Icons.Default.FlashlightOn else Icons.Default.FlashlightOff,
+                                        contentDescription = "灯光",
+                                        tint = Color.White,
+                                    )
+                                }
+                            }
                         }
                     }
 
@@ -111,6 +162,26 @@ class CameraXActivity : ComponentActivity() {
                     })
                 }
             }
+        }
+    }
+
+    @Composable
+    fun CaptureButton(onClick: () -> Unit) {
+        Surface(
+            modifier = Modifier
+                .size(64.dp)
+                .clip(CircleShape)
+                .clickable(onClick = onClick),
+            color = Color.White
+        ) {
+
+            Icon(
+                imageVector = Icons.Default.CameraAlt,
+                contentDescription = "Capture",
+                tint = Color.DarkGray,
+                modifier = Modifier
+                    .padding(16.dp)
+            )
         }
     }
 
@@ -290,6 +361,10 @@ class CameraXActivity : ComponentActivity() {
                     view.performClick()
                     scaleGestureDetector.onTouchEvent(event)
                     return@setOnTouchListener true
+                }
+
+                camera!!.cameraInfo.torchState.observe(this) {
+                    isFlashOpen = it == TorchState.ON
                 }
             } catch (exc: Exception) {
                 Log.e(TAG, "Use case binding failed", exc)
