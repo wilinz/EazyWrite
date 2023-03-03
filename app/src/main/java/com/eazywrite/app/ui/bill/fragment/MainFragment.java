@@ -39,7 +39,10 @@ import java.util.Locale;
 
 public class MainFragment extends Fragment implements View.OnClickListener, CallbackData {
 
-    private  SharedPreferences pref;
+    private SharedPreferences pref;
+
+    private String account;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,13 +68,16 @@ public class MainFragment extends Fragment implements View.OnClickListener, Call
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        pref = getActivity().getSharedPreferences("accout", Context.MODE_PRIVATE);
+        pref = getContext().getSharedPreferences("User", Context.MODE_PRIVATE);
+        account = pref.getString("account","");
 
         List<BillBean> billBeans = LitePal.findAll(BillBean.class);
+
         List<OutputBean> outputBeans = new ArrayList<>();
+
         if (billBeans!=null){
             for (BillBean billBean : billBeans){
-                if (billBean.getAccount().equals(pref.getString("account",""))){
+                if (billBean.getAccount().equals(account)){
                     OutputBean outputBean = new OutputBean();
                     outputBean.setName(billBean.getName());
                     outputBean.setImageId(billBean.getImageId());
@@ -87,8 +93,8 @@ public class MainFragment extends Fragment implements View.OnClickListener, Call
 
 
         mBinding.addItem.setOnClickListener(view1 -> {
-            if (pref.getString("account","").equals("")){
-                Toast.makeText(getContext(),"请先登录账号",Toast.LENGTH_SHORT).show();
+            if (account.equals("")){
+                Toast.makeText(getContext(),"请先登陆账号",Toast.LENGTH_SHORT).show();
             }else {
                 AddBillContentActivity.actionStart(getActivity(),this,null);
             }
