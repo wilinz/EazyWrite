@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.databinding.DataBindingUtil;
 
+import com.eazywrite.app.MyApplication;
 import com.eazywrite.app.R;
 import com.eazywrite.app.data.model.RegisterResponse;
 import com.eazywrite.app.data.model.SignUpBean;
@@ -102,8 +103,8 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
                 if(response.body().getCode().equals(200)){
                     ShowToast.showToast(getApplicationContext(),"登陆成功");
                     MainActivity.Companion.jumpMainActivity(mActivity);
-                    SharedPreferences sharedPreferences = getSharedPreferences("password", Context.MODE_PRIVATE);
-                    sharedPreferences.edit().putString("password",password).apply();
+                    SharedPreferences sharedPreferences = getSharedPreferences("account", Context.MODE_PRIVATE);
+                    sharedPreferences.edit().putString("account",account).apply();
                     mActivity.finish();
                 } else if (response.body().getCode().equals(10007)) {
                     ShowToast.showToast(getApplicationContext(),"用户不存在");

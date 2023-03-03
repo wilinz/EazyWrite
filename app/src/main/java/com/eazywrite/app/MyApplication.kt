@@ -1,12 +1,14 @@
 package com.eazywrite.app
 
 import android.app.Application
+import android.content.SharedPreferences
 import org.litepal.LitePal
 
 class MyApplication : Application() {
 
     companion object {
         lateinit var instance: MyApplication
+
     }
 
     override fun onCreate() {
