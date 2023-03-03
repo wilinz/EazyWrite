@@ -7,10 +7,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.util.Size
-import android.view.MotionEvent
-import android.view.View
-import android.view.ViewGroup
-import android.view.ViewTreeObserver
+import android.view.*
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -279,13 +276,28 @@ class CameraXActivity : ComponentActivity() {
                 camera = cameraProvider.bindToLifecycle(
                     this, cameraSelector, preview, imageCapture
                 )
+                val scaleGestureDetector = ScaleGestureDetector(this,
+                    object : ScaleGestureDetector.SimpleOnScaleGestureListener() {
+                        override fun onScale(detector: ScaleGestureDetector): Boolean {
+                            val scale =
+                                camera!!.cameraInfo.zoomState.value!!.zoomRatio * detector.scaleFactor
+                            camera!!.cameraControl.setZoomRatio(scale)
+                            return true
+                        }
+                    })
 
+                previewView.setOnTouchListener { view, event ->
+                    view.performClick()
+                    scaleGestureDetector.onTouchEvent(event)
+                    return@setOnTouchListener true
+                }
             } catch (exc: Exception) {
                 Log.e(TAG, "Use case binding failed", exc)
             }
 
         }, ContextCompat.getMainExecutor(this))
     }
+
 
 }
 
