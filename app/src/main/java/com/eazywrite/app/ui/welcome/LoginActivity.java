@@ -110,7 +110,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 Log.d("HelloWorld", "onResponse: "+"code"+response.body().getCode());
                 if(response.body().getCode().equals(200)){
                     showToast("注册成功");
-                    SharedPreferences sharedPreferences = getSharedPreferences("account", Context.MODE_PRIVATE);
+                    SharedPreferences sharedPreferences = getSharedPreferences("User", Context.MODE_PRIVATE);
                     sharedPreferences.edit().putString("account",postbox).apply();
                     MainActivity.Companion.jumpMainActivity(mActivity);
                     mActivity.finish();

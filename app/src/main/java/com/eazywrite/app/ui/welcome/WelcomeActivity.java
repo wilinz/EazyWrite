@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.content.res.AssetManager;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -101,10 +102,11 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
             public void onResponse(Call<RegisterResponse> call, Response<RegisterResponse> response) {
                 response.body().getAll();
                 if(response.body().getCode().equals(200)){
+                    SharedPreferences.Editor editor = getSharedPreferences("User",MODE_PRIVATE).edit();
+                    editor.putString("account",account);
+                    editor.apply();
                     ShowToast.showToast(getApplicationContext(),"登陆成功");
                     MainActivity.Companion.jumpMainActivity(mActivity);
-                    SharedPreferences sharedPreferences = getSharedPreferences("account", Context.MODE_PRIVATE);
-                    sharedPreferences.edit().putString("account",account).apply();
                     mActivity.finish();
                 } else if (response.body().getCode().equals(10007)) {
                     ShowToast.showToast(getApplicationContext(),"用户不存在");
