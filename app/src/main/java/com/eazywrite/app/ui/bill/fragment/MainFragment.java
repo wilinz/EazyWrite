@@ -1,14 +1,11 @@
 package com.eazywrite.app.ui.bill.fragment;
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -39,11 +36,9 @@ import java.util.Locale;
 
 public class MainFragment extends Fragment implements View.OnClickListener, CallbackData {
 
-    private  SharedPreferences pref;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
 
     }
 
@@ -66,21 +61,19 @@ public class MainFragment extends Fragment implements View.OnClickListener, Call
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        pref = getContext().getSharedPreferences("User", Context.MODE_PRIVATE);
-        Log.d("TAGX", pref.getString("account",""));
         List<BillBean> billBeans = LitePal.findAll(BillBean.class);
+
         List<OutputBean> outputBeans = new ArrayList<>();
+
         if (billBeans!=null){
             for (BillBean billBean : billBeans){
-                if (billBean.getAccount().equals(pref.getString("account",""))){
-                    OutputBean outputBean = new OutputBean();
-                    outputBean.setName(billBean.getName());
-                    outputBean.setImageId(billBean.getImageId());
-                    outputBean.setDate(new StringBuilder().append(billBean.getDate()));
-                    outputBean.setBeiZhu(new StringBuilder().append(billBean.getBeiZhu()));
-                    outputBean.setMoneyCount(new StringBuilder().append(billBean.getMoneyCount()));
-                    outputBeans.add(outputBean);
-                }
+                OutputBean outputBean = new OutputBean();
+                outputBean.setName(billBean.getName());
+                outputBean.setImageId(billBean.getImageId());
+                outputBean.setDate(new StringBuilder().append(billBean.getDate()));
+                outputBean.setBeiZhu(new StringBuilder().append(billBean.getBeiZhu()));
+                outputBean.setMoneyCount(new StringBuilder().append(billBean.getMoneyCount()));
+                outputBeans.add(outputBean);
             }
             mBinding.keepAccounts.setLayoutManager(new LinearLayoutManager(getContext()));
             mBinding.keepAccounts.setAdapter(new ItemRecyclerViewAdapter(outputBeans,getContext()));
@@ -88,12 +81,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Call
 
 
         mBinding.addItem.setOnClickListener(view1 -> {
-            Log.d("TAGX", pref.getString("account",""));
-            if (pref.getString("account","").equals("")){
-                Toast.makeText(getContext(),"请先登录账号",Toast.LENGTH_SHORT).show();
-            }else {
-                AddBillContentActivity.actionStart(getActivity(),this,null);
-            }
+            AddBillContentActivity.actionStart(getActivity(),this,null);
         });
         setOnClickListener();
     }
