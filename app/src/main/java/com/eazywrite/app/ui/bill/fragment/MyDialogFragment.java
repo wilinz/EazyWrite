@@ -45,6 +45,8 @@ public class MyDialogFragment extends DialogFragment implements View.OnClickList
 
     private SharedPreferences pref;
 
+    private String account;
+
     public MyDialogFragment(AddBillContentActivity activity, FragmentManager fragmentManager,
                             MainFragment mainFragment, OutputBean bean) {
         mActivity = activity;
@@ -82,6 +84,8 @@ public class MyDialogFragment extends DialogFragment implements View.OnClickList
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        pref = getContext().getSharedPreferences("User", Context.MODE_PRIVATE);
+        account = pref.getString("account","");
         mBinding.money.setText(mBuilder);
         setClickListener();
     }
@@ -187,12 +191,10 @@ public class MyDialogFragment extends DialogFragment implements View.OnClickList
                     isCul = false;
                 }else {
                     mMainFragment.getList().clear();
-
-                    pref = getActivity().getSharedPreferences("accout", Context.MODE_PRIVATE);
                     List<BillBean> billBeans = LitePal.findAll(BillBean.class);
                     if (billBeans!=null){
                         for (BillBean billBean : billBeans){
-                            if (billBean.getAccount().equals(pref.getString("account",""))){
+                            if (billBean.getAccount().equals(account)){
                                 OutputBean outputBean = new OutputBean();
                                 outputBean.setName(billBean.getName());
                                 outputBean.setImageId(billBean.getImageId());
@@ -203,6 +205,8 @@ public class MyDialogFragment extends DialogFragment implements View.OnClickList
                             }
                         }
                     }
+
+
                     mOutputBean.setMoneyCount(mBuilder);
                     mMainFragment.getList().add(mOutputBean);
                     BillBean billBean = new BillBean();
@@ -211,7 +215,7 @@ public class MyDialogFragment extends DialogFragment implements View.OnClickList
                     billBean.setBeiZhu(mOutputBean.getBeiZhu().toString());
                     billBean.setMoneyCount(mOutputBean.getMoneyCount().toString());
                     billBean.setDate(mOutputBean.getDate().toString());
-                    billBean.setAccount(pref.getString("account",""));
+                    billBean.setAccount(account);
                     billBean.save();
                     mViewModel.setBean(mMainFragment.getList());
                     mMainFragment.addData(mViewModel);
