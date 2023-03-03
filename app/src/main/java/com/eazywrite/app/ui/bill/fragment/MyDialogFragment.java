@@ -1,5 +1,7 @@
 package com.eazywrite.app.ui.bill.fragment;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -40,6 +42,8 @@ public class MyDialogFragment extends DialogFragment implements View.OnClickList
     private FragmentManager mFragmentManager;
     private MainFragment mMainFragment;
     private OutputBean mOutputBean;
+
+    private SharedPreferences pref;
 
     public MyDialogFragment(AddBillContentActivity activity, FragmentManager fragmentManager,
                             MainFragment mainFragment, OutputBean bean) {
@@ -183,16 +187,20 @@ public class MyDialogFragment extends DialogFragment implements View.OnClickList
                     isCul = false;
                 }else {
                     mMainFragment.getList().clear();
+
+                    pref = getActivity().getSharedPreferences("accout", Context.MODE_PRIVATE);
                     List<BillBean> billBeans = LitePal.findAll(BillBean.class);
                     if (billBeans!=null){
                         for (BillBean billBean : billBeans){
-                            OutputBean outputBean = new OutputBean();
-                            outputBean.setName(billBean.getName());
-                            outputBean.setImageId(billBean.getImageId());
-                            outputBean.setDate(new StringBuilder().append(billBean.getDate()));
-                            outputBean.setBeiZhu(new StringBuilder().append(billBean.getBeiZhu()));
-                            outputBean.setMoneyCount(new StringBuilder().append(billBean.getMoneyCount()));
-                            mMainFragment.getList().add(outputBean);
+                            if (billBean.getAccount().equals(pref.getString("account",""))){
+                                OutputBean outputBean = new OutputBean();
+                                outputBean.setName(billBean.getName());
+                                outputBean.setImageId(billBean.getImageId());
+                                outputBean.setDate(new StringBuilder().append(billBean.getDate()));
+                                outputBean.setBeiZhu(new StringBuilder().append(billBean.getBeiZhu()));
+                                outputBean.setMoneyCount(new StringBuilder().append(billBean.getMoneyCount()));
+                                mMainFragment.getList().add(outputBean);
+                            }
                         }
                     }
                     mOutputBean.setMoneyCount(mBuilder);
@@ -203,6 +211,7 @@ public class MyDialogFragment extends DialogFragment implements View.OnClickList
                     billBean.setBeiZhu(mOutputBean.getBeiZhu().toString());
                     billBean.setMoneyCount(mOutputBean.getMoneyCount().toString());
                     billBean.setDate(mOutputBean.getDate().toString());
+                    billBean.setAccount(pref.getString("account",""));
                     billBean.save();
                     mViewModel.setBean(mMainFragment.getList());
                     mMainFragment.addData(mViewModel);

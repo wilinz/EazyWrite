@@ -4,6 +4,7 @@ import org.litepal.crud.LitePalSupport;
 
 public class BillBean extends LitePalSupport {
 
+    private String account;
     private int imageId;
     private String name;
     private String beiZhu;
@@ -49,5 +50,13 @@ public class BillBean extends LitePalSupport {
 
     public void setMoneyCount(String moneyCount) {
         this.moneyCount = moneyCount;
+    }
+
+    public String getAccount() {
+        return account;
+    }
+
+    public void setAccount(String account) {
+        this.account = account;
     }
 }
