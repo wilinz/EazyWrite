@@ -6,6 +6,7 @@ import androidx.databinding.DataBindingUtil;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.AssetManager;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -109,6 +110,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 Log.d("HelloWorld", "onResponse: "+"code"+response.body().getCode());
                 if(response.body().getCode().equals(200)){
                     showToast("注册成功");
+                    SharedPreferences sharedPreferences = getSharedPreferences("account", Context.MODE_PRIVATE);
+                    sharedPreferences.edit().putString("account",postbox).apply();
                     MainActivity.Companion.jumpMainActivity(mActivity);
                     mActivity.finish();
                     sWelcomeActivity.finish();

@@ -2,6 +2,7 @@ package com.eazywrite.app.ui.welcome;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
@@ -95,6 +96,8 @@ public class ForgetPasswordActivity extends AppCompatActivity implements View.On
                 response.body().getAll();
                 if(response.body().getCode().equals(200)){
                     showToast("重置密码成功");
+                    SharedPreferences sharedPreferences = getSharedPreferences("password", Context.MODE_PRIVATE);
+                    sharedPreferences.edit().putString("password",passwordThree).apply();
                     MainActivity.Companion.jumpMainActivity(mForgetPasswordActivity);
                     mForgetPasswordActivity.finish();
                 }
