@@ -14,7 +14,7 @@ import androidx.databinding.DataBindingUtil;
 import com.eazywrite.app.R;
 import com.eazywrite.app.data.model.RegisterResponse;
 import com.eazywrite.app.data.model.SignUpBean;
-import com.eazywrite.app.data.database.network.Network;
+import com.eazywrite.app.data.network.Network;
 import com.eazywrite.app.databinding.FragmentLoginBinding;
 import com.eazywrite.app.ui.main.MainActivity;
 import com.eazywrite.app.util.ActivityKt;

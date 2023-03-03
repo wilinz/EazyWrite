@@ -1,22 +1,21 @@
 package com.eazywrite.app.ui.welcome;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.databinding.DataBindingUtil;
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.databinding.DataBindingUtil;
 
 import com.eazywrite.app.R;
 import com.eazywrite.app.data.model.RegisterResponse;
 import com.eazywrite.app.data.model.ResetBean;
 import com.eazywrite.app.data.model.VerifyBean;
-import com.eazywrite.app.data.database.network.Network;
+import com.eazywrite.app.data.network.Network;
 import com.eazywrite.app.databinding.ActivityFogetPasswordBinding;
 import com.eazywrite.app.ui.main.MainActivity;
 import com.google.gson.Gson;

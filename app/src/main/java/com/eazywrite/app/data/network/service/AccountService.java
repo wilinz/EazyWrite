@@ -1,4 +1,4 @@
-package com.eazywrite.app.data.database.network.service;
+package com.eazywrite.app.data.network.service;
 
 import com.eazywrite.app.data.model.RegisterResponse;
 

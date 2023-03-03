@@ -11,10 +11,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.eazywrite.app.R;
-import com.eazywrite.app.ui.bill.fragment.InputViewModel;
 import com.eazywrite.app.ui.bill.fragment.OutputBean;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ItemRecyclerViewAdapter extends RecyclerView.Adapter<ItemRecyclerViewAdapter.ViewHolder> {

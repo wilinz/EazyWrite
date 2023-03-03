@@ -1,6 +1,6 @@
 package com.eazywrite.app.data.repository
 
-import com.eazywrite.app.data.database.network.Network
+import com.eazywrite.app.data.network.Network
 
 //这是一个kotlin Repository模板示例
 object TemplateKotlinRepository {
