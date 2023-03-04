@@ -1,9 +1,13 @@
 package com.eazywrite.app.ui.bill.fragment;
 
+import static android.content.Context.MODE_PRIVATE;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,6 +36,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.format.TextStyle;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -40,6 +45,12 @@ import java.util.Locale;
 public class MainFragment extends Fragment implements View.OnClickListener, CallbackData {
 
     private SharedPreferences pref;
+
+    private SharedPreferences prefDate;
+
+    private String sYear;
+    private String sMonth;
+    private String sDay;
 
     private String account;
 
@@ -68,7 +79,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Call
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        pref = getContext().getSharedPreferences("User", Context.MODE_PRIVATE);
+        pref = getContext().getSharedPreferences("User", MODE_PRIVATE);
         account = pref.getString("account","");
 
         List<BillBean> billBeans = LitePal.findAll(BillBean.class);
@@ -139,7 +150,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Call
                             dayOfWeek = date2.getDayOfWeek();
                             DayOfWeek dayOfWeek2 = DayOfWeek.valueOf(dayOfWeek.toString());
                             chineseDayOfWeekString = dayOfWeek2.getDisplayName(
-                                    java.time.format.TextStyle.FULL_STANDALONE,
+                                    TextStyle.FULL_STANDALONE,
                                     Locale.CHINESE
                             );
                         }
@@ -147,6 +158,16 @@ public class MainFragment extends Fragment implements View.OnClickListener, Call
                         mBinding.year.setText(year+"年");
                         mBinding.month.setText(month+"月");
                         mBinding.day.setText(month+"月"+day+"日"+" "+chineseDayOfWeekString);
+
+                        SharedPreferences.Editor editor = getContext().getSharedPreferences("date",MODE_PRIVATE).edit();
+                        editor.putString("year",year+"");
+                        editor.putString("month",month+"");
+                        editor.putString("day",day+"");
+                        editor.apply();
+
+                        Message message = new Message();
+                        message.what = 1;
+                        handler.sendMessage(message);
                     }
                 })
                 .display();
@@ -178,4 +199,67 @@ public class MainFragment extends Fragment implements View.OnClickListener, Call
         mBinding.keepAccounts.setLayoutManager(new LinearLayoutManager(getContext()));
         mBinding.keepAccounts.setAdapter(new ItemRecyclerViewAdapter(viewModel.getBean().getValue(),getContext()));
     }
+
+    Handler handler = new Handler(new Handler.Callback() {
+        @Override
+        public boolean handleMessage(@NonNull Message message) {
+            if (message.what == 1){
+                prefDate = getContext().getSharedPreferences("date", MODE_PRIVATE);
+                sYear = prefDate.getString("year","");
+                sMonth = prefDate .getString("month","");
+                sDay = prefDate.getString("day","");
+
+                Log.d("TAGX", ""+sYear+" "+sMonth+ " "+sDay);
+                List<BillBean> billBeans = LitePal.findAll(BillBean.class);
+
+                List<OutputBean> outputBeans = new ArrayList<>();
+
+                if (billBeans!=null){
+                    for (BillBean billBean : billBeans){
+                        if (billBean.getAccount().equals(account)){
+                            //将2022年10月3日 截取三段 提取出 2022 10 3
+                            String str0 = billBean.getDate();
+                            Date d1 = null;//定义起始日期
+                            try {
+                                d1 = new SimpleDateFormat("yyyy年MM月dd日").parse(str0);
+                            } catch (ParseException e) {
+                                throw new RuntimeException(e);
+                            }
+                            SimpleDateFormat sdf0 = new SimpleDateFormat("yyyy");
+
+                            SimpleDateFormat sdf1 = new SimpleDateFormat("MM");
+
+                            SimpleDateFormat sdf2= new SimpleDateFormat("dd");
+
+                            String year = sdf0.format(d1);
+
+                            String month = sdf1.format(d1);
+
+                            String day = sdf2.format(d1);
+
+                            //去掉月份和日前面的零
+                            String newMonth = month.replaceFirst("^0*", "");
+                            String newDay = day.replaceFirst("^0*", "");
+
+
+                            Log.d("TAGX", "" + year + "  "+month + " "+day);
+                            if (year.equals(sYear)&&newMonth.equals(sMonth)&&newDay.equals(sDay)){
+                                OutputBean outputBean = new OutputBean();
+                                outputBean.setName(billBean.getName());
+                                outputBean.setImageId(billBean.getImageId());
+                                outputBean.setDate(new StringBuilder().append(billBean.getDate()));
+                                outputBean.setBeiZhu(new StringBuilder().append(billBean.getBeiZhu()));
+                                outputBean.setMoneyCount(new StringBuilder().append(billBean.getMoneyCount()));
+                                outputBeans.add(outputBean);
+                            }
+                        }
+                    }
+                    mBinding.keepAccounts.setLayoutManager(new LinearLayoutManager(getContext()));
+                    mBinding.keepAccounts.setAdapter(new ItemRecyclerViewAdapter(outputBeans,getContext()));
+                }
+
+            }
+            return false;
+        }
+    });
 }
