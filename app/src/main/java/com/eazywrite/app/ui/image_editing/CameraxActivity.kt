@@ -1,4 +1,7 @@
-@file:OptIn(ExperimentalPermissionsApi::class, ExperimentalPermissionsApi::class)
+@file:OptIn(
+    ExperimentalPermissionsApi::class, ExperimentalPermissionsApi::class,
+    ExperimentalMaterial3Api::class
+)
 
 package com.eazywrite.app.ui.image_editing
 
@@ -16,8 +19,11 @@ import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
@@ -27,11 +33,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import coil.compose.AsyncImage
 import com.eazywrite.app.util.screenHeight
 import com.eazywrite.app.util.screenWidth
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -54,11 +64,11 @@ class CameraXActivity : ComponentActivity() {
     private val albumLauncher =
         registerForActivityResult(ActivityResultContracts.GetMultipleContents()) { uris ->
             if (uris.isNotEmpty()) {
-                Toast.makeText(this, "正在处理", Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(this, "未选择图片", Toast.LENGTH_SHORT).show()
+                images.addAll(uris)
             }
         }
+
+    private val images = mutableStateListOf<Uri>()
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -91,6 +101,7 @@ class CameraXActivity : ComponentActivity() {
                             }
                         }
                     )
+
                     AndroidView(
                         factory = {
                             PreviewView(it).apply {
@@ -108,59 +119,176 @@ class CameraXActivity : ComponentActivity() {
                             setAutoFocus(it)
                         }
                     )
-                    Box(
+
+                    Scaffold(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(bottom = 64.dp)
-                            .align(Alignment.BottomCenter),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Row(
-                            Modifier.fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically
+                            .pointerInput(Unit) {
+                                detectTransformGestures { _, _, zoom, _ ->
+                                    val scale =
+                                        camera?.cameraInfo?.zoomState?.value?.zoomRatio
+                                    scale?.let {
+                                        camera?.cameraControl?.setZoomRatio(it * zoom)
+                                    }
+                                }
+                            },
+                        containerColor = Color.Transparent,
+                        topBar = {
+                            TopAppBar(
+                                title = {
+                                    Text(text = "智能识别票据", color = Color.White)
+                                },
+                                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent),
+                                navigationIcon = {
+                                    IconButton(onClick = {
+                                        finish()
+                                    }) {
+                                        Icon(
+                                            imageVector = Icons.Default.ArrowBack,
+                                            contentDescription = "返回",
+                                            tint = Color.White,
+                                        )
+                                    }
+                                },
+                                actions = {
+                                    IconButton(onClick = {
+                                        camera?.cameraControl?.enableTorch(!isFlashOpen)
+                                    }) {
+                                        Icon(
+                                            imageVector = if (isFlashOpen) Icons.Default.FlashlightOn else Icons.Default.FlashlightOff,
+                                            contentDescription = "灯光",
+                                            tint = Color.White,
+                                        )
+                                    }
+                                }
+                            )
+                        },
+                        bottomBar = {
+                            BottomActions(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .align(Alignment.BottomCenter)
+                            )
+                        }
+                    ) { pad ->
+                        Box(
+                            modifier = Modifier
+                                .padding(pad)
+                                .fillMaxSize()
                         ) {
-                            Box(
-                                modifier = Modifier
-                                    .weight(1f), Alignment.Center
-                            ) {
-                                IconButton(onClick = {
-                                    Toast.makeText(this@CameraXActivity, "长按多选", Toast.LENGTH_SHORT)
-                                        .show()
-                                    albumLauncher.launch("image/*") }) {
-                                    Icon(
-                                        imageVector = Icons.Default.PhotoLibrary,
-                                        contentDescription = "相册",
-                                        tint = Color.White,
-                                    )
-                                }
-                            }
-                            Box(modifier = Modifier.weight(1f), Alignment.Center) {
-                                CaptureButton {
-                                    takePhoto()
-                                }
-                            }
-                            Box(
-                                modifier = Modifier
-                                    .weight(1f), Alignment.Center
-                            ) {
-                                IconButton(onClick = {
-                                    camera?.cameraControl?.enableTorch(!isFlashOpen)
-                                }) {
-                                    Icon(
-                                        imageVector = if (isFlashOpen) Icons.Default.FlashlightOn else Icons.Default.FlashlightOff,
-                                        contentDescription = "灯光",
-                                        tint = Color.White,
-                                    )
-                                }
-                            }
+
                         }
                     }
-
 
                     LaunchedEffect(key1 = Unit, block = {
                         cameraPermissionState.launchPermissionRequest()
                     })
+
                 }
+            }
+        }
+    }
+
+    @Composable
+    private fun BottomActions(modifier: Modifier = Modifier) {
+        Box(
+            modifier = modifier
+                .padding(bottom = 64.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Row(
+                Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Box(
+                    modifier = Modifier
+                        .weight(1f), Alignment.Center
+                ) {
+                    if (images.isEmpty()) {
+                        IconButton(onClick = {
+                            Toast.makeText(
+                                this@CameraXActivity,
+                                "长按多选",
+                                Toast.LENGTH_SHORT
+                            )
+                                .show()
+                            albumLauncher.launch("image/*")
+                        }) {
+                            Icon(
+                                imageVector = Icons.Default.PhotoLibrary,
+                                contentDescription = "相册",
+                                tint = Color.White,
+                            )
+                        }
+                    } else {
+                        Box(
+                            Modifier
+                                .size(54.dp)
+                        ) {
+                            AsyncImage(
+                                model = images.last(),
+                                modifier = Modifier
+                                    .padding(7.dp)
+                                    .fillMaxSize()
+                                    .clip(RoundedCornerShape(6.dp))
+                                    .clickable {
+                                        Toast
+                                            .makeText(
+                                                this@CameraXActivity,
+                                                "长按多选",
+                                                Toast.LENGTH_SHORT
+                                            )
+                                            .show()
+                                        albumLauncher.launch("image/*")
+                                    },
+                                contentDescription = "图片",
+                                contentScale = ContentScale.Crop
+                            )
+                            RedDot(Modifier.align(Alignment.TopEnd), images.size)
+                        }
+                    }
+
+                }
+                Box(modifier = Modifier.weight(1f), Alignment.Center) {
+                    CaptureButton {
+                        takePhoto()
+                    }
+                }
+                Box(
+                    modifier = Modifier
+                        .weight(1f), Alignment.Center
+                ) {
+                    IconButton(onClick = {
+                    }) {
+                        Icon(
+                            imageVector = Icons.Default.Done,
+                            contentDescription = "完成",
+                            tint = Color.White,
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    @Composable
+    private fun RedDot(modifier: Modifier = Modifier, number: Int) {
+        Surface(
+            color = Color.Red, modifier = modifier
+                .size(14.dp),
+            shape = CircleShape
+        ) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                Alignment.Center
+            ) {
+                val fontSize = with(LocalDensity.current) {
+                    10.dp.toSp()
+                }
+                Text(
+                    text = "$number",
+                    fontSize = fontSize,
+                    color = Color.White
+                )
             }
         }
     }
@@ -172,7 +300,9 @@ class CameraXActivity : ComponentActivity() {
                 .size(64.dp)
                 .clip(CircleShape)
                 .clickable(onClick = onClick),
-            color = Color.White
+            color = Color.White,
+            shadowElevation = 8.dp,
+            tonalElevation = 8.dp
         ) {
 
             Icon(
@@ -262,9 +392,9 @@ class CameraXActivity : ComponentActivity() {
                 }
 
                 override fun onImageSaved(output: ImageCapture.OutputFileResults) {
-                    val savedUri = Uri.fromFile(photoFile)
+                    val savedUri = output.savedUri ?: return
+                    images.add(savedUri)
                     val msg = "Photo capture succeeded: $savedUri"
-                    Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
                     Log.d(TAG, msg)
                 }
             })
@@ -347,21 +477,6 @@ class CameraXActivity : ComponentActivity() {
                 camera = cameraProvider.bindToLifecycle(
                     this, cameraSelector, preview, imageCapture
                 )
-                val scaleGestureDetector = ScaleGestureDetector(this,
-                    object : ScaleGestureDetector.SimpleOnScaleGestureListener() {
-                        override fun onScale(detector: ScaleGestureDetector): Boolean {
-                            val scale =
-                                camera!!.cameraInfo.zoomState.value!!.zoomRatio * detector.scaleFactor
-                            camera!!.cameraControl.setZoomRatio(scale)
-                            return true
-                        }
-                    })
-
-                previewView.setOnTouchListener { view, event ->
-                    view.performClick()
-                    scaleGestureDetector.onTouchEvent(event)
-                    return@setOnTouchListener true
-                }
 
                 camera!!.cameraInfo.torchState.observe(this) {
                     isFlashOpen = it == TorchState.ON
