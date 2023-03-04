@@ -19,9 +19,9 @@ import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -35,8 +35,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.toSize
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
@@ -115,13 +117,43 @@ class CameraXActivity : ComponentActivity() {
                         modifier = Modifier
                             .fillMaxWidth(),
                         update = {
-                            setFocusOnClick(it)
                             setAutoFocus(it)
                         }
                     )
 
+                    var size by remember {
+                        mutableStateOf(androidx.compose.ui.geometry.Size.Zero)
+                    }
                     Scaffold(
                         modifier = Modifier
+                            .onSizeChanged {
+                                size = it.toSize()
+                            }
+                            .pointerInput(Unit) {
+                                detectTapGestures(onTap = { offset ->
+                                    val factory: MeteringPointFactory =
+                                        SurfaceOrientedMeteringPointFactory(
+                                            size.width, size.height
+                                        )
+                                    val autoFocusPoint = factory.createPoint(offset.x, offset.y)
+                                    try {
+                                        camera?.cameraControl?.startFocusAndMetering(
+                                            FocusMeteringAction
+                                                .Builder(
+                                                    autoFocusPoint,
+                                                    FocusMeteringAction.FLAG_AF
+                                                )
+                                                .apply {
+                                                    //focus only when the user tap the preview
+                                                    disableAutoCancel()
+                                                }
+                                                .build()
+                                        )
+                                    } catch (e: CameraInfoUnavailableException) {
+                                        Log.d("ERROR", "cannot access camera", e)
+                                    }
+                                })
+                            }
                             .pointerInput(Unit) {
                                 detectTransformGestures { _, _, zoom, _ ->
                                     val scale =
@@ -330,38 +362,6 @@ class CameraXActivity : ComponentActivity() {
                 camera?.cameraControl?.startFocusAndMetering(autoFocusAction)
             } catch (e: CameraInfoUnavailableException) {
                 Log.d("ERROR", "cannot access camera", e)
-            }
-        }
-    }
-
-    @SuppressLint("ClickableViewAccessibility")
-    private fun setFocusOnClick(previewView: PreviewView) {
-        previewView.setOnTouchListener { _, event ->
-            return@setOnTouchListener when (event.action) {
-                MotionEvent.ACTION_DOWN -> {
-                    true
-                }
-                MotionEvent.ACTION_UP -> {
-                    val factory: MeteringPointFactory = SurfaceOrientedMeteringPointFactory(
-                        previewView.width.toFloat(), previewView.height.toFloat()
-                    )
-                    val autoFocusPoint = factory.createPoint(event.x, event.y)
-                    try {
-                        camera?.cameraControl?.startFocusAndMetering(
-                            FocusMeteringAction.Builder(
-                                autoFocusPoint,
-                                FocusMeteringAction.FLAG_AF
-                            ).apply {
-                                //focus only when the user tap the preview
-                                disableAutoCancel()
-                            }.build()
-                        )
-                    } catch (e: CameraInfoUnavailableException) {
-                        Log.d("ERROR", "cannot access camera", e)
-                    }
-                    true
-                }
-                else -> false // Unhandled event.
             }
         }
     }
