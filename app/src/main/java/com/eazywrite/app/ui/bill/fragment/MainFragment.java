@@ -266,9 +266,9 @@ public class MainFragment extends Fragment implements View.OnClickListener, Call
                         editor.putString("day",day+"");
                         editor.apply();
 
-//                        Message message = new Message();
-//                        message.what = 1;
-//                        handler.sendMessage(message);
+                        Message message = new Message();
+                        message.what = 1;
+                        handler.sendMessage(message);
                     }
                 })
                 .display();
@@ -301,66 +301,84 @@ public class MainFragment extends Fragment implements View.OnClickListener, Call
         mBinding.keepAccounts.setAdapter(new BitemRecyclerViewAdapter(weekBillBeanList,getContext()));
     }
 
-//    Handler handler = new Handler(new Handler.Callback() {
-//        @Override
-//        public boolean handleMessage(@NonNull Message message) {
-//            if (message.what == 1){
-//                prefDate = getContext().getSharedPreferences("date", MODE_PRIVATE);
-//                sYear = prefDate.getString("year","");
-//                sMonth = prefDate .getString("month","");
-//                sDay = prefDate.getString("day","");
-//
-//                Log.d("TAGX", ""+sYear+" "+sMonth+ " "+sDay);
-//                List<BillBean> billBeans = LitePal.findAll(BillBean.class);
-//
-//                List<OutputBean> outputBeans = new ArrayList<>();
-//
-//                if (billBeans!=null){
-//                    for (BillBean billBean : billBeans){
-//                        if (billBean.getAccount().equals(account)){
-//                            //将2022年10月3日 截取三段 提取出 2022 10 3
-//                            String str0 = billBean.getDate();
-//                            Date d1 = null;//定义起始日期
-//                            try {
-//                                d1 = new SimpleDateFormat("yyyy年MM月dd日").parse(str0);
-//                            } catch (ParseException e) {
-//                                throw new RuntimeException(e);
-//                            }
-//                            SimpleDateFormat sdf0 = new SimpleDateFormat("yyyy");
-//
-//                            SimpleDateFormat sdf1 = new SimpleDateFormat("MM");
-//
-//                            SimpleDateFormat sdf2= new SimpleDateFormat("dd");
-//
-//                            String year = sdf0.format(d1);
-//
-//                            String month = sdf1.format(d1);
-//
-//                            String day = sdf2.format(d1);
-//
-//                            //去掉月份和日前面的零
-//                            String newMonth = month.replaceFirst("^0*", "");
-//                            String newDay = day.replaceFirst("^0*", "");
-//
-//
-//
-//                            if (year.equals(sYear)&&newMonth.equals(sMonth)&&newDay.equals(sDay)){
-//                                OutputBean outputBean = new OutputBean();
-//                                outputBean.setName(billBean.getName());
-//                                outputBean.setImageId(billBean.getImageId());
-//                                outputBean.setDate(new StringBuilder().append(billBean.getDate()));
-//                                outputBean.setBeiZhu(new StringBuilder().append(billBean.getBeiZhu()));
-//                                outputBean.setMoneyCount(new StringBuilder().append(billBean.getMoneyCount()));
-//                                outputBeans.add(outputBean);
-//                            }
-//                        }
-//                    }
-//                    mBinding.keepAccounts.setLayoutManager(new LinearLayoutManager(getContext()));
-//                    mBinding.keepAccounts.setAdapter(new ItemRecyclerViewAdapter(outputBeans,getContext()));
-//                }
-//
-//            }
-//            return false;
-//        }
-//    });
+    Handler handler = new Handler(new Handler.Callback() {
+        @Override
+        public boolean handleMessage(@NonNull Message message) {
+            if (message.what == 1){
+                prefDate = getContext().getSharedPreferences("date", MODE_PRIVATE);
+                sYear = prefDate.getString("year","");
+                sMonth = prefDate .getString("month","");
+                sDay = prefDate.getString("day","");
+
+                List<BillBean> billBeans = LitePal.findAll(BillBean.class);
+                List<WeekBillBean> weekBillBeanList = new ArrayList<>();
+
+                //获取不重复的时间集合
+                List<String> mDateList = new ArrayList<>();
+                for (BillBean billBean : billBeans){
+                    mDateList.add(billBean.getDate());
+                }
+                List<String> noRepeatList = new ArrayList<>(mDateList);
+                Set set = new HashSet(noRepeatList);
+                noRepeatList = new ArrayList<>(set);
+                int i= 0;
+                for (i = 0;i<noRepeatList.size();i++){
+                    List<OutputBean> outputBeans = new ArrayList<>();
+                    for (BillBean billBean : billBeans){
+                        if (billBean.getDate().equals(noRepeatList.get(i))){
+                            if (billBean.getAccount().equals(account)){
+                                OutputBean outputBean = new OutputBean();
+                                outputBean.setName(billBean.getName());
+                                outputBean.setImageId(billBean.getImageId());
+                                outputBean.setDate(new StringBuilder().append(billBean.getDate()));
+                                outputBean.setBeiZhu(new StringBuilder().append(billBean.getBeiZhu()));
+                                outputBean.setMoneyCount(new StringBuilder().append(billBean.getMoneyCount()));
+                                outputBeans.add(outputBean);
+                            }
+                        }
+                    }
+                    WeekBillBean weekBillBean = new WeekBillBean();
+                    weekBillBean.setWeekDate(noRepeatList.get(i));
+                    weekBillBean.setWeekBillBeanList(outputBeans);
+                    weekBillBeanList.add(weekBillBean);
+                }
+                List<WeekBillBean> weekBillBeanList1 = new ArrayList<>();
+                for (WeekBillBean weekBillBean : weekBillBeanList){
+                    String str0 = weekBillBean.getWeekDate();
+                            Date d1 = null;//定义起始日期
+                            try {
+                                d1 = new SimpleDateFormat("yyyy年MM月dd日").parse(str0);
+                            } catch (ParseException e) {
+                                throw new RuntimeException(e);
+                            }
+
+                            SimpleDateFormat sdf0 = new SimpleDateFormat("yyyy");
+
+                            SimpleDateFormat sdf1 = new SimpleDateFormat("MM");
+
+                            SimpleDateFormat sdf2= new SimpleDateFormat("dd");
+
+                            String year = sdf0.format(d1);
+
+                            String month = sdf1.format(d1);
+
+                            String day = sdf2.format(d1);
+
+                            //去掉月份和日前面的零
+                            String newMonth = month.replaceFirst("^0*", "");
+                            String newDay = day.replaceFirst("^0*", "");
+
+                            if (newMonth.equals(sMonth)&&newDay.equals(sDay)&&year.equals(sYear)){
+                                weekBillBean.setWeekDate(weekBillBean.getWeekDate().substring(5,weekBillBean.getWeekDate().length()));
+                                weekBillBeanList1.add(weekBillBean);
+                            }
+                }
+                mBinding.keepAccounts.setLayoutManager(new LinearLayoutManager(getContext()));
+                mBinding.keepAccounts.setAdapter(new BitemRecyclerViewAdapter(weekBillBeanList1,getContext()));
+
+
+            }
+            return false;
+        }
+    });
 }
