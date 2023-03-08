@@ -23,6 +23,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.eazywrite.app.R;
 import com.eazywrite.app.data.model.BillBean;
+import com.eazywrite.app.data.model.WeekBillBean;
 import com.eazywrite.app.databinding.DialogFragmentBinding;
 import com.eazywrite.app.ui.bill.AddBillContentActivity;
 import com.eazywrite.app.ui.bill.adapter.ItemRecyclerViewAdapter;
@@ -34,7 +35,9 @@ import org.litepal.LitePal;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.Stack;
 
 public class MyDialogFragment extends DialogFragment implements View.OnClickListener {
@@ -46,6 +49,8 @@ public class MyDialogFragment extends DialogFragment implements View.OnClickList
     private SharedPreferences pref;
 
     private String account;
+
+    private List<WeekBillBean> weekBillBeanList;
 
     public MyDialogFragment(AddBillContentActivity activity, FragmentManager fragmentManager,
                             MainFragment mainFragment, OutputBean bean) {
@@ -190,25 +195,102 @@ public class MyDialogFragment extends DialogFragment implements View.OnClickList
 
                     isCul = false;
                 }else {
-                    mMainFragment.getList().clear();
+//                    mMainFragment.getList().clear();
+//                    List<BillBean> billBeans = LitePal.findAll(BillBean.class);
+//                    if (billBeans!=null){
+//                        for (BillBean billBean : billBeans){
+//                            if (billBean.getAccount().equals(account)){
+//                                OutputBean outputBean = new OutputBean();
+//                                outputBean.setName(billBean.getName());
+//                                outputBean.setImageId(billBean.getImageId());
+//                                outputBean.setDate(new StringBuilder().append(billBean.getDate()));
+//                                outputBean.setBeiZhu(new StringBuilder().append(billBean.getBeiZhu()));
+//                                outputBean.setMoneyCount(new StringBuilder().append(billBean.getMoneyCount()));
+//                                mMainFragment.getList().add(outputBean);
+//                            }
+//                        }
+//                    }
+
+//                    List<BillBean> billBeans = LitePal.findAll(BillBean.class);
+//
+//                    weekBillBeanList = new ArrayList<>();
+//
+//
+//                    for(BillBean billBean:billBeans){
+//                        List<OutputBean> outputBeans = new ArrayList<>();
+//                        for (BillBean billBean1 : billBeans){
+//                            if (billBean1.getDate().equals(billBean.getDate())){
+//                                if (billBean.getAccount().equals(account)&&billBean1.getAccount().equals(account)){
+//                                    OutputBean outputBean = new OutputBean();
+//                                    outputBean.setName(billBean1.getName());
+//                                    outputBean.setImageId(billBean1.getImageId());
+//                                    outputBean.setDate(new StringBuilder().append(billBean1.getDate()));
+//                                    outputBean.setBeiZhu(new StringBuilder().append(billBean1.getBeiZhu()));
+//                                    outputBean.setMoneyCount(new StringBuilder().append(billBean1.getMoneyCount()));
+//                                    outputBeans.add(outputBean);
+//                                }
+//                            }
+//                        }
+//                        WeekBillBean weekBillBean = new WeekBillBean();
+//                        weekBillBean.setWeekDate(billBean.getDate());
+//                        weekBillBean.setWeekBillBeanList(outputBeans);
+//                        weekBillBeanList.add(weekBillBean);
+//                    }
                     List<BillBean> billBeans = LitePal.findAll(BillBean.class);
-                    if (billBeans!=null){
+
+                    weekBillBeanList = new ArrayList<>();
+
+                    //获取不重复的时间集合
+                    List<String> mDateList = new ArrayList<>();
+                    for (BillBean billBean : billBeans){
+                        mDateList.add(billBean.getDate());
+                    }
+                    List<String> noRepeatList = new ArrayList<>(mDateList);
+
+                    Set set = new HashSet(noRepeatList);
+
+                    noRepeatList = new ArrayList<>(set);
+
+                    int i= 0;
+                    for (i = 0;i<noRepeatList.size();i++){
+                        List<OutputBean> outputBeans = new ArrayList<>();
                         for (BillBean billBean : billBeans){
-                            if (billBean.getAccount().equals(account)){
-                                OutputBean outputBean = new OutputBean();
-                                outputBean.setName(billBean.getName());
-                                outputBean.setImageId(billBean.getImageId());
-                                outputBean.setDate(new StringBuilder().append(billBean.getDate()));
-                                outputBean.setBeiZhu(new StringBuilder().append(billBean.getBeiZhu()));
-                                outputBean.setMoneyCount(new StringBuilder().append(billBean.getMoneyCount()));
-                                mMainFragment.getList().add(outputBean);
+                            if (billBean.getDate().equals(noRepeatList.get(i))){
+                                if (billBean.getAccount().equals(account)){
+                                    OutputBean outputBean = new OutputBean();
+                                    outputBean.setName(billBean.getName());
+                                    outputBean.setImageId(billBean.getImageId());
+                                    outputBean.setDate(new StringBuilder().append(billBean.getDate()));
+                                    outputBean.setBeiZhu(new StringBuilder().append(billBean.getBeiZhu()));
+                                    outputBean.setMoneyCount(new StringBuilder().append(billBean.getMoneyCount()));
+                                    outputBeans.add(outputBean);
+                                }
                             }
                         }
+                        WeekBillBean weekBillBean = new WeekBillBean();
+                        weekBillBean.setWeekDate(noRepeatList.get(i));
+                        weekBillBean.setWeekBillBeanList(outputBeans);
+                        weekBillBeanList.add(weekBillBean);
                     }
-
-
                     mOutputBean.setMoneyCount(mBuilder);
-                    mMainFragment.getList().add(mOutputBean);
+
+                    int j = 0;
+                    for (WeekBillBean weekBillBean:weekBillBeanList){
+                        if (weekBillBean.getWeekDate().equals(mOutputBean.getDate().toString())){
+                            weekBillBean.getWeekBillBeanList().add(mOutputBean);
+                            j = 1;
+                            break;
+                        }
+                    }
+                    if (j == 0){
+                        List<OutputBean> outputBeans = new ArrayList<>();
+                        outputBeans.add(mOutputBean);
+                        WeekBillBean weekBillBean = new WeekBillBean();
+                        weekBillBean.setWeekDate(mOutputBean.getDate().toString());
+                        weekBillBean.setWeekBillBeanList(outputBeans);
+                        weekBillBeanList.add(weekBillBean);
+                    }
+//                    mMainFragment.getList().add(mOutputBean);
                     BillBean billBean = new BillBean();
                     billBean.setImageId(mOutputBean.getImageId());
                     billBean.setName(mOutputBean.getName());
@@ -217,8 +299,9 @@ public class MyDialogFragment extends DialogFragment implements View.OnClickList
                     billBean.setDate(mOutputBean.getDate().toString());
                     billBean.setAccount(account);
                     billBean.save();
-                    mViewModel.setBean(mMainFragment.getList());
-                    mMainFragment.addData(mViewModel);
+
+//                    mViewModel.setBean(mMainFragment.getList());
+                    mMainFragment.addData(weekBillBeanList);
                     getDialog().dismiss();
                     getActivity().finish();
 
