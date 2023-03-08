@@ -24,6 +24,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import com.eazywrite.app.R;
 import com.eazywrite.app.data.model.BillBean;
 
+import com.eazywrite.app.data.model.Order;
 import com.eazywrite.app.data.model.WeekBillBean;
 import com.eazywrite.app.databinding.RestallMainBinding;
 import com.eazywrite.app.ui.bill.AddBillContentActivity;
@@ -41,6 +42,8 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.format.TextStyle;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -98,10 +101,82 @@ public class MainFragment extends Fragment implements View.OnClickListener, Call
             mDateList.add(billBean.getDate());
         }
         List<String> noRepeatList = new ArrayList<>(mDateList);
-
         Set set = new HashSet(noRepeatList);
-
         noRepeatList = new ArrayList<>(set);
+
+
+        //不重复时间集合的时间戳
+        List<Long> mTimeStr  = new ArrayList<>();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日");
+
+        int p = 0;
+        for (p = 0;p < noRepeatList.size();p++){
+            Long timeStr = null;
+            try {
+                timeStr = sdf.parse(noRepeatList.get(p)).getTime();
+            } catch (ParseException e) {
+                throw new RuntimeException(e);
+            }
+            //获取到时间戳集合
+            mTimeStr.add(timeStr);
+        }
+
+
+        //排序时间戳集合，由大到小
+        List<Order> orders = new ArrayList<>();
+        int k = 0;
+        for (k=0;k<mTimeStr.size();k++){
+            Order order = new Order();
+            order.setDate(mTimeStr.get(k));
+            orders.add(order);
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            orders.sort((t1, t2) -> t2.getDate().compareTo(t1.getDate()));
+        }
+
+        //获取排序后的时间戳
+        List<Long> mNewTimeStr  = new ArrayList<>();
+        for (Order order:orders){
+            Long newTimeStr = order.getDate();
+            mNewTimeStr.add(newTimeStr);
+        }
+
+        //将排序好的时间戳再次转为String类型
+        List<String> strTimesList = new ArrayList<>();
+        int x =0;
+        for (x = 0;x<mNewTimeStr.size();x++){
+            String strTimes = sdf.format(mNewTimeStr.get(x));
+            strTimesList.add(strTimes);
+        }
+
+        //去掉月日前面多余的0,不然会影响与数据库中取出的日期对比
+        noRepeatList.clear();
+        Date d1 = null;//定义起始日期
+        for (x = 0;x<strTimesList.size();x++){
+            try {
+                d1 = new SimpleDateFormat("yyyy年MM月dd日").parse(strTimesList.get(x));
+            } catch (ParseException e) {
+                throw new RuntimeException(e);
+            }
+            SimpleDateFormat sdf0 = new SimpleDateFormat("yyyy");
+
+            SimpleDateFormat sdf1 = new SimpleDateFormat("MM");
+
+            SimpleDateFormat sdf2= new SimpleDateFormat("dd");
+
+            String year = sdf0.format(d1);
+
+            String month = sdf1.format(d1);
+
+            String day = sdf2.format(d1);
+
+            //去掉月份和日前面的零
+            String newMonth = month.replaceFirst("^0*", "");
+            String newDay = day.replaceFirst("^0*", "");
+            String newDate = year + "年" + newMonth + "月" + newDay + "日";
+            Log.d("TAGX", ""+newDate);
+            noRepeatList.add(newDate);
+        }
 
         int i= 0;
         for (i = 0;i<noRepeatList.size();i++){
