@@ -268,7 +268,7 @@ public class MyDialogFragment extends DialogFragment implements View.OnClickList
                             }
                         }
                         WeekBillBean weekBillBean = new WeekBillBean();
-                        weekBillBean.setWeekDate(noRepeatList.get(i));
+                        weekBillBean.setWeekDate(noRepeatList.get(i).substring(5,noRepeatList.get(i).length()));
                         weekBillBean.setWeekBillBeanList(outputBeans);
                         weekBillBeanList.add(weekBillBean);
                     }
