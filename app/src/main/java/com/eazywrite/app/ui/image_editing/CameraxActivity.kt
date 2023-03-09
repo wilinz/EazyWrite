@@ -147,7 +147,7 @@ class CameraXActivity : ComponentActivity() {
                                             FocusMeteringAction
                                                 .Builder(
                                                     autoFocusPoint,
-                                                    FocusMeteringAction.FLAG_AF
+                                                    FocusMeteringAction.FLAG_AF or FocusMeteringAction.FLAG_AE or FocusMeteringAction.FLAG_AWB
                                                 )
                                                 .apply {
                                                     //focus only when the user tap the preview
@@ -412,7 +412,7 @@ class CameraXActivity : ComponentActivity() {
         try {
             val autoFocusAction = FocusMeteringAction.Builder(
                 autoFocusPoint,
-                FocusMeteringAction.FLAG_AF
+                FocusMeteringAction.FLAG_AF or FocusMeteringAction.FLAG_AE or FocusMeteringAction.FLAG_AWB
             ).apply {
                 //start auto-focusing after 2 seconds
                 setAutoCancelDuration(2, TimeUnit.SECONDS)
