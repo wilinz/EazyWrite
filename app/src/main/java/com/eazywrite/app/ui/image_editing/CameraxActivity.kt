@@ -5,7 +5,6 @@
 
 package com.eazywrite.app.ui.image_editing
 
-import android.annotation.SuppressLint
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -18,6 +17,9 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.detectTransformGestures
@@ -31,14 +33,14 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.toSize
+import androidx.compose.ui.unit.*
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
@@ -48,6 +50,7 @@ import com.eazywrite.app.util.screenHeight
 import com.eazywrite.app.util.screenWidth
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberPermissionState
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.io.File
@@ -72,7 +75,6 @@ class CameraXActivity : ComponentActivity() {
 
     private val images = mutableStateListOf<Uri>()
 
-    @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
@@ -117,13 +119,16 @@ class CameraXActivity : ComponentActivity() {
                         modifier = Modifier
                             .fillMaxWidth(),
                         update = {
-                            setAutoFocus(it)
                         }
                     )
 
                     var size by remember {
                         mutableStateOf(androidx.compose.ui.geometry.Size.Zero)
                     }
+                    var focusOffset by remember {
+                        mutableStateOf(Offset.Zero)
+                    }
+
                     Scaffold(
                         modifier = Modifier
                             .onSizeChanged {
@@ -131,6 +136,7 @@ class CameraXActivity : ComponentActivity() {
                             }
                             .pointerInput(Unit) {
                                 detectTapGestures(onTap = { offset ->
+                                    focusOffset = offset
                                     val factory: MeteringPointFactory =
                                         SurfaceOrientedMeteringPointFactory(
                                             size.width, size.height
@@ -211,6 +217,8 @@ class CameraXActivity : ComponentActivity() {
                         }
                     }
 
+                    FocusAnimationCircle(focusOffset)
+
                     LaunchedEffect(key1 = Unit, block = {
                         cameraPermissionState.launchPermissionRequest()
                     })
@@ -218,6 +226,57 @@ class CameraXActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    @Composable
+    fun FocusAnimationCircle(offset: Offset) {
+        var isShow by remember { mutableStateOf(false) }
+        var centerOffset by remember { mutableStateOf(IntOffset.Zero) }
+        var size by remember { mutableStateOf(100.dp) }
+        val scope = rememberCoroutineScope()
+        var lastJob by remember { mutableStateOf<Job?>(null) }
+        val localDensity = LocalDensity.current
+        LaunchedEffect(offset) {
+            centerOffset = offset.round()
+            lastJob?.cancel()
+            lastJob = scope.launch {
+                isShow = true
+                val max = 80
+                val min = 60
+                val fps = 120
+                val duration = 100
+
+                val delayDuration = 1000 / fps
+                size = max.dp
+                val times = (duration / delayDuration.toFloat()).toInt()
+                val step = (max - min).toFloat() / times
+                for (i in 0 until times) {
+                    size -= step.dp
+                    val pxSize = with(localDensity) { size.toPx() }
+                    val radius = pxSize / 2
+                    centerOffset =
+                        Offset(offset.x - radius, offset.y - radius).round()
+                    delay(delayDuration.toLong())
+                }
+                isShow = false
+            }
+        }
+        if (isShow) {
+            Surface(
+                color = Color.Transparent,
+                shape = CircleShape,
+                border = BorderStroke(1.dp, Color.White),
+                modifier = Modifier
+                    .offset { centerOffset }
+                    .size(size)
+            ) {
+
+            }
+        }
+    }
+
+    fun Modifier.fadeOutAnimation(): Modifier {
+        return this.animateContentSize(animationSpec = tween(durationMillis = 1000)) { initialValue, targetValue -> }
     }
 
     @Composable
@@ -347,22 +406,20 @@ class CameraXActivity : ComponentActivity() {
         }
     }
 
-    private fun setAutoFocus(previewView: PreviewView) {
-        previewView.afterMeasured {
-            val autoFocusPoint = SurfaceOrientedMeteringPointFactory(1f, 1f)
-                .createPoint(.5f, .5f)
-            try {
-                val autoFocusAction = FocusMeteringAction.Builder(
-                    autoFocusPoint,
-                    FocusMeteringAction.FLAG_AF
-                ).apply {
-                    //start auto-focusing after 2 seconds
-                    setAutoCancelDuration(2, TimeUnit.SECONDS)
-                }.build()
-                camera?.cameraControl?.startFocusAndMetering(autoFocusAction)
-            } catch (e: CameraInfoUnavailableException) {
-                Log.d("ERROR", "cannot access camera", e)
-            }
+    private fun startFocusAndMetering(camera: Camera) {
+        val autoFocusPoint = SurfaceOrientedMeteringPointFactory(1f, 1f)
+            .createPoint(.5f, .5f)
+        try {
+            val autoFocusAction = FocusMeteringAction.Builder(
+                autoFocusPoint,
+                FocusMeteringAction.FLAG_AF
+            ).apply {
+                //start auto-focusing after 2 seconds
+                setAutoCancelDuration(2, TimeUnit.SECONDS)
+            }.build()
+            camera.cameraControl.startFocusAndMetering(autoFocusAction)
+        } catch (e: CameraInfoUnavailableException) {
+            Log.d("ERROR", "cannot access camera", e)
         }
     }
 
@@ -481,6 +538,8 @@ class CameraXActivity : ComponentActivity() {
                 camera!!.cameraInfo.torchState.observe(this) {
                     isFlashOpen = it == TorchState.ON
                 }
+
+                startFocusAndMetering(camera!!)
             } catch (exc: Exception) {
                 Log.e(TAG, "Use case binding failed", exc)
             }
