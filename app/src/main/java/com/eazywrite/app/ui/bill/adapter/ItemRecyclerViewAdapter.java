@@ -1,6 +1,8 @@
 package com.eazywrite.app.ui.bill.adapter;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,7 +29,7 @@ public class ItemRecyclerViewAdapter extends RecyclerView.Adapter<ItemRecyclerVi
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(mContext).inflate(R.layout.item_layout,parent,false);
+        View view = LayoutInflater.from(mContext).inflate(R.layout.item_layout_restall,parent,false);
         return new ViewHolder(view);
     }
 
@@ -38,6 +40,10 @@ public class ItemRecyclerViewAdapter extends RecyclerView.Adapter<ItemRecyclerVi
         holder.name.setText(outputBean.getName());
         holder.beiZhu.setText(outputBean.getBeiZhu());
         holder.money.setText(outputBean.getMoneyCount());
+
+        if (position == (mList.size()-1)){
+            holder.line.setBackgroundColor(Color.WHITE);
+        }
     }
 
     @Override
@@ -48,16 +54,17 @@ public class ItemRecyclerViewAdapter extends RecyclerView.Adapter<ItemRecyclerVi
     public class ViewHolder extends RecyclerView.ViewHolder {
         ImageView icon;
         TextView beiZhu;
-        TextView time;
         TextView money;
         TextView name;
+
+        ImageView line;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             icon = itemView.findViewById(R.id.icon);
             beiZhu = itemView.findViewById(R.id.beiZhu);
-            time = itemView.findViewById(R.id.time);
             money = itemView.findViewById(R.id.money);
             name = itemView.findViewById(R.id.name);
+            line = itemView.findViewById(R.id.line_background);
         }
     }
 }

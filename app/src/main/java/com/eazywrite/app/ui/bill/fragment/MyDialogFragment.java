@@ -2,6 +2,7 @@ package com.eazywrite.app.ui.bill.fragment;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -23,6 +24,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.eazywrite.app.R;
 import com.eazywrite.app.data.model.BillBean;
+import com.eazywrite.app.data.model.Order;
+import com.eazywrite.app.data.model.WeekBillBean;
 import com.eazywrite.app.databinding.DialogFragmentBinding;
 import com.eazywrite.app.ui.bill.AddBillContentActivity;
 import com.eazywrite.app.ui.bill.adapter.ItemRecyclerViewAdapter;
@@ -32,9 +35,13 @@ import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClic
 import org.litepal.LitePal;
 
 import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.Stack;
 
 public class MyDialogFragment extends DialogFragment implements View.OnClickListener {
@@ -46,6 +53,8 @@ public class MyDialogFragment extends DialogFragment implements View.OnClickList
     private SharedPreferences pref;
 
     private String account;
+
+    private List<WeekBillBean> weekBillBeanList;
 
     public MyDialogFragment(AddBillContentActivity activity, FragmentManager fragmentManager,
                             MainFragment mainFragment, OutputBean bean) {
@@ -190,25 +199,135 @@ public class MyDialogFragment extends DialogFragment implements View.OnClickList
 
                     isCul = false;
                 }else {
-                    mMainFragment.getList().clear();
                     List<BillBean> billBeans = LitePal.findAll(BillBean.class);
-                    if (billBeans!=null){
-                        for (BillBean billBean : billBeans){
-                            if (billBean.getAccount().equals(account)){
-                                OutputBean outputBean = new OutputBean();
-                                outputBean.setName(billBean.getName());
-                                outputBean.setImageId(billBean.getImageId());
-                                outputBean.setDate(new StringBuilder().append(billBean.getDate()));
-                                outputBean.setBeiZhu(new StringBuilder().append(billBean.getBeiZhu()));
-                                outputBean.setMoneyCount(new StringBuilder().append(billBean.getMoneyCount()));
-                                mMainFragment.getList().add(outputBean);
-                            }
+
+                    weekBillBeanList = new ArrayList<>();
+
+                    //获取不重复的时间集合
+                    List<String> mDateList = new ArrayList<>();
+                    for (BillBean billBean : billBeans){
+                        mDateList.add(billBean.getDate());
+                    }
+                    List<String> noRepeatList = new ArrayList<>(mDateList);
+
+                    Set set = new HashSet(noRepeatList);
+
+                    noRepeatList = new ArrayList<>(set);
+
+
+                    //不重复时间集合的时间戳
+                    List<Long> mTimeStr  = new ArrayList<>();
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日");
+
+                    int p = 0;
+                    for (p = 0;p < noRepeatList.size();p++){
+                        Long timeStr = null;
+                        try {
+                            timeStr = sdf.parse(noRepeatList.get(p)).getTime();
+                        } catch (ParseException e) {
+                            throw new RuntimeException(e);
                         }
+                        //获取到时间戳集合
+                        mTimeStr.add(timeStr);
                     }
 
 
+                    //排序时间戳集合，由大到小
+                    List<Order> orders = new ArrayList<>();
+                    int k = 0;
+                    for (k=0;k<mTimeStr.size();k++){
+                        Order order = new Order();
+                        order.setDate(mTimeStr.get(k));
+                        orders.add(order);
+                    }
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                        orders.sort((t1, t2) -> t2.getDate().compareTo(t1.getDate()));
+                    }
+
+                    //获取排序后的时间戳
+                    List<Long> mNewTimeStr  = new ArrayList<>();
+                    for (Order order:orders){
+                        Long newTimeStr = order.getDate();
+                        mNewTimeStr.add(newTimeStr);
+                    }
+
+                    //将排序好的时间戳再次转为String类型
+                    List<String> strTimesList = new ArrayList<>();
+                    int x =0;
+                    for (x = 0;x<mNewTimeStr.size();x++){
+                        String strTimes = sdf.format(mNewTimeStr.get(x));
+                        strTimesList.add(strTimes);
+                    }
+
+                    //去掉月日前面多余的0,不然会影响与数据库中取出的日期对比
+                    noRepeatList.clear();
+                    Date d1 = null;//定义起始日期
+                    for (x = 0;x<strTimesList.size();x++){
+                        try {
+                            d1 = new SimpleDateFormat("yyyy年MM月dd日").parse(strTimesList.get(x));
+                        } catch (ParseException e) {
+                            throw new RuntimeException(e);
+                        }
+                        SimpleDateFormat sdf0 = new SimpleDateFormat("yyyy");
+
+                        SimpleDateFormat sdf1 = new SimpleDateFormat("MM");
+
+                        SimpleDateFormat sdf2= new SimpleDateFormat("dd");
+
+                        String year = sdf0.format(d1);
+
+                        String month = sdf1.format(d1);
+
+                        String day = sdf2.format(d1);
+
+                        //去掉月份和日前面的零
+                        String newMonth = month.replaceFirst("^0*", "");
+                        String newDay = day.replaceFirst("^0*", "");
+                        String newDate = year + "年" + newMonth + "月" + newDay + "日";
+                        Log.d("TAGX", ""+newDate);
+                        noRepeatList.add(newDate);
+                    }
+
+                    int i= 0;
+                    for (i = 0;i<noRepeatList.size();i++){
+                        List<OutputBean> outputBeans = new ArrayList<>();
+                        for (BillBean billBean : billBeans){
+                            if (billBean.getDate().equals(noRepeatList.get(i))){
+                                if (billBean.getAccount().equals(account)){
+                                    OutputBean outputBean = new OutputBean();
+                                    outputBean.setName(billBean.getName());
+                                    outputBean.setImageId(billBean.getImageId());
+                                    outputBean.setDate(new StringBuilder().append(billBean.getDate()));
+                                    outputBean.setBeiZhu(new StringBuilder().append(billBean.getBeiZhu()));
+                                    outputBean.setMoneyCount(new StringBuilder().append(billBean.getMoneyCount()));
+                                    outputBeans.add(outputBean);
+                                }
+                            }
+                        }
+                        WeekBillBean weekBillBean = new WeekBillBean();
+                        weekBillBean.setWeekDate(noRepeatList.get(i).substring(5,noRepeatList.get(i).length()));
+                        weekBillBean.setWeekBillBeanList(outputBeans);
+                        weekBillBeanList.add(weekBillBean);
+                    }
                     mOutputBean.setMoneyCount(mBuilder);
-                    mMainFragment.getList().add(mOutputBean);
+
+                    int j = 0;
+                    for (WeekBillBean weekBillBean:weekBillBeanList){
+                        if (weekBillBean.getWeekDate().equals(mOutputBean.getDate().toString().substring(5,mOutputBean.getDate().toString().length()))){
+                            weekBillBean.getWeekBillBeanList().add(mOutputBean);
+                            j = 1;
+                            break;
+                        }
+                    }
+                    if (j == 0){
+                        List<OutputBean> outputBeans = new ArrayList<>();
+                        outputBeans.add(mOutputBean);
+                        WeekBillBean weekBillBean = new WeekBillBean();
+                        weekBillBean.setWeekDate(mOutputBean.getDate().toString().substring(5,mOutputBean.getDate().toString().length()));
+                        weekBillBean.setWeekBillBeanList(outputBeans);
+                        weekBillBeanList.add(weekBillBean);
+                    }
+
                     BillBean billBean = new BillBean();
                     billBean.setImageId(mOutputBean.getImageId());
                     billBean.setName(mOutputBean.getName());
@@ -217,8 +336,8 @@ public class MyDialogFragment extends DialogFragment implements View.OnClickList
                     billBean.setDate(mOutputBean.getDate().toString());
                     billBean.setAccount(account);
                     billBean.save();
-                    mViewModel.setBean(mMainFragment.getList());
-                    mMainFragment.addData(mViewModel);
+
+                    mMainFragment.addData(weekBillBeanList);
                     getDialog().dismiss();
                     getActivity().finish();
 
