@@ -36,10 +36,10 @@ public class ItemRecyclerViewAdapter extends RecyclerView.Adapter<ItemRecyclerVi
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         OutputBean outputBean = mList.get(position);
-        holder.icon.setImageResource(outputBean.getImageId());
-        holder.name.setText(outputBean.getName());
-        holder.beiZhu.setText(outputBean.getBeiZhu());
-        holder.money.setText(outputBean.getMoneyCount());
+//        holder.icon.setImageResource(outputBean.getImageId());
+//        holder.name.setText(outputBean.getName());
+//        holder.beiZhu.setText(outputBean.getBeiZhu());
+//        holder.money.setText(outputBean.getMoneyCount());
 
         if (position == (mList.size()-1)){
             holder.line.setBackgroundColor(Color.WHITE);

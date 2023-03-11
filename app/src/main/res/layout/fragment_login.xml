@@ -140,6 +140,7 @@
                 android:layout_height="match_parent"
                 android:background="@drawable/gradient"
                 android:gravity="center"
+                android:foreground="?android:attr/selectableItemBackground"
                 android:padding="15dp"
                 android:text="立即登录"
                 android:textColor="@color/white"

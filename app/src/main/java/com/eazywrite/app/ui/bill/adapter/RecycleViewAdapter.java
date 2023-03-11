@@ -8,16 +8,18 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.eazywrite.app.R;
-import com.eazywrite.app.ui.bill.fragment.MainFragment;
+import com.eazywrite.app.ui.bill.fragment.AddItemFragment;
+import com.eazywrite.app.ui.bill.fragment.FragmentOne;
+import com.eazywrite.app.ui.bill.fragment.FragmentTwo;
 import com.eazywrite.app.ui.bill.fragment.OutputBean;
-import com.eazywrite.app.ui.bill.AddBillContentActivity;
 import com.eazywrite.app.ui.bill.fragment.MyDialogFragment;
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 import java.util.ArrayList;
 
@@ -27,20 +29,36 @@ public class RecycleViewAdapter extends RecyclerView.Adapter<RecycleViewAdapter.
     private Context mContext;
     private GridLayoutManager layoutManager;
     private FragmentManager fragmentManager;
-    private AddBillContentActivity  mActivity;
-    private MainFragment mMainFragment;
+    private AddItemFragment addItemFragment;
+    private FragmentTwo mFragmentTwo;
+    private FragmentOne mFragmentOne;
 
     public RecycleViewAdapter(ArrayList<OutputBean> beans, Context context, ArrayList<OutputBean> coloredBeans
             , GridLayoutManager layoutManager, FragmentManager fragmentManager
-            , AddBillContentActivity addBillContentActivity, MainFragment mainFragment) {
+            , AddItemFragment addItemFragment, FragmentOne fragment) {
         super();
         this.beans = beans;
-        this.mMainFragment = mainFragment;
+        this.addItemFragment = addItemFragment;
         this.mContext = context;
         this.coloredBeans = coloredBeans;
         this.layoutManager = layoutManager;
         this.fragmentManager = fragmentManager;
-        this.mActivity = addBillContentActivity;
+        this.mFragmentOne = fragment;
+
+    }
+
+    public RecycleViewAdapter(ArrayList<OutputBean> beans, Context context, ArrayList<OutputBean> coloredBeans
+            , GridLayoutManager layoutManager, FragmentManager fragmentManager
+            , AddItemFragment addItemFragment, FragmentTwo fragment) {
+        super();
+        this.beans = beans;
+        this.addItemFragment = addItemFragment;
+        this.mContext = context;
+        this.coloredBeans = coloredBeans;
+        this.layoutManager = layoutManager;
+        this.fragmentManager = fragmentManager;
+        this.mFragmentTwo = fragment;
+
     }
     boolean isClick = false;
     int prePosition;
@@ -68,18 +86,26 @@ public class RecycleViewAdapter extends RecyclerView.Adapter<RecycleViewAdapter.
                     view.icon.setImageResource(coloredBeans.get(position).getImageId());
                     prePosition = position;
                 }
-
-                showDialog(coloredBeans.get(prePosition));
-
+                addItemFragment.getImage(coloredBeans.get(prePosition).getImageId());
+                addItemFragment.getName(beans.get(prePosition).getName());
+                showDialog(addItemFragment);
 
             }
         });
         return view;
     }
+    RecycleViewAdapter mAdapter;
 
-    private void showDialog(OutputBean bean) {
-        DialogFragment dialogFragment = new MyDialogFragment(mActivity,fragmentManager,mMainFragment,bean);
+    private void showDialog(AddItemFragment addItemFragment){
+        BottomSheetDialogFragment dialogFragment = new MyDialogFragment(addItemFragment);
         dialogFragment.show(fragmentManager,"DialogFragment");
+        if(mFragmentOne==null){
+            addItemFragment.getInOrOut(true);
+            return;
+        } else if (mFragmentTwo == null) {
+            addItemFragment.getInOrOut(false);
+            return;
+        }
     }
 
 

@@ -29,11 +29,13 @@ import com.eazywrite.app.data.model.WeekBillBean;
 import com.eazywrite.app.databinding.DialogFragmentBinding;
 import com.eazywrite.app.ui.bill.AddBillContentActivity;
 import com.eazywrite.app.ui.bill.adapter.ItemRecyclerViewAdapter;
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener;
 
 import org.litepal.LitePal;
 
+import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -44,30 +46,18 @@ import java.util.List;
 import java.util.Set;
 import java.util.Stack;
 
-public class MyDialogFragment extends DialogFragment implements View.OnClickListener {
-    private AddBillContentActivity mActivity;
-    private FragmentManager mFragmentManager;
-    private MainFragment mMainFragment;
-    private OutputBean mOutputBean;
+public class MyDialogFragment extends BottomSheetDialogFragment implements View.OnClickListener {
 
-    private SharedPreferences pref;
+    DialogFragmentBinding mBinding;
 
-    private String account;
+    StringBuilder mBuilder = new StringBuilder("0");
 
-    private List<WeekBillBean> weekBillBeanList;
+    boolean isDot = false;
+    boolean isCul = false;
+    private  AddItemFragment mAddItemFragment;
 
-    public MyDialogFragment(AddBillContentActivity activity, FragmentManager fragmentManager,
-                            MainFragment mainFragment, OutputBean bean) {
-        mActivity = activity;
-        this.mMainFragment = mainFragment;
-        mFragmentManager = fragmentManager;
-        mOutputBean = bean;
-    }
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
+    public MyDialogFragment(AddItemFragment addItemFragment) {
+        mAddItemFragment = addItemFragment;
     }
 
     @Nullable
@@ -75,26 +65,16 @@ public class MyDialogFragment extends DialogFragment implements View.OnClickList
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
 
-
-        getDialog().getWindow().setWindowAnimations(R.style.dialogAnim);
-        getDialog().getWindow().setGravity(Gravity.BOTTOM);
+        getDialog().getWindow().setDimAmount(0f);
 
         mBinding = DataBindingUtil.inflate(inflater, R.layout.dialog_fragment, container, false);
 
-        mViewModel = new ViewModelProvider(this).get(InputViewModel.class);
-
         return mBinding.getRoot();
     }
-    InputViewModel mViewModel;
 
-    DialogFragmentBinding mBinding;
-
-    StringBuilder mBuilder = new StringBuilder("0");
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        pref = getContext().getSharedPreferences("User", Context.MODE_PRIVATE);
-        account = pref.getString("account","");
         mBinding.money.setText(mBuilder);
         setClickListener();
     }
@@ -113,40 +93,13 @@ public class MyDialogFragment extends DialogFragment implements View.OnClickList
         mBinding.finish.setOnClickListener(this);
         mBinding.dot.setOnClickListener(this);
         mBinding.delete.setOnClickListener(this);
-        mBinding.date.setOnClickListener(this);
+        mBinding.mul.setOnClickListener(this);
+        mBinding.div.setOnClickListener(this);
+        mBinding.clear2.setOnClickListener(this);
         mBinding.add.setOnClickListener(this);
         mBinding.sub.setOnClickListener(this);
-        mBinding.beiZhu.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                beiZhu.replace(0, beiZhu.length(), charSequence.toString());
-                mOutputBean.setBeiZhu(new StringBuilder(beiZhu.toString()));
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-
-            }
-        });
-
-    }
-    StringBuilder beiZhu = new StringBuilder();
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        DisplayMetrics dm = getResources().getDisplayMetrics();
-        mActivity.getWindowManager().getDefaultDisplay().getMetrics(dm);
-        getDialog().getWindow().setLayout(dm.widthPixels*1, ViewGroup.LayoutParams.WRAP_CONTENT);
     }
 
-    boolean isDot = false;
-    boolean isCul = false;
 
     @Override
     public void onClick(View view) {
@@ -191,162 +144,29 @@ public class MyDialogFragment extends DialogFragment implements View.OnClickList
                 if(mBuilder.length()<=8)add('9');
                 break;
             case R.id.finish:
+                if(mBuilder.length()==0)return;
+                char temp = mBuilder.toString().charAt(0);
+                if(temp=='+'|temp=='*'|temp=='/'|temp=='-'){
+                    mBuilder.deleteCharAt(0);
+                    mBinding.money.setText(mBuilder.toString());
+                    return;
+                }else if(temp=='.'){
+                    mBuilder.deleteCharAt(0);
+                    mBinding.money.setText("0");
+                    isCul=false;
+                    isDot=false;
+                }
                 if(isCul){
-                    int result = calculate(toInfixExpression(mBuilder.toString()));
+                    Double result = calculate(toInfixExpression(mBuilder.toString()));
                     mBuilder.delete(0, mBuilder.length());
                     mBuilder.append(result);
                     mBinding.money.setText(mBuilder.toString());
 
                     isCul = false;
                 }else {
-                    List<BillBean> billBeans = LitePal.findAll(BillBean.class);
-
-                    weekBillBeanList = new ArrayList<>();
-
-                    //获取不重复的时间集合
-                    List<String> mDateList = new ArrayList<>();
-                    for (BillBean billBean : billBeans){
-                        mDateList.add(billBean.getDate());
-                    }
-                    List<String> noRepeatList = new ArrayList<>(mDateList);
-
-                    Set set = new HashSet(noRepeatList);
-
-                    noRepeatList = new ArrayList<>(set);
-
-
-                    //不重复时间集合的时间戳
-                    List<Long> mTimeStr  = new ArrayList<>();
-                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日");
-
-                    int p = 0;
-                    for (p = 0;p < noRepeatList.size();p++){
-                        Long timeStr = null;
-                        try {
-                            timeStr = sdf.parse(noRepeatList.get(p)).getTime();
-                        } catch (ParseException e) {
-                            throw new RuntimeException(e);
-                        }
-                        //获取到时间戳集合
-                        mTimeStr.add(timeStr);
-                    }
-
-
-                    //排序时间戳集合，由大到小
-                    List<Order> orders = new ArrayList<>();
-                    int k = 0;
-                    for (k=0;k<mTimeStr.size();k++){
-                        Order order = new Order();
-                        order.setDate(mTimeStr.get(k));
-                        orders.add(order);
-                    }
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                        orders.sort((t1, t2) -> t2.getDate().compareTo(t1.getDate()));
-                    }
-
-                    //获取排序后的时间戳
-                    List<Long> mNewTimeStr  = new ArrayList<>();
-                    for (Order order:orders){
-                        Long newTimeStr = order.getDate();
-                        mNewTimeStr.add(newTimeStr);
-                    }
-
-                    //将排序好的时间戳再次转为String类型
-                    List<String> strTimesList = new ArrayList<>();
-                    int x =0;
-                    for (x = 0;x<mNewTimeStr.size();x++){
-                        String strTimes = sdf.format(mNewTimeStr.get(x));
-                        strTimesList.add(strTimes);
-                    }
-
-                    //去掉月日前面多余的0,不然会影响与数据库中取出的日期对比
-                    noRepeatList.clear();
-                    Date d1 = null;//定义起始日期
-                    for (x = 0;x<strTimesList.size();x++){
-                        try {
-                            d1 = new SimpleDateFormat("yyyy年MM月dd日").parse(strTimesList.get(x));
-                        } catch (ParseException e) {
-                            throw new RuntimeException(e);
-                        }
-                        SimpleDateFormat sdf0 = new SimpleDateFormat("yyyy");
-
-                        SimpleDateFormat sdf1 = new SimpleDateFormat("MM");
-
-                        SimpleDateFormat sdf2= new SimpleDateFormat("dd");
-
-                        String year = sdf0.format(d1);
-
-                        String month = sdf1.format(d1);
-
-                        String day = sdf2.format(d1);
-
-                        //去掉月份和日前面的零
-                        String newMonth = month.replaceFirst("^0*", "");
-                        String newDay = day.replaceFirst("^0*", "");
-                        String newDate = year + "年" + newMonth + "月" + newDay + "日";
-                        Log.d("TAGX", ""+newDate);
-                        noRepeatList.add(newDate);
-                    }
-
-                    int i= 0;
-                    for (i = 0;i<noRepeatList.size();i++){
-                        List<OutputBean> outputBeans = new ArrayList<>();
-                        for (BillBean billBean : billBeans){
-                            if (billBean.getDate().equals(noRepeatList.get(i))){
-                                if (billBean.getAccount().equals(account)){
-                                    OutputBean outputBean = new OutputBean();
-                                    outputBean.setName(billBean.getName());
-                                    outputBean.setImageId(billBean.getImageId());
-                                    outputBean.setDate(new StringBuilder().append(billBean.getDate()));
-                                    outputBean.setBeiZhu(new StringBuilder().append(billBean.getBeiZhu()));
-                                    outputBean.setMoneyCount(new StringBuilder().append(billBean.getMoneyCount()));
-                                    outputBeans.add(outputBean);
-                                }
-                            }
-                        }
-                        WeekBillBean weekBillBean = new WeekBillBean();
-                        weekBillBean.setWeekDate(noRepeatList.get(i).substring(5,noRepeatList.get(i).length()));
-                        weekBillBean.setWeekBillBeanList(outputBeans);
-                        weekBillBeanList.add(weekBillBean);
-                    }
-                    mOutputBean.setMoneyCount(mBuilder);
-
-                    int j = 0;
-                    for (WeekBillBean weekBillBean:weekBillBeanList){
-                        if (weekBillBean.getWeekDate().equals(mOutputBean.getDate().toString().substring(5,mOutputBean.getDate().toString().length()))){
-                            weekBillBean.getWeekBillBeanList().add(mOutputBean);
-                            j = 1;
-                            break;
-                        }
-                    }
-                    if (j == 0){
-                        List<OutputBean> outputBeans = new ArrayList<>();
-                        outputBeans.add(mOutputBean);
-                        WeekBillBean weekBillBean = new WeekBillBean();
-                        weekBillBean.setWeekDate(mOutputBean.getDate().toString().substring(5,mOutputBean.getDate().toString().length()));
-                        weekBillBean.setWeekBillBeanList(outputBeans);
-                        weekBillBeanList.add(weekBillBean);
-                    }
-
-                    BillBean billBean = new BillBean();
-                    billBean.setImageId(mOutputBean.getImageId());
-                    billBean.setName(mOutputBean.getName());
-                    billBean.setBeiZhu(mOutputBean.getBeiZhu().toString());
-                    billBean.setMoneyCount(mOutputBean.getMoneyCount().toString());
-                    billBean.setDate(mOutputBean.getDate().toString());
-                    billBean.setAccount(account);
-                    billBean.save();
-
-                    mMainFragment.addData(weekBillBeanList);
                     getDialog().dismiss();
-                    getActivity().finish();
-
-
+                    mAddItemFragment.getCount(mBuilder.toString());
                 }
-
-                break;
-            case R.id.date:
-                dataPicker();
 
                 break;
             case R.id.add:
@@ -357,93 +177,24 @@ public class MyDialogFragment extends DialogFragment implements View.OnClickList
                 if(mBuilder.length()<=8&&!isCul)add('-');
                 isCul = true;
                 break;
+            case R.id.mul:
+                if(mBuilder.length()<=8&&!isCul)add('*');
+                isCul = true;
+                break;
+            case R.id.div:
+                if(mBuilder.length()<=8&&!isCul)add('/');
+                isCul = true;
+                break;
+            case R.id.clear2:
+                mBuilder.delete(0,mBuilder.length());
+                mBinding.money.setText("0");
+                isCul=false;
+                isDot=false;
+                break;
         }
     }
 
 
-    StringBuilder date = new StringBuilder();
-    private void dataPicker() {
-        MaterialDatePicker<Long> datePicker= MaterialDatePicker.Builder.datePicker().setTitleText("日期选择").build();
-
-        datePicker.addOnPositiveButtonClickListener(new MaterialPickerOnPositiveButtonClickListener<Long>() {
-            @Override
-            public void onPositiveButtonClick(Long selection) {
-                String dateStr = DateFormat.getDateInstance().format(new Date(selection));
-                date.append(dateStr);
-                mBinding.dateIcon.setVisibility(View.GONE);
-                mBinding.dateContent.setText(dateStr);
-                mOutputBean.setDate(new StringBuilder(dateStr));
-            }
-        });
-        datePicker.addOnNegativeButtonClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-            }
-        });
-
-        datePicker.show(mFragmentManager,"data");
-    }
-
-
-    public static List<String> toInfixExpression(String string) {
-        // 索引
-        int index = 0;
-        // 创建一个数组保存
-        List<String> ls = new ArrayList<>();
-        while (index < string.length()) {
-            // 如果是字符那么就直接添加
-            if (string.charAt(index) < 48 || string.charAt(index) > 57) {
-                ls.add(string.charAt(index) + "");
-                index++;
-            } else {
-                String str = "";
-                // 判断数字是否是多位数，直到匹配不到数字结束循环
-                while (index < string.length() && (string.charAt(index) >= 48 && string.charAt(index) <= 57)) {
-                    // 拼接
-                    str += string.charAt(index) + "";
-                    index++;
-                }
-                ls.add(str);
-            }
-        }
-        return ls;
-
-    }
-
-    public static int calculate(List<String> ls) {
-        // 创建栈, 只需要一个栈即可
-        Stack<String> stack = new Stack<String>();
-        // 遍历 ls
-        for (String item : ls) {
-            // 这里使用正则表达式来取出数
-            if (item.matches("\\d+")) { // 匹配的是多位数
-                // 入栈
-                stack.push(item);
-            }
-        }
-        for (String item : ls) {
-            // 这里使用正则表达式来取出数
-            if (item.matches("\\d+")) { // 匹配的是多位数
-
-            }else {
-                // pop出两个数，并运算， 再入栈
-                int num2 = Integer.parseInt(stack.pop());
-                int num1 = Integer.parseInt(stack.pop());
-                int res = 0;
-                if (item.equals("+")) {
-                    res = num1 + num2;
-                } else if (item.equals("-")) {
-                    res = num1 - num2;
-                }
-                //把res 入栈
-                stack.push("" + res);
-                //最后留在stack中的数据是运算结果
-            }
-        }
-
-        return Integer.parseInt(stack.pop());
-    }
 
     private void delete() {
         if (mBuilder.length() == 1) {
@@ -453,22 +204,73 @@ public class MyDialogFragment extends DialogFragment implements View.OnClickList
         }else {
             mBuilder.setLength(mBuilder.length()-1);
             mBinding.money.setText(mBuilder);
-        }
-//        Log.d("HelloWorld", "delete: "+mBuilder.toString());
 
+        }
+
+    }
+
+
+    public static List<String> toInfixExpression(String string) {
+        int index = 0;
+        List<String> ls = new ArrayList<>();
+        while (index < string.length()) {
+            if (string.charAt(index) == '+' || string.charAt(index) == '-'
+                    || string.charAt(index) == '*' || string.charAt(index) == '/') {
+                ls.add(string.charAt(index) + "");
+                index++;
+            } else {
+                String str = "";
+                while (index < string.length() && ((string.charAt(index) >= '0' && string.charAt(index) <= '9') || string.charAt(index) == '.')) {
+                    str += string.charAt(index) + "";
+                    index++;
+                }
+                ls.add(str);
+            }
+        }
+        return ls;
+    }
+
+    public static double calculate(List<String> ls) {
+        Stack<String> stack = new Stack<String>();
+        for (String item : ls) {
+            if (item.matches("\\d+\\.?\\d*")) {
+                stack.push(item);
+            }
+        }
+        for (String item : ls) {
+            if (item.matches("\\d+\\.?\\d*")) {
+
+            } else {
+                double num2 = Double.parseDouble(stack.pop());
+                double num1 = Double.parseDouble(stack.pop());
+                double res = 0;
+                if (item.equals("+")) {
+                    res = num1 + num2;
+                } else if (item.equals("-")) {
+                    res = num1 - num2;
+                } else if (item.equals("*")) {
+                    res = num1 * num2;
+                } else if (item.equals("/")) {
+                    res = num1 / num2;
+                    BigDecimal bg = new BigDecimal(res);
+
+                    res = bg.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+                }
+                stack.push("" + res);
+            }
+        }
+
+        return Double.parseDouble(stack.pop());
     }
 
     private void add(char s) {
-//        Log.d("HelloWorld", "add: "+mBuilder.toString());
-        if(mBuilder.toString().equals("0")){
-            // Log.d("HelloWorld", "add: 1");
-            mBuilder.setCharAt(0,s);
+        if (mBuilder.toString().equals("0")) {
+            mBuilder.setCharAt(0, s);
             mBinding.money.setText(mBuilder);
-        }else {
-           // Log.d("HelloWorld", "add:2 ");
+        } else {
             mBuilder.append(s);
             mBinding.money.setText(mBuilder);
         }
-
     }
+
 }

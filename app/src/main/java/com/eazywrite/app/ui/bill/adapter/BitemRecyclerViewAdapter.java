@@ -37,10 +37,10 @@ public class BitemRecyclerViewAdapter extends RecyclerView.Adapter<BitemRecycler
     public void onBindViewHolder(@NonNull BitemRecyclerViewAdapter.ViewHolder holder, int position) {
         WeekBillBean weekBillBean = mWeekBillBean.get(position);
         holder.date.setText(weekBillBean.getWeekDate());
-        ItemRecyclerViewAdapter itemRecyclerViewAdapter = new ItemRecyclerViewAdapter(weekBillBean.getWeekBillBeanList(),mContext);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mContext);
-        holder.recyclerView.setLayoutManager(linearLayoutManager);
-        holder.recyclerView.setAdapter(itemRecyclerViewAdapter);
+//        ItemRecyclerViewAdapter itemRecyclerViewAdapter = new ItemRecyclerViewAdapter(weekBillBean.getWeekBillBeanList(),mContext);
+//        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mContext);
+//        holder.recyclerView.setLayoutManager(linearLayoutManager);
+//        holder.recyclerView.setAdapter(itemRecyclerViewAdapter);
     }
 
     @Override

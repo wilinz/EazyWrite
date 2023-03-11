@@ -9,8 +9,8 @@
         android:id="@+id/icon"
         android:layout_marginTop="3dp"
         android:layout_gravity="center"
-        android:layout_width="45dp"
-        android:layout_height="45dp"></ImageView>
+        android:layout_width="70px"
+        android:layout_height="70px"></ImageView>
 
     <TextView
         android:id="@+id/name"

@@ -20,16 +20,11 @@ import com.eazywrite.app.ui.bill.adapter.RecycleViewAdapter;
 import java.util.ArrayList;
 
 public class FragmentOne extends Fragment {
-
+    AddItemFragment mAddItemFragment;
     MainFragment mMainFragment;
-    public FragmentOne(MainFragment mainFragment) {
+    public FragmentOne(MainFragment mainFragment, AddItemFragment addItemFragment) {
         this.mMainFragment = mainFragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
+        this.mAddItemFragment = addItemFragment;
     }
 
     @Override
@@ -55,7 +50,7 @@ public class FragmentOne extends Fragment {
         mBinding.recycleView.setLayoutManager(layoutManager);
         adapter = new RecycleViewAdapter(viewModel.outputBean.getValue(),getContext(),
                 viewModel.outputBeanColored.getValue(),layoutManager,getActivity().getSupportFragmentManager()
-        , (AddBillContentActivity) getActivity(),mMainFragment);
+        ,mAddItemFragment,this);
         mBinding.recycleView.setAdapter(adapter);
     }
     OutputViewModel viewModel;
@@ -70,66 +65,35 @@ public class FragmentOne extends Fragment {
     ArrayList<OutputBean> beansColored = new ArrayList<>();
 
     private void init(){
-        beans.add(setResource("jiaju","家具"));
-        beans.add(setResource("bangong","办公"));
-        beans.add(setResource("geren","个人"));
-        beans.add(setResource("gouwu","购物"));
-        beans.add(setResource("jianshen","健身"));
-        beans.add(setResource("jiaotong","交通"));
-        beans.add(setResource("jiating","家庭"));
-        beans.add(setResource("qita","其他"));
-        beans.add(setResource("shenghuo","生活"));
-        beans.add(setResource("shouru","收入"));
-        beans.add(setResource("xuexi","学习"));
-        beans.add(setResource("yiliao","医疗"));
-        beans.add(setResource("yule","娱乐"));
-        beans.add(setResource("zhufang","住房"));
-        beans.add(setResource("zhangbei","长辈"));
-        beans.add(setResource("yundong","运动"));
-        beans.add(setResource("xuexi","学习"));
-        beans.add(setResource("weixiu","未休"));
-        beans.add(setResource("tongxun","通讯"));
-        beans.add(setResource("shuma","数码"));
-        beans.add(setResource("shuiguo","水果"));
-        beans.add(setResource("shucai","蔬菜"));
-        beans.add(setResource("shejiao","社交"));
-        beans.add(setResource("riyong","日用"));
-        beans.add(setResource("qinyou","亲友"));
-        beans.add(setResource("qiche","汽车"));
-        beans.add(setResource("meirong","美容"));
-        beans.add(setResource("kuaidi","快递"));
+        beans.add(setResource("service","服务"));
+        beans.add(setResource("traver","旅游"));
+        beans.add(setResource("transport","转账"));
+        beans.add(setResource("sport","运动"));
+        beans.add(setResource("shopping","购物"));
+        beans.add(setResource("play","娱乐"));
+        beans.add(setResource("medical","医疗"));
+        beans.add(setResource("gong_yi","公益"));
+        beans.add(setResource("education","教育"));
+        beans.add(setResource("eat","饮食"));
+        beans.add(setResource("cloth","服装"));
+        beans.add(setResource("bus","交通"));
+        beans.add(setResource("bao_xian","保险"));
 
-        beans.add(setResource("juanzeng","捐赠"));
 
-        beansColored.add(setResource("jiaju1","家具"));
-        beansColored.add(setResource("bangong1","办公"));
-        beansColored.add(setResource("geren1","个人"));
-        beansColored.add(setResource("gouwu1","购物"));
-        beansColored.add(setResource("jianshen1","健身"));
-        beansColored.add(setResource("jiaotong1","交通"));
-        beansColored.add(setResource("jiating1","家庭"));
-        beansColored.add(setResource("qita1","其他"));
-        beansColored.add(setResource("shenghuo1","生活"));
-        beansColored.add(setResource("shouru1","收入"));
-        beansColored.add(setResource("xuexi1","学习"));
-        beansColored.add(setResource("yiliao1","医疗"));
-        beansColored.add(setResource("yule1","娱乐"));
-        beansColored.add(setResource("zhufang1","住房"));
-        beansColored.add(setResource("zhangbei1","长辈"));
-        beansColored.add(setResource("yundong1","运动"));
-        beansColored.add(setResource("xuexi1","学习"));
-        beansColored.add(setResource("weixiu1","未休"));
-        beansColored.add(setResource("tongxun1","通讯"));
-        beansColored.add(setResource("shuma1","数码"));
-        beansColored.add(setResource("shuiguo1","水果"));
-        beansColored.add(setResource("shucai1","蔬菜"));
-        beansColored.add(setResource("shejiao1","社交"));
-        beansColored.add(setResource("riyong1","日用"));
-        beansColored.add(setResource("qinyou1","亲友"));
-        beansColored.add(setResource("qiche1","汽车"));
-        beansColored.add(setResource("meirong1","美容"));
-        beansColored.add(setResource("kuaidi1","快递"));
-        beansColored.add(setResource("juanzeng1","捐赠"));
+        beansColored.add(setResource("service1","服务"));
+        beansColored.add(setResource("traver1","旅游"));
+        beansColored.add(setResource("transport1","转账"));
+        beansColored.add(setResource("sport1","运动"));
+        beansColored.add(setResource("shopping1","购物"));
+        beansColored.add(setResource("play1","娱乐"));
+        beansColored.add(setResource("medical1","医疗"));
+        beansColored.add(setResource("gong_yi1","公益"));
+        beansColored.add(setResource("education1","教育"));
+        beansColored.add(setResource("eat1","饮食"));
+        beansColored.add(setResource("cloth1","服装"));
+        beansColored.add(setResource("bus1","交通"));
+        beansColored.add(setResource("bao_xian1","保险"));
+
 
     }
 
