@@ -5,34 +5,32 @@ package com.eazywrite.app.ui.main
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import androidx.activity.ComponentActivity
+import android.view.ViewGroup
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.eazywrite.app.ui.bill.BillActivity
-import com.eazywrite.app.ui.chart.ChartActivity
-import com.eazywrite.app.ui.image_editing.CameraXActivity
-import com.eazywrite.app.ui.image_editing.ImageEditingActivity
+import androidx.compose.ui.viewinterop.AndroidView
+import androidx.core.view.WindowCompat
+import androidx.fragment.app.FragmentActivity
+import androidx.viewpager2.widget.ViewPager2
 import com.eazywrite.app.ui.theme.EazyWriteTheme
-import com.eazywrite.app.ui.welcome.WelcomeActivity
 import com.eazywrite.app.util.setWindow
 
-class MainActivity : ComponentActivity() {
+
+class MainActivity : FragmentActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        WindowCompat.setDecorFitsSystemWindows(window, false)
         setWindow()
         setContent {
             EazyWriteTheme {
@@ -41,74 +39,42 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-
+                    var currentPage by remember {
+                        mutableStateOf(0)
+                    }
                     Scaffold(
-                        topBar = {
-                            TopAppBar(
-                                title = { Text(text = "记账") },
-                            )
-                        },
                         bottomBar = {
-                            var currentSelected by rememberSaveable {
-                                mutableStateOf(0)
-                            }
-                            val items = remember {
-                                mutableStateListOf(
-                                    Pair("主页", Icons.Default.Home),
-                                    Pair("账单", Icons.Default.Menu),
-                                    Pair("我的", Icons.Default.Person)
-                                )
-                            }
-                            NavigationBar {
-                                items.forEachIndexed { index, pair ->
-                                    val selected = currentSelected == index
-                                    NavigationBarItem(
-                                        selected = selected,
-                                        onClick = {
-                                            if (!selected) {
-                                                currentSelected = index
-                                            }
-                                        },
-                                        label = {
-                                            Text(
-                                                text = pair.first,
-                                                fontWeight = FontWeight.SemiBold,
-                                            )
-                                        },
-                                        icon = {
-                                            Icon(
-                                                pair.second,
-                                                contentDescription = pair.first,
-                                            )
-                                        }
-                                    )
-                                }
-                            }
-
+                            BottomBar(currentPage, onSelected = { currentPage = it })
                         },
-                    ) {
-                        Box(Modifier.padding(it)) {
-                            Column(
-                                Modifier
-                                    .fillMaxSize()
-                                    .padding(8.dp)
-                            ) {
-                                ElevatedButton(onClick = { startActivity<BillActivity>() }) {
-                                    Text(text = "记账页面")
-                                }
-                                ElevatedButton(onClick = { startActivity<ChartActivity>() }) {
-                                    Text(text = "图表页面")
-                                }
-                                ElevatedButton(onClick = { startActivity<WelcomeActivity>() }) {
-                                    Text(text = "欢迎页面")
-                                }
-                                ElevatedButton(onClick = { startActivity<ImageEditingActivity>() }) {
-                                    Text(text = "图像增强")
-                                }
-                                ElevatedButton(onClick = { startActivity<CameraXActivity>() }) {
-                                    Text(text = "相机预览")
-                                }
-                            }
+                    ) { paddingValues ->
+                        Box(
+                            modifier = Modifier.padding(bottom = paddingValues.calculateBottomPadding())
+                        ) {
+                            AndroidView(
+                                modifier = Modifier.fillMaxSize(),
+                                factory = { context ->
+                                    ViewPager2(context).apply {
+                                        val viewPager2 = this
+                                        adapter = ViewPage2Adapter(this@MainActivity)
+                                        registerOnPageChangeCallback(
+                                            onViewPage2ChangeCallback(
+                                                onPageSelected = { index ->
+                                                    currentPage = index
+                                                    setSystemUI(index)
+                                                }
+                                            )
+                                        )
+                                        offscreenPageLimit = 4
+                                        layoutParams = ViewGroup.LayoutParams(
+                                            ViewGroup.LayoutParams.MATCH_PARENT,
+                                            ViewGroup.LayoutParams.MATCH_PARENT
+                                        )
+                                    }
+                                },
+                                update = { view ->
+                                    view.setCurrentItem(currentPage, true)
+                                })
+
                         }
                     }
 
@@ -117,18 +83,70 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private inline fun <reified T> startActivity() {
-        this.startActivity(
-            Intent(
-                this@MainActivity,
-                T::class.java
-            )
+    fun Modifier.paddingPage(page: Int, paddingValues: PaddingValues): Modifier {
+        var top = paddingValues.calculateTopPadding()
+        val bottom = paddingValues.calculateBottomPadding()
+        when (page) {
+            0 -> top =0.dp
+        }
+        return padding(
+            top = top,
+            bottom = bottom,
         )
     }
+    fun setSystemUI(page: Int) {
+        when (page) {
+            0 -> setWindow(isAppearanceLightStatusBars = false)
+            1 -> setWindow(isAppearanceLightStatusBars = true)
+            2 -> setWindow(isAppearanceLightStatusBars = true)
+            else -> setWindow(isAppearanceLightStatusBars = true)
+        }
+    }
 
-    companion object{
+
+
+    companion object {
         fun jumpMainActivity(context: Context) {
-            context.startActivity(Intent(context,MainActivity::class.java))
+            context.startActivity(Intent(context, MainActivity::class.java))
+        }
+    }
+}
+
+data class BottomItem(val title: String, val icon: ImageVector, val selectedIcon: ImageVector)
+
+@Composable
+private fun BottomBar(currentSelected: Int, onSelected: (index: Int) -> Unit) {
+    val items = remember {
+        mutableStateListOf(
+            BottomItem("首页", Icons.Outlined.Home, Icons.Default.Home),
+            BottomItem("统计", Icons.Outlined.StackedLineChart, Icons.Default.BarChart),
+            BottomItem("发现", Icons.Outlined.Explore, Icons.Default.Explore),
+            BottomItem("我的", Icons.Outlined.Person, Icons.Default.Person)
+        )
+    }
+    NavigationBar {
+        items.forEachIndexed { index, item ->
+            val selected = currentSelected == index
+            NavigationBarItem(
+                selected = selected,
+                onClick = {
+                    if (!selected) {
+                        onSelected(index)
+                    }
+                },
+                label = {
+                    Text(
+                        text = item.title,
+                        fontWeight = FontWeight.SemiBold,
+                    )
+                },
+                icon = {
+                    Icon(
+                        if (selected) item.selectedIcon else item.icon,
+                        contentDescription = item.title,
+                    )
+                }
+            )
         }
     }
 }
@@ -140,8 +158,39 @@ fun Greeting(name: String) {
 
 @Preview(showBackground = true)
 @Composable
-fun DefaultPreview() {
+fun BottomBarPreview() {
     EazyWriteTheme {
-        Greeting("Android")
+        BottomBar(currentSelected = 0, onSelected = {})
+    }
+}
+
+fun onViewPage2ChangeCallback(
+    onPageScrolled: ((
+        position: Int,
+        positionOffset: Float,
+        positionOffsetPixels: Int
+    ) -> Unit)? = null,
+    onPageSelected: ((position: Int) -> Unit)? = null,
+    onPageScrollStateChanged: ((state: Int) -> Unit)? = null
+): ViewPager2.OnPageChangeCallback {
+    return object : ViewPager2.OnPageChangeCallback() {
+        override fun onPageScrolled(
+            position: Int,
+            positionOffset: Float,
+            positionOffsetPixels: Int
+        ) {
+            super.onPageScrolled(position, positionOffset, positionOffsetPixels)
+            onPageScrolled?.invoke(position, positionOffset, positionOffsetPixels)
+        }
+
+        override fun onPageSelected(position: Int) {
+            super.onPageSelected(position)
+            onPageSelected?.invoke(position)
+        }
+
+        override fun onPageScrollStateChanged(state: Int) {
+            super.onPageScrollStateChanged(state)
+            onPageScrollStateChanged?.invoke(state)
+        }
     }
 }
