@@ -62,7 +62,12 @@
         </activity>
         <activity
             android:name="com.eazywrite.app.ui.bill.AddBillContentActivity"
-            android:exported="true" />
+            android:exported="true"
+            android:windowSoftInputMode="adjustPan">
+
+
+
+        </activity>
         <activity
             android:name=".ui.image_editing.CameraXActivity"
             android:exported="true" />
