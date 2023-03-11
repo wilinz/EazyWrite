@@ -237,7 +237,9 @@ public class AddItemFragment extends Fragment implements CountInterface,View.OnC
 
 
     private void dataPicker() {
-        MaterialDatePicker<Long> datePicker= MaterialDatePicker.Builder.datePicker().setTitleText("日期选择").build();
+        MaterialDatePicker<Long> datePicker= MaterialDatePicker.Builder.datePicker()
+                .setTheme(R.style.ThemeOverlay_App_DatePicker)
+                        .setTitleText("日期选择").build();
 
         datePicker.addOnPositiveButtonClickListener(new MaterialPickerOnPositiveButtonClickListener<Long>() {
             @Override
