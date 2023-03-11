@@ -6,9 +6,21 @@
         <item name="cornerSize">30dp</item>
     </style>
 
+
+
     <style name="dialogAnim" mce_bogus="1" parent="android:Animation">
         <item name="android:windowEnterAnimation">@anim/enter</item>
         <item name="android:windowExitAnimation">@anim/out</item>
+    </style>
+
+    <style name="ModalBottomSheetDialog" parent="Widget.Material3.BottomSheet.Modal">
+        <item name="backgroundTint">@color/white</item>
+        <item name="shapeAppearance">@style/ShapeAppearance.App.LargeComponent</item>
+    </style>
+
+    <style name="ShapeAppearance.App.LargeComponent" parent="ShapeAppearance.Material3.LargeComponent">
+        <item name="cornerFamily">cut</item>
+        <item name="cornerSize">24dp</item>
     </style>
 
     <style name="welcomeStyle">
@@ -22,5 +34,17 @@
         </item>
 
     </style>
+
+    <style name="Theme.App" parent="Theme.Material3.Light">
+
+        <item name="materialCalendarTheme">@style/ThemeOverlay.App.DatePicker</item>
+    </style>
+
+    <style name="ThemeOverlay.App.DatePicker" parent="@style/ThemeOverlay.Material3.MaterialCalendar">
+        <item name="colorPrimary">#FFBB51</item>
+
+
+    </style>
+
 
 </resources>

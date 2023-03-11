@@ -130,6 +130,8 @@
                         android:id="@+id/gainYanZhenMa"
                         android:padding="10dp"
                         android:background="#FFBB52"
+                        android:foreground="?android:attr/selectableItemBackground"
+
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textColor="#FFFFFF"
@@ -196,6 +198,8 @@
                 android:layout_height="match_parent"
                 android:background="@drawable/gradient"
                 android:gravity="center"
+                android:foreground="?android:attr/selectableItemBackground"
+
                 android:padding="15dp"
                 android:text="注册并登录"
                 android:textColor="@color/white"

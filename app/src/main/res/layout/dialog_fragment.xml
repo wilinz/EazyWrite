@@ -8,353 +8,425 @@
             type="com.eazywrite.app.ui.bill.fragment.InputViewModel" />
     </data>
 
-    <LinearLayout
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
-        android:orientation="vertical"
-        android:focusable="true"
-        android:focusableInTouchMode="true"
+        android:background="#EFEFEF"
         android:layout_height="match_parent">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="0"
-            android:maxLength="8"
-            android:layout_marginLeft="20dp"
-            android:paddingLeft="10dp"
-            android:layout_margin="5dp"
-            android:textSize="23sp"
-            android:id="@+id/money"></TextView>
-
-        <androidx.cardview.widget.CardView
+        <com.google.android.material.bottomsheet.BottomSheetDragHandleView
+            android:id="@+id/drag_handle"
+            android:background="#F5F5F5"
             android:layout_width="match_parent"
-            app:cardCornerRadius="10dp"
-            app:cardElevation="0dp"
+            android:layout_height="wrap_content"/>
+
+        <LinearLayout
+
+            android:layout_width="match_parent"
+            android:orientation="vertical"
             android:focusable="true"
             android:focusableInTouchMode="true"
-            android:layout_marginBottom="10dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent">
 
-            <EditText
+            <LinearLayout
+                android:background="#F5F5F5"
+                android:layout_marginTop="20dp"
                 android:layout_width="match_parent"
-                android:background="#F6F7F9"
-                android:layout_height="wrap_content"
-                android:text="备注："
-                android:singleLine="true"
-                android:id="@+id/beiZhu"
-                android:focusable="true"
-                android:focusableInTouchMode="true"
-                android:hint="点击写备注..."
-                android:textSize="15sp"
-                android:paddingLeft="10dp"
-                android:paddingTop="5dp"
-                android:paddingBottom="5dp"></EditText>
-        </androidx.cardview.widget.CardView>
+                android:layout_marginBottom="10dp"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/money"
+                    android:text="0"
+                    android:textColor="@color/black"
+                    android:textSize="30sp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_width="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_height="wrap_content">
+
+                </TextView>
+            </LinearLayout>
 
 
-        <TableLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            <TableLayout
 
-            <View
-                android:layout_height="0.5dp"
                 android:layout_width="match_parent"
-                android:background="#E8E8E8"></View>
+                android:layout_height="match_parent">
+                <TableRow
 
-            <TableRow>
-
-                <View
-                    android:layout_height="match_parent"
-                    android:layout_width="0.5dp"
-                    android:background="#E8E8E8"></View>
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="60dp"
-                    android:id="@+id/seven"
-                    android:text="7"
-                    android:gravity="center"></TextView>
-
-                <View
-                    android:layout_height="match_parent"
-                    android:layout_width="0.5dp"
-                    android:background="#E8E8E8"></View>
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="60dp"
-                    android:gravity="center"
-                    android:id="@+id/eight"
-                    android:text="8"></TextView>
-
-                <View
-                    android:layout_height="match_parent"
-                    android:layout_width="0.5dp"
-                    android:background="#E8E8E8"></View>
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:id="@+id/nine"
-                    android:gravity="center"
-                    android:layout_height="60dp"
-                    android:text="9"></TextView>
-
-                <View
-                    android:layout_height="match_parent"
-                    android:layout_width="0.5dp"
-                    android:background="#E8E8E8"></View>
-
-
-                <LinearLayout
-                    android:orientation="horizontal"
-                    android:layout_width="0dp"
-                    android:id="@+id/date"
-                    android:layout_height="60dp"
-                    android:layout_weight="1">
-
-                    <ImageView
-                        android:id="@+id/dateIcon"
-                        android:layout_gravity="center_vertical"
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:layout_marginLeft="15dp"
-                        android:background="@drawable/icon_family_calendar"></ImageView>
+                    >
 
                     <TextView
-                        android:layout_marginLeft="8dp"
-                        android:layout_width="wrap_content"
+                        android:id="@+id/clear2"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginRight="5dp"
+                        android:background="@drawable/textview_corner"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:focusable="true"
+                        android:clickable="true"
+                        android:foreground="?android:attr/selectableItemBackground"
+                        android:layout_height="50dp"
+                        android:textColor="#ED9000"
+                        android:text="C"
+                        android:textSize="18sp"
+                        android:gravity="center"></TextView>
+
+
+                    <TextView
+                        android:id="@+id/div"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginRight="5dp"
+                        android:background="@drawable/textview_corner"
+                        android:layout_width="0dp"
+                        android:textColor="#ED9000"
+                        android:focusable="true"
+                        android:clickable="true"
+                        android:foreground="?android:attr/selectableItemBackground"
+
+                        android:layout_weight="1"
+                        android:textSize="18sp"
+                        android:layout_height="50dp"
+                        android:gravity="center"
+                        android:text="/"></TextView>
+
+
+
+                    <TextView
+                        android:id="@+id/mul"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginRight="5dp"
+                        android:background="@drawable/textview_corner"
+
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:focusable="true"
+                        android:clickable="true"
+                        android:foreground="?android:attr/selectableItemBackground"
+
+                        android:textSize="18sp"
+                        android:textColor="#ED9000"
+                        android:gravity="center"
+                        android:layout_height="50dp"
+                        android:text="*"></TextView>
+
+
+
+
+                    <RelativeLayout
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginRight="5dp"
+                        android:background="@drawable/textview_corner"
+                        android:orientation="horizontal"
+                        android:layout_width="0dp"
+                        android:focusable="true"
+                        android:clickable="true"
+                        android:foreground="?android:attr/selectableItemBackground"
+
+                        android:id="@+id/delete"
+                        android:layout_height="50dp"
+                        android:layout_weight="1">
+
+                        <ImageView
+                            android:layout_width="18dp"
+                            android:layout_height="14dp"
+                            android:layout_centerInParent="true"
+                            android:background="@drawable/delete"></ImageView>
+                    </RelativeLayout>
+
+
+                </TableRow>
+
+
+                <TableRow>
+
+
+
+                    <TextView
+                        android:layout_margin="5dp"
+                        android:background="@drawable/textview_corner"
+
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="50dp"
+                        android:id="@+id/one"
+                        android:focusable="true"
+                        android:clickable="true"
+                        android:foreground="?android:attr/selectableItemBackground"
+
+                        android:text="1"
+                        android:gravity="center"></TextView>
+
+
+
+                    <TextView
+                        android:layout_margin="5dp"
+                        android:background="@drawable/textview_corner"
+
+                        android:layout_width="0dp"
+                        android:focusable="true"
+                        android:clickable="true"
+                        android:foreground="?android:attr/selectableItemBackground"
+
+                        android:layout_weight="1"
+                        android:layout_height="50dp"
+                        android:gravity="center"
+                        android:id="@+id/two"
+                        android:text="2"></TextView>
+
+
+
+                    <TextView
+                        android:layout_margin="5dp"
+                        android:background="@drawable/textview_corner"
+
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:id="@+id/three"
+                        android:focusable="true"
+                        android:clickable="true"
+                        android:foreground="?android:attr/selectableItemBackground"
+
+                        android:gravity="center"
+                        android:layout_height="50dp"
+                        android:text="3"></TextView>
+
+
+
+                    <TextView
+                        android:layout_margin="5dp"
+                        android:background="@drawable/textview_corner"
+
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:focusable="true"
+                        android:clickable="true"
+                        android:foreground="?android:attr/selectableItemBackground"
+
+                        android:textColor="#ED9000"
+                        android:id="@+id/sub"
+                        android:textSize="18sp"
+                        android:gravity="center"
+                        android:layout_height="50dp"
+                        android:text="-"></TextView>
+
+
+                </TableRow>
+
+
+
+                <TableRow>
+
+                    <TextView
+                        android:layout_margin="5dp"
+                        android:background="@drawable/textview_corner"
+
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="50dp"
+                        android:focusable="true"
+                        android:clickable="true"
+                        android:foreground="?android:attr/selectableItemBackground"
+
+                        android:id="@+id/four"
+                        android:text="4"
+                        android:gravity="center"></TextView>
+
+
+                    <TextView
+                        android:layout_margin="5dp"
+                        android:background="@drawable/textview_corner"
+
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:focusable="true"
+                        android:clickable="true"
+                        android:foreground="?android:attr/selectableItemBackground"
+
+                        android:id="@+id/five"
+                        android:gravity="center"
+                        android:layout_height="50dp"
+                        android:text="5"></TextView>
+
+
+                    <TextView
+                        android:layout_margin="5dp"
+                        android:background="@drawable/textview_corner"
+
+                        android:layout_width="0dp"
+                        android:focusable="true"
+                        android:clickable="true"
+                        android:foreground="?android:attr/selectableItemBackground"
+
+                        android:layout_weight="1"
+                        android:id="@+id/six"
+                        android:gravity="center"
+                        android:layout_height="50dp"
+                        android:text="6"></TextView>
+
+
+                    <TextView
+                        android:layout_margin="5dp"
+                        android:background="@drawable/textview_corner"
+
+                        android:focusable="true"
+                        android:clickable="true"
+                        android:foreground="?android:attr/selectableItemBackground"
+
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:textColor="#ED9000"
+                        android:id="@+id/add"
+                        android:gravity="center"
+                        android:textSize="18sp"
+                        android:layout_height="50dp"
+                        android:text="+"
+                        ></TextView>
+
+                         </TableRow>
+
+
+
+                <TableRow
+                    >
+                    <LinearLayout
+                        android:layout_marginBottom="5dp"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:id="@+id/dateContent"
-                        android:gravity="center"
-                        android:textSize="9sp"
-                        android:text="今天"></TextView>
-                </LinearLayout>
+                        android:layout_weight="3"
+                        android:orientation="vertical"
+                        >
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            >
+
+                            <TextView
+                                android:layout_margin="5dp"
+                                android:background="@drawable/textview_corner"
+
+                                android:focusable="true"
+                                android:clickable="true"
+                                android:foreground="?android:attr/selectableItemBackground"
+
+                                android:layout_width="0dp"
+                                android:layout_weight="1"
+                                android:id="@+id/seven"
+                                android:layout_height="50dp"
+                                android:text="7"
+                                android:gravity="center"></TextView>
 
 
-                <View
-                    android:layout_height="match_parent"
-                    android:layout_width="0.5dp"
-                    android:background="#E8E8E8"></View>
-            </TableRow>
+                            <TextView
+                                android:layout_margin="5dp"
+                                android:background="@drawable/textview_corner"
 
-            <View
-                android:layout_height="0.5dp"
-                android:layout_width="match_parent"
-                android:background="#E8E8E8"></View>
+                                android:layout_width="0dp"
+                                android:layout_weight="1"
+                                android:focusable="true"
+                                android:clickable="true"
+                                android:foreground="?android:attr/selectableItemBackground"
 
-            <TableRow>
-
-                <View
-                    android:layout_height="match_parent"
-                    android:layout_width="0.5dp"
-                    android:background="#E8E8E8"></View>
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="60dp"
-                    android:id="@+id/four"
-                    android:text="4"
-                    android:gravity="center"></TextView>
-
-                <View
-                    android:layout_height="match_parent"
-                    android:layout_width="0.5dp"
-                    android:background="#E8E8E8"></View>
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:id="@+id/five"
-                    android:gravity="center"
-                    android:layout_height="60dp"
-                    android:text="5"></TextView>
-
-                <View
-                    android:layout_height="match_parent"
-                    android:layout_width="0.5dp"
-                    android:background="#E8E8E8"></View>
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:id="@+id/six"
-                    android:gravity="center"
-                    android:layout_height="60dp"
-                    android:text="6"></TextView>
-
-                <View
-                    android:layout_height="match_parent"
-                    android:layout_width="0.5dp"
-                    android:background="#E8E8E8"></View>
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:id="@+id/add"
-                    android:gravity="center"
-                    android:layout_height="60dp"
-                    android:text="+"
-                    ></TextView>
-
-                <View
-                    android:layout_height="match_parent"
-                    android:layout_width="0.5dp"
-                    android:background="#E8E8E8"></View>
-            </TableRow>
-
-            <View
-                android:layout_height="0.5dp"
-                android:layout_width="match_parent"
-                android:background="#E8E8E8"></View>
-
-            <TableRow>
-
-                <View
-                    android:layout_height="match_parent"
-                    android:layout_width="0.5dp"
-                    android:background="#E8E8E8"></View>
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:id="@+id/one"
-                    android:layout_height="60dp"
-                    android:text="1"
-                    android:gravity="center"></TextView>
-
-                <View
-                    android:layout_height="match_parent"
-                    android:layout_width="0.5dp"
-                    android:background="#E8E8E8"></View>
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:id="@+id/two"
-                    android:gravity="center"
-                    android:layout_height="60dp"
-                    android:text="2"></TextView>
-
-                <View
-                    android:layout_height="match_parent"
-                    android:layout_width="0.5dp"
-                    android:background="#E8E8E8"></View>
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:id="@+id/three"
-                    android:layout_height="60dp"
-                    android:text="3"></TextView>
-
-                <View
-                    android:layout_height="match_parent"
-                    android:layout_width="0.5dp"
-                    android:background="#E8E8E8"></View>
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:gravity="center"
-                    android:layout_weight="1"
-                    android:id="@+id/sub"
-                    android:layout_height="60dp"
-                    android:text="-"></TextView>
-
-                <View
-                    android:layout_height="match_parent"
-                    android:layout_width="0.5dp"
-                    android:background="#E8E8E8"></View>
-            </TableRow>
-
-            <View
-                android:layout_height="0.5dp"
-                android:background="#E8E8E8"
-                android:layout_width="match_parent"></View>
-
-            <TableRow>
-
-                <View
-                    android:layout_height="match_parent"
-                    android:layout_width="0.5dp"
-                    android:background="#E8E8E8"></View>
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="60dp"
-                    android:text="."
-                    android:id="@+id/dot"
-                    android:gravity="center"></TextView>
-
-                <View
-                    android:layout_height="match_parent"
-                    android:layout_width="0.5dp"
-                    android:background="#E8E8E8"></View>
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:id="@+id/zero"
-                    android:layout_height="60dp"
-                    android:text="0"></TextView>
-
-                <View
-                    android:layout_height="match_parent"
-                    android:layout_width="0.5dp"
-                    android:background="#E8E8E8"></View>
-
-                <RelativeLayout
-                    android:id="@+id/delete"
-                    android:orientation="horizontal"
-                    android:layout_width="0dp"
-                    android:layout_height="60dp"
-                    android:layout_weight="1">
-
-                    <ImageView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:layout_centerInParent="true"
-                        android:background="@drawable/keyboard_view_delete_icon"
-                        android:gravity="center"
-                        android:text=""></ImageView>
-
-                </RelativeLayout>
+                                android:id="@+id/eight"
+                                android:gravity="center"
+                                android:layout_height="50dp"
+                                android:text="8"></TextView>
 
 
-                <View
-                    android:layout_height="match_parent"
-                    android:layout_width="0.5dp"
-                    android:background="#E8E8E8"></View>
+                            <TextView
+                                android:layout_margin="5dp"
+                                android:background="@drawable/textview_corner"
 
-                <TextView
-                    android:layout_width="0dp"
-                    android:gravity="center"
-                    android:layout_weight="1"
-                    android:background="#FCBD1A"
-                    android:layout_height="60dp"
-                    android:id="@+id/finish"
-                    android:text="完成"></TextView>
+                                android:id="@+id/nine"
+                                android:layout_width="0dp"
+                                android:focusable="true"
+                                android:clickable="true"
+                                android:foreground="?android:attr/selectableItemBackground"
 
-                <View
-                    android:layout_height="match_parent"
-                    android:layout_width="0.5dp"
-                    android:background="#E8E8E8"></View>
-            </TableRow>
+                                android:layout_height="50dp"
+                                android:layout_weight="1"
+                                android:gravity="center"
+                                android:text="9"></TextView>
 
-            <View
-                android:layout_height="0.5dp"
-                android:background="#E8E8E8"
-                android:layout_width="match_parent"></View>
-        </TableLayout>
+                        </LinearLayout>
 
-    </LinearLayout>
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+
+                            >
+
+                            <TextView
+                                android:layout_marginTop="5dp"
+                                android:layout_marginRight="10dp"
+                                android:layout_marginBottom="5dp"
+                                android:layout_marginLeft="5dp"
+                                android:background="@drawable/textview_corner"
+
+                                android:layout_width="0dp"
+                                android:layout_weight="1"
+                                android:focusable="true"
+                                android:clickable="true"
+                                android:foreground="?android:attr/selectableItemBackground"
+
+                                android:layout_height="50dp"
+                                android:text="."
+                                android:id="@+id/dot"
+                                android:gravity="center"></TextView>
+
+
+                            <TextView
+                                android:id="@+id/zero"
+                                android:layout_width="0dp"
+
+                                android:layout_marginTop="5dp"
+                                android:layout_marginRight="5dp"
+                                android:layout_marginBottom="5dp"
+                                android:layout_height="50dp"
+
+
+                                android:layout_weight="2"
+                                android:background="@drawable/textview_corner"
+                                android:clickable="true"
+                                android:focusable="true"
+                                android:foreground="?android:attr/selectableItemBackground"
+
+                                android:gravity="center"
+                                android:text="0"></TextView>
+
+                        </LinearLayout>
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        >
+                        <TextView
+                            android:layout_width="0dp"
+                            android:gravity="center"
+
+                            android:layout_marginLeft="5dp"
+                            android:layout_marginRight="5dp"
+                            android:layout_marginTop="5dp"
+                            android:layout_marginBottom="10dp"
+                            android:focusable="true"
+                            android:clickable="true"
+                            android:foreground="?android:attr/selectableItemBackground"
+
+                            android:layout_weight="1"
+                            android:background="@drawable/textview_style"
+                            android:layout_height="match_parent"
+                            android:id="@+id/finish"
+                            android:text="完成"></TextView>
+                    </LinearLayout>
+                </TableRow>
+
+            </TableLayout>
+
+        </LinearLayout>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
 </layout>

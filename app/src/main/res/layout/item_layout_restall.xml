@@ -15,7 +15,7 @@
         android:id="@+id/icon"
         android:layout_margin="10dp"
         android:layout_centerVertical="true"
-        android:background="@drawable/bangong1"/>
+        />
 
     <TextView
         android:id="@+id/zhangmumingchen"

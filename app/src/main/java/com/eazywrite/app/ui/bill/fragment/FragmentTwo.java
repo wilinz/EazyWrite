@@ -14,7 +14,6 @@ import androidx.recyclerview.widget.GridLayoutManager;
 
 import com.eazywrite.app.R;
 import com.eazywrite.app.databinding.FragmentBillTwoBinding;
-import com.eazywrite.app.ui.bill.AddBillContentActivity;
 import com.eazywrite.app.ui.bill.adapter.RecycleViewAdapter;
 
 import java.util.ArrayList;
@@ -22,8 +21,11 @@ import java.util.ArrayList;
 
 public class FragmentTwo extends Fragment {
     MainFragment mMainFragment;
-    public FragmentTwo(MainFragment mainFragment) {
+    AddItemFragment mAddItemFragment;
+
+    public FragmentTwo(MainFragment mainFragment, AddItemFragment addItemFragment) {
         this.mMainFragment = mainFragment;
+        this.mAddItemFragment = addItemFragment;
     }
 
     @Override
@@ -52,7 +54,7 @@ public class FragmentTwo extends Fragment {
         mBinding.recycleViewTwo.setLayoutManager(layoutManager);
         adapter = new RecycleViewAdapter(viewModel.inputBean.getValue(), getContext(),
                 viewModel.inputBeanColored.getValue(), layoutManager,getActivity().getSupportFragmentManager(),
-                (AddBillContentActivity) getActivity(),mMainFragment);
+                mAddItemFragment, this);
         mBinding.recycleViewTwo.setAdapter(adapter);
     }
 
@@ -68,17 +70,17 @@ public class FragmentTwo extends Fragment {
     ArrayList<OutputBean> beans = new ArrayList<>();
     ArrayList<OutputBean> beansColored = new ArrayList<>();
     private void init() {
-        beans.add(setResource("gongzi","工资"));
-        beans.add(setResource("jianzhi","兼职"));
-        beans.add(setResource("lijin","礼金"));
-        beans.add(setResource("other","其他"));
-        beans.add(setResource("shezhi","设置"));
+        beans.add(setResource("gong_zi","工资"));
+        beans.add(setResource("jian_zhi","兼职"));
+        beans.add(setResource("li_cai","理财"));
+        beans.add(setResource("li_jin","礼金"));
+        beans.add(setResource("zhuan_zhang","转账"));
 
-        beansColored.add(setResource("gongzi1","工资"));
-        beansColored.add(setResource("jianzhi1","兼职"));
-        beansColored.add(setResource("lijin1","礼金"));
-        beansColored.add(setResource("other1","其他"));
-        beansColored.add(setResource("shezhi1","设置"));
+        beansColored.add(setResource("gong_zi1","工资"));
+        beansColored.add(setResource("jian_zhi1","兼职"));
+        beansColored.add(setResource("li_cai1","理财"));
+        beansColored.add(setResource("li_jin1","礼金"));
+        beansColored.add(setResource("zhuan_zhang1","转账"));
 
 
     }
