@@ -1,6 +1,7 @@
 @file:OptIn(ExperimentalMaterial3Api::class)
 
 package com.eazywrite.app.ui.chart
+
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -44,9 +45,16 @@ class ChartActivity : ComponentActivity() {
 @Composable
 fun ChartPage() {
     Scaffold(topBar = {
-        TopAppBar(title = {
-            Text(text = stringResource(id = R.string.chart))
-        })
+        Column {
+            TopAppBar(
+                modifier = Modifier
+                    .windowInsetsPadding(WindowInsets.statusBars),
+                title = {
+                    Text(text = stringResource(id = R.string.chart))
+                },
+            )
+        }
+
     }) {
         Box(modifier = Modifier.padding(it)) {
             val clickedValue: MutableState<Pair<Any, Any>?> =
@@ -68,14 +76,16 @@ fun ChartPage() {
                 ),
                 yAxisLabelPosition = LabelPosition.LEFT
             )
-            Box(modifier = Modifier
-                .fillMaxWidth()
-                .height(250.dp)){
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(250.dp)
+            ) {
                 LineGraph(
                     xAxisData = listOf("周一", "周二", "周三", "周四", "周五", "周六", "周日").map {
                         GraphData.String(it)
                     },
-                    yAxisData = listOf(16.5, 24,17, 40, 10, 50, 30),
+                    yAxisData = listOf(16.5, 24, 17, 40, 10, 50, 30),
                     style = style2,
                     onPointClicked = {
                         clickedValue.value = it
