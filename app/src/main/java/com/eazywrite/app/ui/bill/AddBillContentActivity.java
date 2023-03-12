@@ -28,11 +28,6 @@ public class AddBillContentActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_bill_content);
         ActivityKt.setWindow(this);
-        Window window = getWindow();
-        WindowCompat.setDecorFitsSystemWindows(window, false);
-        window.setStatusBarColor(Color.TRANSPARENT);
-        window.setNavigationBarColor(Color.TRANSPARENT);
-
         addFragment();
     }
 
