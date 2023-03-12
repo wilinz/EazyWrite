@@ -12,6 +12,7 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
+import com.eazywrite.app.ui.bill.BillActivity
 import com.eazywrite.app.ui.image_editing.CameraXActivity
 import com.eazywrite.app.ui.image_editing.ImageEditingActivity
 import com.eazywrite.app.ui.theme.EazyWriteTheme
@@ -57,6 +58,9 @@ fun ExplorePage(paddingValues: PaddingValues) {
                 .padding(8.dp)
         ) {
             val context = LocalContext.current
+            ElevatedButton(onClick = { context.startActivity<BillActivity>() }) {
+                Text(text = "账单页面")
+            }
             ElevatedButton(onClick = { context.startActivity<WelcomeActivity>() }) {
                 Text(text = "欢迎页面")
             }

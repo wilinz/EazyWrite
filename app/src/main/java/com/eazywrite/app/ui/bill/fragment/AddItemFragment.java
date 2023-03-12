@@ -241,25 +241,19 @@ public class AddItemFragment extends Fragment implements CountInterface,View.OnC
                 .setTheme(R.style.ThemeOverlay_App_DatePicker)
                         .setTitleText("日期选择").build();
 
-        datePicker.addOnPositiveButtonClickListener(new MaterialPickerOnPositiveButtonClickListener<Long>() {
-            @Override
-            public void onPositiveButtonClick(Long selection) {
-                String dateStr = DateFormat.getDateInstance().format(new Date(selection));
-                String yearStr = dateStr.substring(0, 4) + "年";
-                String monthDayStr = dateStr.substring(5);
-                mBinding.datePicker.setText(monthDayStr);
-                mDataViewModel.getDayMonth().setValue(monthDayStr);
-                mDataViewModel.getYear().setValue(yearStr);
-            }
+        datePicker.addOnPositiveButtonClickListener(selection -> {
+            String dateStr = DateFormat.getDateInstance().format(new Date(selection));
+            String yearStr = dateStr.substring(0, 4) + "年";
+            String monthDayStr = dateStr.substring(5);
+            mBinding.datePicker.setText(monthDayStr);
+            mDataViewModel.getDayMonth().setValue(monthDayStr);
+            mDataViewModel.getYear().setValue(yearStr);
         });
-        datePicker.addOnNegativeButtonClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        datePicker.addOnNegativeButtonClickListener(view -> {
 
-            }
         });
 
-        datePicker.show(getFragmentManager(),"data");
+        datePicker.show(getActivity().getSupportFragmentManager(), "data");
     }
 
 

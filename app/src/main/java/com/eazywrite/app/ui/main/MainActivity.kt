@@ -7,6 +7,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.ViewGroup
 import androidx.activity.compose.setContent
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
@@ -27,7 +28,7 @@ import com.eazywrite.app.ui.theme.EazyWriteTheme
 import com.eazywrite.app.util.setWindow
 
 
-class MainActivity : FragmentActivity() {
+class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

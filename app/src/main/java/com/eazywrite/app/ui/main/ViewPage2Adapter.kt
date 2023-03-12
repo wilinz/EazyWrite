@@ -9,6 +9,7 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.eazywrite.app.ui.bill.fragment.MainFragment
 import com.eazywrite.app.ui.chart.ChartFragment
 import com.eazywrite.app.ui.explore.ExploreFragment
+import com.eazywrite.app.ui.home.HomeFragment
 import com.eazywrite.app.ui.profile.ProfileFragment
 
 class ViewPage2Adapter: FragmentStateAdapter {
@@ -28,7 +29,7 @@ class ViewPage2Adapter: FragmentStateAdapter {
 
     override fun createFragment(position: Int): Fragment {
         return when (position) {
-            0-> MainFragment()
+            0-> HomeFragment(paddingValues)
             1 -> ChartFragment(paddingValues)
             2 -> ExploreFragment(paddingValues)
             else -> ProfileFragment(paddingValues)
