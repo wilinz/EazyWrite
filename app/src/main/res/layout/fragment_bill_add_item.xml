@@ -11,12 +11,13 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context="com.eazywrite.part1.ui.fragment.AddItemFragment"
-        android:fitsSystemWindows="true">
+        >
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/linearLayout4"
             android:layout_width="match_parent"
             android:background="#FFBB51"
+            android:fitsSystemWindows="true"
             android:layout_height="0dp"
             android:layout_weight="1"
             android:orientation="horizontal"

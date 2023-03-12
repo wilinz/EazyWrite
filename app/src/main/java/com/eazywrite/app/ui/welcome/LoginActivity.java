@@ -23,6 +23,7 @@ import com.eazywrite.app.data.model.VerifyBean;
 import com.eazywrite.app.data.network.Network;
 import com.eazywrite.app.databinding.SignupBinding;
 import com.eazywrite.app.ui.main.MainActivity;
+import com.eazywrite.app.util.ActivityKt;
 import com.google.gson.Gson;
 
 import okhttp3.RequestBody;
@@ -36,7 +37,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        ActivityKt.setWindow(this, false);
         mBinding = DataBindingUtil.setContentView(this,R.layout.signup);
         mActivity = this;
         mBinding.post.setOnClickListener(this);

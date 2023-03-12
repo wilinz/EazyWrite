@@ -18,6 +18,7 @@ import com.eazywrite.app.data.model.VerifyBean;
 import com.eazywrite.app.data.network.Network;
 import com.eazywrite.app.databinding.ActivityFogetPasswordBinding;
 import com.eazywrite.app.ui.main.MainActivity;
+import com.eazywrite.app.util.ActivityKt;
 import com.google.gson.Gson;
 
 import okhttp3.RequestBody;
@@ -30,6 +31,7 @@ public class ForgetPasswordActivity extends AppCompatActivity implements View.On
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ActivityKt.setWindow(this, false);
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_foget_password);
         setOnClickListener();
     }

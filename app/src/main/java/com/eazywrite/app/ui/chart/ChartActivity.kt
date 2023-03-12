@@ -2,6 +2,7 @@
 
 package com.eazywrite.app.ui.chart
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -14,8 +15,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily.*
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.core.view.WindowCompat
-import androidx.core.view.WindowInsetsControllerCompat
 import com.eazywrite.app.R
 import com.eazywrite.app.ui.theme.EazyWriteTheme
 import com.eazywrite.app.util.setWindow
@@ -35,20 +34,21 @@ class ChartActivity : ComponentActivity() {
         setContent {
             EazyWriteTheme {
                 Surface(color = MaterialTheme.colorScheme.background) {
-                    ChartPage()
+//                    ChartPage(paddingValues)
                 }
             }
         }
     }
 }
 
+const val TAG = "ChartActivity.kt"
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun ChartPage() {
+fun ChartPage(paddingValues: PaddingValues) {
     Scaffold(topBar = {
         Column {
             TopAppBar(
-                modifier = Modifier
-                    .windowInsetsPadding(WindowInsets.statusBars),
+                modifier = Modifier.padding(top = paddingValues.calculateTopPadding()),
                 title = {
                     Text(text = stringResource(id = R.string.chart))
                 },

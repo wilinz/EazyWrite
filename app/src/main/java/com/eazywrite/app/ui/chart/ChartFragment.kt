@@ -4,13 +4,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import com.eazywrite.app.ui.theme.EazyWriteTheme
 
-class ChartFragment: Fragment() {
+class ChartFragment(private val paddingValues: PaddingValues) : Fragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -21,7 +22,7 @@ class ChartFragment: Fragment() {
             setContent {
                 EazyWriteTheme {
                     Surface(color = MaterialTheme.colorScheme.background) {
-                        ChartPage()
+                        ChartPage(paddingValues)
                     }
                 }
             }
