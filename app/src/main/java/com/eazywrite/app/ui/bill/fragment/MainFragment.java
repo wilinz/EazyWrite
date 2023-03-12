@@ -2,7 +2,6 @@ package com.eazywrite.app.ui.bill.fragment;
 
 import static android.content.Context.MODE_PRIVATE;
 
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
@@ -16,10 +15,12 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.UiThread;
 import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.eazywrite.app.R;
 import com.eazywrite.app.data.model.BillBean;
@@ -30,6 +31,8 @@ import com.eazywrite.app.databinding.RestallMainBinding;
 import com.eazywrite.app.ui.bill.AddBillContentActivity;
 import com.eazywrite.app.ui.bill.adapter.BitemRecyclerViewAdapter;
 import com.eazywrite.app.ui.bill.adapter.CallbackData;
+import com.eazywrite.app.ui.bill.adapter.DateAdapter;
+import com.eazywrite.app.ui.main.MainActivity;
 import com.eazywrite.app.ui.bill.adapter.ItemRecyclerViewAdapter;
 import com.eazywrite.app.util.ActivityKt;
 import com.github.florent37.singledateandtimepicker.dialog.SingleDateAndTimePickerDialog;
@@ -43,8 +46,7 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.format.TextStyle;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -73,16 +75,45 @@ public class MainFragment extends Fragment implements View.OnClickListener, Call
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         mBinding = DataBindingUtil.inflate(inflater, R.layout.restall_main,container,false);
-
+        initView();
         return  mBinding.getRoot();
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
+    private void initView() {
+        int year = 0;
+        int month = 0;
+        int daysInMonth = 0;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            LocalDate today = LocalDate.now();
+            year = today.getYear();
+//            month = today.getMonthValue()-1;
+            daysInMonth = getDaysInMonth(year, month);
+        }
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.YEAR, year);
+        calendar.set(Calendar.MONTH,0);
+//        calendar.set(Calendar.MONTH, month-1);
+        calendar.set(Calendar.DAY_OF_MONTH, 1);
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("d");
+        SimpleDateFormat dateFormat1 = new SimpleDateFormat("EEEE");
+
+        for (int i = 1; i <= daysInMonth; i++) {
+            riQi.add(dateFormat.format(calendar.getTime()));
+            xingQi.add(dateFormat1.format(calendar.getTime()).replace("星期",""));
+            calendar.add(Calendar.DAY_OF_MONTH, 1);
+        }
+
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this.getContext());
+        layoutManager.setOrientation(RecyclerView.HORIZONTAL);
+        mBinding.data.setLayoutManager(layoutManager);
+        mAdapter = new DateAdapter(xingQi,riQi,getActivity());
+        mBinding.data.setAdapter(mAdapter);
 
     }
 
+    DateAdapter mAdapter;
 
     RestallMainBinding mBinding;
     @Override
@@ -269,13 +300,44 @@ public class MainFragment extends Fragment implements View.OnClickListener, Call
 
                         Message message = new Message();
                         message.what = 1;
+                        message.arg1 = year;
+                        message.arg2 = month;
                         handler.sendMessage(message);
                     }
                 })
                 .display();
     }
-    
-    
+
+    List<String> riQi = new ArrayList<>();
+    List<String> xingQi = new ArrayList<>();
+    private void getData(int year, int month) {
+        Log.d("HelloWorld", "getData: "+ year + "///" + month);
+        riQi.clear();
+        xingQi.clear();
+        int daysInMonth = getDaysInMonth(year,month-1);
+        Calendar calendar =  Calendar.getInstance();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("d");
+        SimpleDateFormat dateFormat1 = new SimpleDateFormat("EEEE");
+        calendar.set(Calendar.YEAR, year);
+        calendar.set(Calendar.MONTH, month-1);
+        calendar.set(Calendar.DAY_OF_MONTH, 1);
+        for (int i = 1; i <= daysInMonth; i++) {
+            riQi.add(dateFormat.format(calendar.getTime()));
+            xingQi.add(dateFormat1.format(calendar.getTime()).replace("星期",""));
+            calendar.add(Calendar.DAY_OF_MONTH, 1);
+        }
+        mAdapter.notifyDataSetChanged();
+    }
+
+
+
+    private static int getDaysInMonth(int year, int month) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(year, month, 1);
+        return calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
+    }
+
+
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
@@ -306,6 +368,8 @@ public class MainFragment extends Fragment implements View.OnClickListener, Call
         @Override
         public boolean handleMessage(@NonNull Message message) {
             if (message.what == 1){
+
+                getData(message.arg1,message.arg2);
                 prefDate = getContext().getSharedPreferences("date", MODE_PRIVATE);
                 sYear = prefDate.getString("year","");
                 sMonth = prefDate .getString("month","");
