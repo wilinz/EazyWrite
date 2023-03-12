@@ -1,18 +1,19 @@
 package com.eazywrite.app.ui.home
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -31,12 +32,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.fragment.app.Fragment
 import com.eazywrite.app.R
+import com.eazywrite.app.ui.bill.AddBillContentActivity
 import com.eazywrite.app.ui.theme.EazyWriteTheme
 import com.google.android.material.datepicker.MaterialDatePicker
 import java.time.Instant
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import java.time.temporal.TemporalAdjusters
+
 
 class HomeFragment(private val paddingValues: PaddingValues) : Fragment() {
 
@@ -68,8 +73,8 @@ fun HomePage(paddingValues: PaddingValues = PaddingValues(0.dp)) {
         DateTimeFormatter.ofPattern("yyyy年MM月dd日")
     }
     var dateTime by remember {
-        val date = LocalDateTime.now()
-        mutableStateOf(date.format(formatter))
+        val date = Instant.now()
+        mutableStateOf(date)
     }
     val context = LocalContext.current
     Scaffold(
@@ -87,14 +92,11 @@ fun HomePage(paddingValues: PaddingValues = PaddingValues(0.dp)) {
                                     MaterialDatePicker.Builder.datePicker()
                                         .setTitleText("请选择日期")
                                         .setTheme(R.style.ThemeOverlay_App_DatePicker)
-                                        .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
+                                        .setSelection(dateTime.toEpochMilli())
                                         .build()
                                         .apply {
                                             addOnPositiveButtonClickListener { timestamp ->
-                                                dateTime = LocalDateTime.ofInstant(
-                                                    Instant.ofEpochMilli(timestamp),
-                                                    ZoneId.systemDefault()
-                                                ).format(formatter)
+                                                dateTime = Instant.ofEpochMilli(timestamp)
                                             }
                                         }
                                 datePicker.show(context.supportFragmentManager, "date1")
@@ -102,13 +104,26 @@ fun HomePage(paddingValues: PaddingValues = PaddingValues(0.dp)) {
                         },
                         colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.onPrimary)
                     ) {
+                        var dateText by remember {
+                            mutableStateOf("")
+                        }
+                        LaunchedEffect(key1 = dateTime, block = {
+                            dateText = LocalDateTime.ofInstant(dateTime, ZoneId.systemDefault())
+                                .format(formatter)
+                        })
                         Row(verticalAlignment = Alignment.CenterVertically) {
-                            Text(text = dateTime, fontSize = 18.sp, fontWeight = FontWeight.Normal)
+                            Text(text = dateText, fontSize = 18.sp, fontWeight = FontWeight.Normal)
                             Icon(imageVector = Icons.Default.ExpandMore, contentDescription = null)
                         }
                     }
                 }
             )
+        },
+        floatingActionButton = {
+            val context = LocalContext.current
+            FloatingActionButton(onClick = { context.startActivity(Intent(context, AddBillContentActivity::class.java)) }) {
+                Icon(imageVector = Icons.Default.Add, contentDescription = "添加",)
+            }
         },
         containerColor = Color.Transparent,
     ) { paddingValues1 ->
@@ -124,7 +139,10 @@ fun HomePage(paddingValues: PaddingValues = PaddingValues(0.dp)) {
                         contentScale = ContentScale.Crop
                     )
                     Box(modifier = Modifier.padding(top = paddingValues1.calculateTopPadding())) {
-                        Row(modifier = Modifier.fillMaxWidth()) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
                             Column(
                                 modifier = Modifier.weight(1f),
                                 horizontalAlignment = Alignment.CenterHorizontally
@@ -132,6 +150,7 @@ fun HomePage(paddingValues: PaddingValues = PaddingValues(0.dp)) {
                                 Text(text = "月收入", color = MaterialTheme.colorScheme.onPrimary)
                                 Text(text = "￥5600", color = MaterialTheme.colorScheme.onPrimary)
                             }
+                            Text(text = "|", color = MaterialTheme.colorScheme.onPrimary)
                             Column(
                                 modifier = Modifier.weight(1f),
                                 horizontalAlignment = Alignment.CenterHorizontally
@@ -143,24 +162,42 @@ fun HomePage(paddingValues: PaddingValues = PaddingValues(0.dp)) {
                     }
                 }
                 val weeks = remember {
-                    mutableStateListOf(
-                        "一",
-                        "二",
-                        "三",
-                        "四",
-                        "五",
-                        "六",
-                        "日",
-                        "一",
-                        "二",
-                        "三",
-                        "四",
-                        "五",
-                        "六",
-                        "日"
+
+                    mutableStateListOf<Pair<Int, Int>>(
                     )
                 }
 
+                LaunchedEffect(key1 = dateTime, block = {
+                    val date = LocalDate.ofEpochDay(dateTime.toEpochMilli() / 86400000)
+
+                    // 获取这个月的第一天
+
+                    // 获取这个月的第一天
+                    val firstDayOfMonth = date.with(TemporalAdjusters.firstDayOfMonth())
+
+                    // 获取这个月的最后一天
+
+                    // 获取这个月的最后一天
+                    val lastDayOfMonth = date.with(TemporalAdjusters.lastDayOfMonth())
+
+                    // 将每个日期与对应的星期几匹配，并放入Pair对象中，再放入列表中
+
+                    // 将每个日期与对应的星期几匹配，并放入Pair对象中，再放入列表中
+                    val datesWithWeekdays: MutableList<Pair<Int, Int>> = ArrayList()
+                    var currentDate: LocalDate = firstDayOfMonth
+                    while (!currentDate.isAfter(lastDayOfMonth)) {
+                        val dayOfWeek = currentDate.dayOfWeek
+                        val weekday: Int = currentDate.dayOfWeek.value
+                        val dateWithWeekday: Pair<Int, Int> =
+                            Pair(currentDate.dayOfMonth, weekday)
+                        datesWithWeekdays.add(dateWithWeekday)
+                        currentDate = currentDate.plusDays(1)
+                    }
+                    weeks.apply {
+                        clear()
+                        addAll(datesWithWeekdays)
+                    }
+                })
                 var itemWidth by remember { mutableStateOf(0.dp) }
                 Box(
                     modifier = Modifier
@@ -168,7 +205,7 @@ fun HomePage(paddingValues: PaddingValues = PaddingValues(0.dp)) {
                         .padding(16.dp)
                 ) {
                     val density = LocalDensity.current
-                    Card(shape = RoundedCornerShape(4.dp)) {
+                    Card(shape = RoundedCornerShape(8.dp)) {
                         Box(modifier = Modifier
                             .padding(8.dp)
                             .wrapContentSize()
@@ -188,11 +225,16 @@ fun HomePage(paddingValues: PaddingValues = PaddingValues(0.dp)) {
                                                 .width(itemWidth),
                                             contentAlignment = Alignment.Center
                                         ) {
-                                            Text(text = item)
+                                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                                Text(text = weekDayMap[item.second] ?: "")
+                                                Text(text = item.first.toString())
+                                            }
+
                                         }
 
                                     }
-                                })
+                                }
+                            )
                         }
                     }
                 }
@@ -202,6 +244,8 @@ fun HomePage(paddingValues: PaddingValues = PaddingValues(0.dp)) {
     }
 
 }
+
+val weekDayMap = mapOf(1 to "一", 2 to "二", 3 to "三", 4 to "四", 5 to "五", 6 to "六", 7 to "日")
 
 @Preview(showBackground = true)
 @Composable
