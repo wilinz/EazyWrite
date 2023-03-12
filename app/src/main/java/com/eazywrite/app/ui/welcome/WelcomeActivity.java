@@ -31,19 +31,19 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class WelcomeActivity extends AppCompatActivity implements View.OnClickListener
-{
+public class WelcomeActivity extends AppCompatActivity implements View.OnClickListener {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ActivityKt.setWindow(this);
+        ActivityKt.setWindow(this, false);
         this.setContentView(R.layout.fragment_login);
-        binding = DataBindingUtil.setContentView(this,R.layout.fragment_login);
+        binding = DataBindingUtil.setContentView(this, R.layout.fragment_login);
         binding.signUp.setOnClickListener(this);
         mActivity = this;
         initView();
 
 
     }
+
     FragmentLoginBinding binding;
 
     private void initView() {
@@ -69,7 +69,7 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
                 ForgetPasswordActivity.jumpForgetActivity(this);
                 break;
             case R.id.loginPassword:
-                LoginActivity.jumpLoginActivity(this,this);
+                LoginActivity.jumpLoginActivity(this, this);
                 break;
             case R.id.signUp:
                 loginUp();
@@ -83,39 +83,39 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
         String account = String.valueOf(binding.account.getText());
         String password = String.valueOf(binding.passwordWelcome.getText());
         if (account.equals("")) {
-            ShowToast.showToast(getApplicationContext(),"用户名不能为空");
+            ShowToast.showToast(getApplicationContext(), "用户名不能为空");
             return;
         } else if (password.equals("")) {
-            ShowToast.showToast(getApplicationContext(),"密码不能为空");
+            ShowToast.showToast(getApplicationContext(), "密码不能为空");
             return;
         }
 
         SignUpBean signUpBean = new SignUpBean();
-        signUpBean.setPassword(MessageSummaryKt.messageSummary(password,"SHA-256"));
+        signUpBean.setPassword(MessageSummaryKt.messageSummary(password, "SHA-256"));
         signUpBean.setUsername(account);
         String json = new Gson().toJson(signUpBean);
         RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8")
-                ,json);
+                , json);
         Call<RegisterResponse> call = Network.INSTANCE.getAccountService().postLogin(body);
         call.enqueue(new Callback<RegisterResponse>() {
             @Override
             public void onResponse(Call<RegisterResponse> call, Response<RegisterResponse> response) {
                 response.body().getAll();
-                if(response.body().getCode().equals(200)){
-                    SharedPreferences.Editor editor = getSharedPreferences("User",MODE_PRIVATE).edit();
-                    editor.putString("account",account);
+                if (response.body().getCode().equals(200)) {
+                    SharedPreferences.Editor editor = getSharedPreferences("User", MODE_PRIVATE).edit();
+                    editor.putString("account", account);
                     editor.apply();
-                    ShowToast.showToast(getApplicationContext(),"登陆成功");
+                    ShowToast.showToast(getApplicationContext(), "登陆成功");
                     MainActivity.Companion.jumpMainActivity(mActivity);
                     mActivity.finish();
                 } else if (response.body().getCode().equals(10007)) {
-                    ShowToast.showToast(getApplicationContext(),"用户不存在");
-                }else if (response.body().getCode().equals(10005)) {
-                    ShowToast.showToast(getApplicationContext(),"密码错误");
-                }else if (response.body().getCode().equals(10004)) {
-                    ShowToast.showToast(getApplicationContext(),"用户名请输入邮箱");
+                    ShowToast.showToast(getApplicationContext(), "用户不存在");
+                } else if (response.body().getCode().equals(10005)) {
+                    ShowToast.showToast(getApplicationContext(), "密码错误");
+                } else if (response.body().getCode().equals(10004)) {
+                    ShowToast.showToast(getApplicationContext(), "用户名请输入邮箱");
                 } else if (response.body().getCode().equals(10002)) {
-                    ShowToast.showToast(getApplicationContext(),"密码错误次数超过5次，禁止1小时登录时间");
+                    ShowToast.showToast(getApplicationContext(), "密码错误次数超过5次，禁止1小时登录时间");
                 }
             }
 

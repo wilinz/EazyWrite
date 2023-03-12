@@ -7,6 +7,8 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.ViewGroup
 import androidx.activity.compose.setContent
+import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -26,7 +28,7 @@ import com.eazywrite.app.ui.theme.EazyWriteTheme
 import com.eazywrite.app.util.setWindow
 
 
-class MainActivity : FragmentActivity() {
+class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,12 +52,12 @@ class MainActivity : FragmentActivity() {
                         Box(
                             modifier = Modifier.padding(bottom = paddingValues.calculateBottomPadding())
                         ) {
+
                             AndroidView(
                                 modifier = Modifier.fillMaxSize(),
                                 factory = { context ->
                                     ViewPager2(context).apply {
-                                        val viewPager2 = this
-                                        adapter = ViewPage2Adapter(this@MainActivity)
+                                        adapter = ViewPage2Adapter(this@MainActivity, paddingValues)
                                         registerOnPageChangeCallback(
                                             onViewPage2ChangeCallback(
                                                 onPageSelected = { index ->
@@ -83,17 +85,6 @@ class MainActivity : FragmentActivity() {
         }
     }
 
-    fun Modifier.paddingPage(page: Int, paddingValues: PaddingValues): Modifier {
-        var top = paddingValues.calculateTopPadding()
-        val bottom = paddingValues.calculateBottomPadding()
-        when (page) {
-            0 -> top =0.dp
-        }
-        return padding(
-            top = top,
-            bottom = bottom,
-        )
-    }
     fun setSystemUI(page: Int) {
         when (page) {
             0 -> setWindow(isAppearanceLightStatusBars = false)
@@ -102,7 +93,6 @@ class MainActivity : FragmentActivity() {
             else -> setWindow(isAppearanceLightStatusBars = true)
         }
     }
-
 
 
     companion object {
