@@ -135,7 +135,8 @@ private fun BottomBar(currentSelected: Int, onSelected: (index: Int) -> Unit) {
                         if (selected) item.selectedIcon else item.icon,
                         contentDescription = item.title,
                     )
-                }
+                },
+//                colors = NavigationBarItemDefaults.colors(selectedIconColor =)
             )
         }
     }
