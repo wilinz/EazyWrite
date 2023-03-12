@@ -65,34 +65,34 @@ public class FragmentOne extends Fragment {
     ArrayList<OutputBean> beansColored = new ArrayList<>();
 
     private void init(){
-        beans.add(setResource("service","服务"));
-        beans.add(setResource("traver","旅游"));
-        beans.add(setResource("transport","转账"));
-        beans.add(setResource("sport","运动"));
-        beans.add(setResource("shopping","购物"));
-        beans.add(setResource("play","娱乐"));
-        beans.add(setResource("medical","医疗"));
-        beans.add(setResource("gong_yi","公益"));
-        beans.add(setResource("education","教育"));
-        beans.add(setResource("eat","饮食"));
-        beans.add(setResource("cloth","服装"));
-        beans.add(setResource("bus","交通"));
-        beans.add(setResource("bao_xian","保险"));
+        beans.add(setResource("baoxian1","保险"));
+        beans.add(setResource("canying1","餐饮"));
+        beans.add(setResource("fushi1","服饰"));
+        beans.add(setResource("fuwu1","服务"));
+        beans.add(setResource("gongyi1","公益"));
+        beans.add(setResource("gouwu1","购物"));
+        beans.add(setResource("jiaotong1","交通"));
+        beans.add(setResource("jiaoyu","教育"));
+        beans.add(setResource("lvxing1","旅行"));
+        beans.add(setResource("yiliao1","医疗"));
+        beans.add(setResource("yule1","娱乐"));
+        beans.add(setResource("yundong1","运动"));
+        beans.add(setResource("zhuanzhang","转账"));
 
 
-        beansColored.add(setResource("service1","服务"));
-        beansColored.add(setResource("traver1","旅游"));
-        beansColored.add(setResource("transport1","转账"));
-        beansColored.add(setResource("sport1","运动"));
-        beansColored.add(setResource("shopping1","购物"));
-        beansColored.add(setResource("play1","娱乐"));
-        beansColored.add(setResource("medical1","医疗"));
-        beansColored.add(setResource("gong_yi1","公益"));
-        beansColored.add(setResource("education1","教育"));
-        beansColored.add(setResource("eat1","饮食"));
-        beansColored.add(setResource("cloth1","服装"));
-        beansColored.add(setResource("bus1","交通"));
-        beansColored.add(setResource("bao_xian1","保险"));
+        beansColored.add(setResource("baoxian","保险"));
+        beansColored.add(setResource("canying","餐饮"));
+        beansColored.add(setResource("fushi","服饰"));
+        beansColored.add(setResource("fuwu","服务"));
+        beansColored.add(setResource("gongyi","公益"));
+        beansColored.add(setResource("gouwu","购物"));
+        beansColored.add(setResource("jiaotong","交通"));
+        beansColored.add(setResource("jiaoyu1","教育"));
+        beansColored.add(setResource("lvxing","旅行"));
+        beansColored.add(setResource("yiliao","医疗"));
+        beansColored.add(setResource("yule","娱乐"));
+        beansColored.add(setResource("yundong","运动"));
+        beansColored.add(setResource("zhuanzhang1","转账"));
 
 
     }
