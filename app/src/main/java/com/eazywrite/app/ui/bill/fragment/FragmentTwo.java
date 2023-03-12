@@ -70,17 +70,17 @@ public class FragmentTwo extends Fragment {
     ArrayList<OutputBean> beans = new ArrayList<>();
     ArrayList<OutputBean> beansColored = new ArrayList<>();
     private void init() {
-        beans.add(setResource("gong_zi","工资"));
-        beans.add(setResource("jian_zhi","兼职"));
-        beans.add(setResource("li_cai","理财"));
-        beans.add(setResource("li_jin","礼金"));
-        beans.add(setResource("zhuan_zhang","转账"));
+        beans.add(setResource("gongzi","工资"));
+        beans.add(setResource("jianzhi","兼职"));
+        beans.add(setResource("licai","理财"));
+        beans.add(setResource("lijin","礼金"));
+        beans.add(setResource("zhuanzhang","转账"));
 
-        beansColored.add(setResource("gong_zi1","工资"));
-        beansColored.add(setResource("jian_zhi1","兼职"));
-        beansColored.add(setResource("li_cai1","理财"));
-        beansColored.add(setResource("li_jin1","礼金"));
-        beansColored.add(setResource("zhuan_zhang1","转账"));
+        beansColored.add(setResource("gongzi1","工资"));
+        beansColored.add(setResource("jianzhi1","兼职"));
+        beansColored.add(setResource("licai1","理财"));
+        beansColored.add(setResource("lijin1","礼金"));
+        beansColored.add(setResource("zhuanzhang1","转账"));
 
 
     }

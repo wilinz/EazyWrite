@@ -48,6 +48,7 @@ public class AddItemFragment extends Fragment implements CountInterface,View.OnC
         mBinding.save.setOnClickListener(this);
         mBinding.clear3.setOnClickListener(this);
         mBinding.datePicker.setOnClickListener(this);
+        mBinding.back2.setOnClickListener(this);
         return  mBinding.getRoot();
     }
     private DataViewModel mDataViewModel;
@@ -190,6 +191,10 @@ public class AddItemFragment extends Fragment implements CountInterface,View.OnC
                 break;
             case R.id.save:
                 save();
+                break;
+            case R.id.back2:
+                clear();
+                getActivity().finish();
                 break;
         }
     }

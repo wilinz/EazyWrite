@@ -139,7 +139,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:orientation="vertical"
-            android:layout_weight="90">
+            android:layout_weight="110">
 
             <TextView
                 android:id="@+id/day"

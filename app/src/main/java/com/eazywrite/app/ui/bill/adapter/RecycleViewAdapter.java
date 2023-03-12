@@ -71,7 +71,7 @@ public class RecycleViewAdapter extends RecyclerView.Adapter<RecycleViewAdapter.
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         ViewHolder view = new ViewHolder(LayoutInflater.from(mContext).inflate(R.layout.item, parent, false));
-        view.icon.setOnClickListener(new View.OnClickListener() {
+        view.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view1) {
                 if(!isClick){
@@ -123,11 +123,13 @@ public class RecycleViewAdapter extends RecyclerView.Adapter<RecycleViewAdapter.
     public class ViewHolder extends RecyclerView.ViewHolder{
         private ImageView icon;
         private TextView name;
+        private View mView;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             icon = itemView.findViewById(R.id.icon);
             name = itemView.findViewById(R.id.name);
+            mView = itemView;
         }
     }
 }
