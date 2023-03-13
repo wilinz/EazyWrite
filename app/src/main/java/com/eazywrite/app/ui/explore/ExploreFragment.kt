@@ -13,6 +13,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import com.eazywrite.app.ui.bill.BillActivity
+import com.eazywrite.app.ui.chat.ChatActivity
 import com.eazywrite.app.ui.image_editing.CameraXActivity
 import com.eazywrite.app.ui.image_editing.ImageEditingActivity
 import com.eazywrite.app.ui.theme.EazyWriteTheme
@@ -69,6 +70,9 @@ fun ExplorePage(paddingValues: PaddingValues) {
             }
             ElevatedButton(onClick = { context.startActivity<CameraXActivity>() }) {
                 Text(text = "相机预览")
+            }
+            ElevatedButton(onClick = { context.startActivity<ChatActivity>() }) {
+                Text(text = "ChatGPT聊天界面")
             }
         }
     }
