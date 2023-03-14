@@ -66,6 +66,7 @@ class MainActivity : AppCompatActivity() {
                                                 }
                                             )
                                         )
+                                        isUserInputEnabled = false
                                         offscreenPageLimit = 4
                                         layoutParams = ViewGroup.LayoutParams(
                                             ViewGroup.LayoutParams.MATCH_PARENT,

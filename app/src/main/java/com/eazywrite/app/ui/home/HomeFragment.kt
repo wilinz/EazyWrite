@@ -7,16 +7,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ExpandMore
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -33,8 +34,14 @@ import androidx.compose.ui.unit.sp
 import androidx.fragment.app.Fragment
 import com.eazywrite.app.R
 import com.eazywrite.app.ui.bill.AddBillContentActivity
+import com.eazywrite.app.ui.bill.BillActivity
+import com.eazywrite.app.ui.image_editing.CameraXActivity
 import com.eazywrite.app.ui.theme.EazyWriteTheme
+import com.eazywrite.app.util.startActivity
 import com.google.android.material.datepicker.MaterialDatePicker
+import com.leinardi.android.speeddial.compose.FabWithLabel
+import com.leinardi.android.speeddial.compose.SpeedDial
+import com.leinardi.android.speeddial.compose.SpeedDialState
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -65,7 +72,7 @@ class HomeFragment(private val paddingValues: PaddingValues) : Fragment() {
 }
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
 @Composable
 fun HomePage(paddingValues: PaddingValues = PaddingValues(0.dp)) {
 
@@ -121,8 +128,39 @@ fun HomePage(paddingValues: PaddingValues = PaddingValues(0.dp)) {
         },
         floatingActionButton = {
             val context = LocalContext.current
-            FloatingActionButton(onClick = { context.startActivity(Intent(context, AddBillContentActivity::class.java)) }) {
-                Icon(imageVector = Icons.Default.Add, contentDescription = "添加",)
+            var speedDialState by rememberSaveable { mutableStateOf(SpeedDialState.Collapsed) }
+            var overlayVisible: Boolean by rememberSaveable { mutableStateOf(speedDialState.isExpanded()) }
+            SpeedDial(
+                state = speedDialState,
+                onFabClick = { expanded ->
+                    overlayVisible = !expanded
+                    speedDialState = if (expanded) SpeedDialState.Collapsed else SpeedDialState.Expanded
+                },
+                fabClosedContent = {
+                    Icon(imageVector = Icons.Default.Add, contentDescription = null)
+                },
+                fabOpenedContent = {
+                    Icon(imageVector = Icons.Default.Close, contentDescription = null)
+                }
+            ) {
+                item {
+                    FabWithLabel(
+                        onClick = { context.startActivity<AddBillContentActivity>() },
+                        labelContent = { Text(text = "手动添加") },
+                        labelBorder = AssistChipDefaults.assistChipBorder(borderWidth = 0.dp, borderColor = Color.Transparent)
+                    ) {
+                        Icon(Icons.Default.Edit, null)
+                    }
+                }
+                item {
+                    FabWithLabel(
+                        onClick = { context.startActivity<CameraXActivity>() },
+                        labelContent = { Text(text = "智能识别") },
+                        labelBorder = AssistChipDefaults.assistChipBorder(borderWidth = 0.dp, borderColor = Color.Transparent)
+                    ) {
+                        Icon(Icons.Default.PhotoCamera ,null)
+                    }
+                }
             }
         },
         containerColor = Color.Transparent,
